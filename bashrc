@@ -86,5 +86,10 @@ if [ -z "$BASH_COMPLETION" ]; then
     unset bash bmajor bminor
 fi
 
+#Aliases
+alias ff="open -a Firefox.app $1"
+alias chrome="open -a 'Google Chrome.app' $1"
+alias safari="open -a Safari.app $1"
+
 # This loads RVM into a shell session.
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
