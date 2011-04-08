@@ -34,6 +34,27 @@ else
     export EDITOR=vi
 fi
 
+#growl support
+growl() { 
+	echo -e $'\e]9;'${1}'\007' ; return ; 
+}
+
+# make rm move to trash instead of traditional delete
+rm () {
+  local path
+  for path in "$@"; do
+    # ignore any arguments
+    if [[ "$path" = -* ]]; then :
+    else
+      local dst=${path##*/}
+      # append the time if necessary
+      while [ -e ~/.Trash/"$dst" ]; do
+        dst="$dst "$(date +%H-%M-%S)
+      done
+      mv "$path" ~/.Trash/"$dst"
+    fi
+  done
+}
 
 
 # set up completion
@@ -51,7 +72,7 @@ if [ -z "$BASH_COMPLETION" ]; then
 				export GIT_PS1_SHOWUNTRACKEDFILES=1
 				
         # set prompt to show git branch
-        PS1='\u@\h:\[\e[0;33m\]\w\[\e[m\]$(__git_ps1 " (%s)") \n$ '
+        PS1='\u@\h:\[\e[0;33m\]\w\[\e[m\]$(__git_ps1 " (%s)")\n$ '
       fi
 
       # remove completions I do not want.
@@ -64,3 +85,6 @@ if [ -z "$BASH_COMPLETION" ]; then
     fi
     unset bash bmajor bminor
 fi
+
+# This loads RVM into a shell session.
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
