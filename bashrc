@@ -34,11 +34,13 @@ else
     export EDITOR=vi
 fi
 
+#OS X Only
 #growl support
 growl() { 
 	echo -e $'\e]9;'${1}'\007' ; return ; 
 }
 
+#OS X Only
 # make rm move to trash instead of traditional delete
 rm () {
   local path
@@ -86,6 +88,7 @@ if [ -z "$BASH_COMPLETION" ]; then
     unset bash bmajor bminor
 fi
 
+#OS X Only
 #Aliases
 alias ff="open -a Firefox.app $1"
 alias chrome="open -a 'Google Chrome.app' $1"
