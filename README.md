@@ -9,6 +9,7 @@ This is primarily for a mac but parts in the bashrc labeled as 'OS X Only' can b
 * [bash_profile](https://github.com/craveytrain/local-config/blob/master/bash_profile) to ~/.bash_profile
 * [bashrc](https://github.com/craveytrain/local-config/blob/master/bashrc) to ~/.bashrc
 * [bin](https://github.com/craveytrain/local-config/tree/master/bin) to ~/bin
+* [gitconfig](https://github.com/craveytrain/local-config/tree/master/gitconfig) to ~/.gitconfig (consider >> or manually merge in existing .gitconfig file)
 
 ## Set permissions
 * Set ~/bin/bash_completion to executable

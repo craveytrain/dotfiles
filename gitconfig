@@ -1,0 +1,16 @@
+[color]
+	ui = true
+	branch = auto
+	diff = auto
+	interactive = auto
+	status = auto
+[alias]
+	co = checkout
+	br = branch
+	st = status
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+[merge]
+	tool = opendiff
+[core]
+	editor = mate -w
+	autocrlf = input
