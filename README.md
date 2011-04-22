@@ -5,10 +5,10 @@ This is primarily for a mac but parts in the bashrc labeled as 'OS X Only' can b
 
 # How to install
 ## Copy files
-* [bash_completion.d] to ~/.bash_completion.d
-* [bash_profile] to ~/.bash_profile
-* [bashrc] to ~/.bashrc
-* [bin] to ~/bin
+* [bash_completion.d](bash_completion.d) to ~/.bash_completion.d
+* [bash_profile](bash_profile) to ~/.bash_profile
+* [bashrc](bashrc) to ~/.bashrc
+* [bin](bin) to ~/bin
 
 ## Set permissions
 * Set ~/bin/bash_completion to executable
