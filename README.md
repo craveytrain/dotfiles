@@ -1,11 +1,12 @@
 # What it is?!
 Just adding some config files so I have them for later and have version control. If you're interested, feel free.
 
-This is primarily for a mac but parts in the bashrc labeled as 'OS X Only' can be stripped out to use it for any *nix system.
+I broke the mac specific stuff out into it's own file. So if you don't have a mac, don't copy the bash_mac file.
 
 # How to install
 ## Copy files
 * [bash_completion.d](https://github.com/craveytrain/local-config/tree/master/bash_completion.d) to ~/.bash_completion.d
+* [bash_mac](https://github.com/craveytrain/local-config/tree/master/bash_mac) to ~/.bash_mac (if you are on a mac)
 * [bash_profile](https://github.com/craveytrain/local-config/blob/master/bash_profile) to ~/.bash_profile
 * [bashrc](https://github.com/craveytrain/local-config/blob/master/bashrc) to ~/.bashrc
 * [bin](https://github.com/craveytrain/local-config/tree/master/bin) to ~/bin

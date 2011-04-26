@@ -34,31 +34,6 @@ else
     export EDITOR=vi
 fi
 
-#OS X Only
-#growl support
-growl() { 
-	echo -e $'\e]9;'${1}'\007' ; return ; 
-}
-
-#OS X Only
-# make rm move to trash instead of traditional delete
-rm () {
-  local path
-  for path in "$@"; do
-    # ignore any arguments
-    if [[ "$path" = -* ]]; then :
-    else
-      local dst=${path##*/}
-      # append the time if necessary
-      while [ -e ~/.Trash/"$dst" ]; do
-        dst="$dst "$(date +%H-%M-%S)
-      done
-      mv "$path" ~/.Trash/"$dst"
-    fi
-  done
-}
-
-
 # set up completion
 if [ -z "$BASH_COMPLETION" ]; then
     bash=${BASH_VERSION%.*}; bmajor=${bash%.*}; bminor=${bash#*.}
@@ -72,7 +47,9 @@ if [ -z "$BASH_COMPLETION" ]; then
 				export GIT_PS1_SHOWDIRTYSTATE=1
 				export GIT_PS1_SHOWSTASHSTATE=1
 				export GIT_PS1_SHOWUNTRACKEDFILES=1
-				
+				export GIT_DIRTY_COLOR="0;31m"
+				export GIT_CLEAN_COLOR="0;32m"
+
         # set prompt to show git branch
         PS1='\u@\h:\[\e[0;33m\]\w\[\e[m\]$(__git_ps1 " (%s)")\n$ '
       fi
@@ -88,11 +65,10 @@ if [ -z "$BASH_COMPLETION" ]; then
     unset bash bmajor bminor
 fi
 
-#OS X Only
-#Aliases
-alias ff="open -a Firefox.app $1"
-alias chrome="open -a 'Google Chrome.app' $1"
-alias safari="open -a Safari.app $1"
+# Mac specific stuff
+if [ -f ~/.bash_mac ]; then
+. ~/.bash_mac
+fi
 
 # This loads RVM into a shell session.
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"

@@ -173,12 +173,16 @@ __git_ps1 ()
 		# if [ -n "${1-}" ]; then
 		# 	printf "$1" "$c${b##refs/heads/}$w$i$s$u$r"
 		if [ -n "${1-}" ]; then
-			if git diff --quiet 2>/dev/null >&2; then
-				br="\e[0;32m$1\e[m"
+			if [ -n "${GIT_DIRTY_COLOR}" ]; then
+				if [ -n "$w$u$i" ]; then
+					br="\e[${GIT_DIRTY_COLOR}$1\e[m"
+				else
+					br="\e[${GIT_CLEAN_COLOR}$1\e[m"
+				fi
+				printf "$br" "$c${b##refs/heads/}$w$i$s$u$r"
 			else
-				br="\e[0;31m$1\e[m"
+				printf "$1" "$c${b##refs/heads/}$w$i$s$u$r"
 			fi
-			printf "$br" "$c${b##refs/heads/}$w$i$s$u$r"
 		else
 			printf " (%s)" "$c${b##refs/heads/}$w$i$s$u$r"
 		fi
