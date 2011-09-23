@@ -5,6 +5,15 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
+# Load things
+if [ -f ~/.aliases ]; then
+  source ~/.aliases
+fi
+
+if [ -f ~/.functions ]; then
+  source ~/.functions
+fi
+
 # append an entry to PATH if it is a dir, and not already in path.
 pathadd() {
     if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
@@ -18,11 +27,15 @@ path_unshift() {
     fi
 }
 
-pathadd $HOME/bin
+# add user folders
+path_unshift $HOME/bin
+path_unshift $HOME/local/node/bin
+
 
 # add /usr/local bindirs
-pathadd /usr/local/bin
-pathadd /usr/local/sbin
+path_unshift /usr/local/bin
+path_unshift /usr/local/sbin
+pathadd /usr/local/mysql/bin
 
 # set lang
 export LANG=en_US.UTF-8
@@ -33,6 +46,7 @@ if [ -x `which vim` ]; then
 else
     export EDITOR=vi
 fi
+
 
 # set up completion
 if [ -z "$BASH_COMPLETION" ]; then
@@ -66,14 +80,13 @@ if [ -z "$BASH_COMPLETION" ]; then
 fi
 
 # Mac specific stuff
-if [ -f ~/.bash_mac ]; then
-. ~/.bash_mac
+if [ -f ~/.bash_osx ]; then
+	. ~/.bash_osx
+fi
+
+if [ -f ~/.localrc ]; then
+	. ~/.localrc
 fi
 
 # This loads RVM into a shell session.
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
-
-# Mac specific stuff
-if [ -f ~/.bash_local ]; then
-. ~/.bash_local
-fi
