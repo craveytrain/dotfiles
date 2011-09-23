@@ -10,13 +10,3 @@ path_unshift() {
         PATH="$1:$PATH"
     fi
 }
-
-# add user folders
-path_unshift $HOME/bin
-path_unshift $HOME/local/node/bin
-
-
-# add /usr/local bindirs
-path_unshift /usr/local/bin
-path_unshift /usr/local/sbin
-pathadd /usr/local/mysql/bin

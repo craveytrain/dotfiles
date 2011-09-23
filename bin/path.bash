@@ -1,0 +1,1 @@
+path_unshift $HOME/bin
