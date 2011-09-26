@@ -1,6 +1,4 @@
-" Set colors/styles
-let g:solarized_visibility="high"
-colorscheme solarized
+" Set font
 set gfn=Consolas:h13
 
 
