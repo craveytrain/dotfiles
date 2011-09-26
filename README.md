@@ -5,13 +5,16 @@ I broke the mac specific stuff out into it's own file. So if you don't have a ma
 
 # install
 Clone the repo (be sure to grab submodules)
-`git clone git@github.com:craveytrain/dotfiles.git`
+
+    git clone git@github.com:craveytrain/dotfiles.git
 
 Get inside the repo
-`cd dotfiles`
+
+    cd dotfiles
 
 Run the Rakefile
-`rake install`
+
+    rake install
 
 # Credits
 Thanks to [mschout](https://github.com/mschout) for all the help, especially on the bash stuff.
