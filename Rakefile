@@ -7,13 +7,19 @@ task :install do
   skip_all = false
   overwrite_all = false
   backup_all = false
+  home = ENV["HOME"]
+
+  empty_dirs = [
+	  "#{home}/.vim/backup",
+	  "#{home}/.vim/undo"
+  ]
 
   linkables.each do |linkable|
     overwrite = false
     backup = false
 
     file = linkable.split('/').last.split('.symlink').last
-    target = "#{ENV["HOME"]}/.#{file}"
+    target = "#{home}/.#{file}"
 
     if File.exists?(target) || File.symlink?(target)
       unless skip_all || overwrite_all || backup_all
@@ -31,5 +37,13 @@ task :install do
     end
     `ln -s "$PWD/#{linkable}" "#{target}"`
   end
+
+  # Create placeholder directories
+  empty_dirs.each do |dir|
+	  unless File.exists?(dir) and File::diretory?(dir)
+		  Dir.mkdir(dir)
+	  end
+  end
+
 end
 task :default => 'install'
