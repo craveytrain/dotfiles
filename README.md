@@ -6,7 +6,7 @@ I broke the mac specific stuff out into it's own file. So if you don't have a ma
 # install
 Clone the repo (be sure to grab submodules)
 
-    git clone git@github.com:craveytrain/dotfiles.git
+    git clone --recursive git@github.com:craveytrain/dotfiles.git
 
 Get inside the repo
 
