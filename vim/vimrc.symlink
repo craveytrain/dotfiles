@@ -4,49 +4,58 @@ set nocompatible
 " Turn out the lights
 syntax on
 set background=dark
-let g:solarized_visibility="high"
-" colorscheme solarized
-
-" Setting font
-set gfn=Consolas:h13
+colorscheme molokai
 
 " Change mapleader
 let mapleader=" "
-
-" Enables filetype plugins
-" filetype plugin on
 
 " Pathogen stuff
 call pathogen#infect()
 filetype plugin indent on
 
-" Set colorscheme after pathogen
-colorscheme solarized
-
 set autoread " Set to auto read when a file is changed from the outside
-set autoindent " Copy indent from last line when starting new line.
+set autoindent " Copy indent from last line when starting new line
+set showmode " Show mode in bottom of window
+set matchpairs+=<:> " Add XML style elements to matching
 set backspace=indent,eol,start
 set cursorline " Highlight current line
-" set diffopt=filler " Add vertical spaces to keep right and left aligned
 set diffopt+=iwhite " Ignore whitespace changes (focus on code changes)
 set encoding=utf-8 nobomb " BOM often causes trouble
 set esckeys " Allow cursor keys in insert mode.
 set ruler " Show cursor location
-set hlsearch " Highlight searches
-set incsearch " Highlight dynamically as pattern is typed.
 set magic "Set magic on, for regular expressions
 set noerrorbells " Disable error bells.
 set nojoinspaces " Only insert single space after a '.', '?' and '!' with a join command.
 set nostartofline " Don't reset cursor to start of line when moving around.
 set nu " Enable line numbers.
-set ignorecase " Ignore case of searches.
-set smartcase " Ignore 'ignorecase' if search patter contains uppercase characters.
 set nosmarttab " At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shiftwidth spaces.
 set undofile " Persistent Undo.
 set showmatch "Show matching bracets when text indicator is over them
 set guicursor+=a:blinkon0
 set tabstop=4 " Set tab stop to 4
 set shiftwidth=4 " Set shift width to 4
+set visualbell t_vb= " turn off the bell
+
+" searching
+set hlsearch " Highlight searches
+set incsearch " Highlight dynamically as pattern is typed.
+set ignorecase " Ignore case of searches.
+set smartcase " Ignore 'ignorecase' if search patter contains uppercase characters.
+
+" use 256 color scheme in terminal if TERM supports it
+if $TERM =~ '^xterm-color'
+    " OSX Termnal.app reports as this, and only supports 16 colors
+    set t_Co=16
+elseif $TERM =~ '^xterm'
+    set t_Co=256
+endif
+
+" directories
+" set backup locations and enable
+set backup
+set backupdir=~/.vim/backup
+set directory=~/.vim/backup
+set undodir=~/.vim/undo
 
 " Sudo write (<leader>W)
 noremap <leader>W :w !sudo tee %<CR>
