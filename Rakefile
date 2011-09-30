@@ -10,8 +10,8 @@ task :install do
   home = ENV["HOME"]
 
   empty_dirs = [
-	  "#{home}/.vim/backup",
-	  "#{home}/.vim/undo"
+	  "#{home}/.backup",
+	  "#{home}/.undo"
   ]
 
   linkables.each do |linkable|
@@ -40,7 +40,7 @@ task :install do
 
   # Create placeholder directories
   empty_dirs.each do |dir|
-	  unless File.exists?(dir) and File::diretory?(dir)
+	  unless File.exists?(dir) and File::directory?(dir)
 		  Dir.mkdir(dir)
 	  end
   end
