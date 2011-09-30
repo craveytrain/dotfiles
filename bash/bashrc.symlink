@@ -3,8 +3,12 @@
 # set lang
 export LANG=en_US.UTF-8
 
-# shortcut to this dotfiles path is $ZSH
+# shortcut to this dotfiles path is $DOTFILES
 export DOTFILES=$HOME/.dotfiles
+
+# Set some LS colors
+export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
+export CLICOLOR=true
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -19,3 +23,5 @@ done
 if [ -f ~/.localrc ]; then
 	. ~/.localrc
 fi
+
+source "`brew --prefix grc`/etc/grc.bashrc"
