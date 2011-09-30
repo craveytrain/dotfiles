@@ -15,7 +15,15 @@ if [ -f /etc/bashrc ]; then
     . /etc/bashrc
 fi
 
+
+# Load all the .bash files
 for config_file in $DOTFILES/*/*.bash
+do
+	. $config_file
+done
+
+# Load all the .sh files
+for config_file in $DOTFILES/*/*.sh
 do
 	. $config_file
 done
@@ -23,5 +31,3 @@ done
 if [ -f ~/.localrc ]; then
 	. ~/.localrc
 fi
-
-source "`brew --prefix grc`/etc/grc.bashrc"

@@ -1,7 +1,5 @@
 # What it is?!
-Just adding some config files so I have them for later and have version control. If you're interested, feel free.
-
-I broke the mac specific stuff out into it's own file. So if you don't have a mac, don't copy the bash_osx file.
+Just adding some config files so I have them for later and have version control. If you're interested, feel free to fork, poach, whatever.
 
 # install
 Clone the repo (be sure to grab submodules)

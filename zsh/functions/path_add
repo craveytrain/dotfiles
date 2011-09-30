@@ -4,9 +4,3 @@ path_add() {
         PATH="$PATH:$1"
     fi
 }
-
-path_unshift() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$1:$PATH"
-    fi
-}
