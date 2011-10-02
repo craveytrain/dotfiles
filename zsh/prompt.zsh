@@ -10,9 +10,9 @@ git_dirty() {
   else
     if [[ $st == "nothing to commit (working directory clean)" ]]
     then
-      echo "%{$fg_bold[green]%}$(git_prompt_info)%{$reset_color%}"
+      echo "%{\e[38;5;118m%}$(git_prompt_info)%{$reset_color%}"
     else
-      echo "%{$fg_bold[red]%}$(git_prompt_info)%{$reset_color%}"
+      echo "%{\e[38;5;161m%}$(git_prompt_info)%{$reset_color%}"
     fi
   fi
 }
@@ -24,15 +24,15 @@ echo "(${ref#refs/heads/})"
 }
 
 directory_name () {
-  echo "%{$fg_bold[cyan]%}${PWD/#$HOME/~}%{$reset_color%}"
+  echo "%{\e[38;5;81m%}${PWD/#$HOME/~}%{$reset_color%}"
 }
 
 username () {
-	echo "%{$fg_bold[magenta]%}%n%{$reset_color%}"
+	echo "%{\e[38;5;135m%}%n%{$reset_color%}"
 }
 
 hostname () {
-	echo "%{$fg_bold[yellow]%}%m%{$reset_color%}"
+	echo "%{\e[38;5;166m%}%m%{$reset_color%}"
 }
 
 export PROMPT=$'$(username) at $(hostname) in $(directory_name) $(git_dirty)\n› '

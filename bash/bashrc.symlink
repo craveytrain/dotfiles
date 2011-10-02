@@ -6,10 +6,6 @@ export LANG=en_US.UTF-8
 # shortcut to this dotfiles path is $DOTFILES
 export DOTFILES=$HOME/.dotfiles
 
-# Set some LS colors
-export LSCOLORS="ExGxBxDxCxEgEdxbxgxcxd"
-export CLICOLOR=true
-
 # Source global definitions
 if [ -f /etc/bashrc ]; then
     . /etc/bashrc
