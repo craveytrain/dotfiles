@@ -25,4 +25,5 @@ setopt HIST_REDUCE_BLANKS
 #   like: git comm-[tab]
 setopt complete_aliases
 
-bindkey '^D' extended_logout
+zle -N salida
+bindkey '^D' salida 
