@@ -7,14 +7,23 @@ export LANG=en_US.UTF-8
 export DOTFILES=$HOME/.dotfiles
 
 # load up local functions
-fpath=($DOTFILES/zsh/functions $fpath)
-autoload -U $DOTFILES/zsh/functions/*(:t)
+fpath=($DOTFILES/system/functions $fpath)
+autoload -U $DOTFILES/system/functions/*(:t)
 
-# source every .zsh file in this rep
-for config_file ($DOTFILES/**/*.zsh) source $config_file
+# set paths
+for path_file ($DOTFILES/**/path) source $path_file
 
 # source every .sh file in this rep
-for config_file ($DOTFILES/**/*.sh) source $config_file
+for config_file ($DOTFILES/**/*.sh)
+do
+	source $config_file
+done
+
+# source every .zsh file in this rep
+for config_file ($DOTFILES/**/*.zsh) 
+do
+	source $config_file
+done
 
 # use .localrc for SUPER SECRET CRAP that you don't want in your public, versioned repo.
 if [[ -e ~/.localrc ]]
