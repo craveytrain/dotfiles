@@ -1,3 +1,7 @@
+#PSA
+
+Bash is kinda broke in this repo right now. Please come back later.
+
 # What it is?!
 Just adding some config files so I have them for later and have version control. If you're interested, feel free to fork, poach, whatever.
 
