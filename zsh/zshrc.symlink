@@ -11,23 +11,40 @@ fpath=($DOTFILES/system/functions $fpath)
 autoload -U $DOTFILES/system/functions/*(:t)
 
 # set paths
-for path_file ($DOTFILES/**/path) source $path_file
+for config_file ($DOTFILES/**/path) do
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
+done
 
 # source every .sh file in this rep
-for config_file ($DOTFILES/**/*.sh)
-do
-	source $config_file
+for config_file ($DOTFILES/**/*.sh) do
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
 done
 
 # source every .zsh file in this rep
-for config_file ($DOTFILES/**/*.zsh) 
-do
-	source $config_file
+for config_file ($DOTFILES/**/*.zsh) do 
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
 done
 
 # use .localrc for SUPER SECRET CRAP that you don't want in your public, versioned repo.
-if [[ -e ~/.localrc ]]
-then
+if [[ -e ~/.localrc ]] then
   source ~/.localrc
 fi
 
@@ -36,4 +53,12 @@ autoload -U compinit
 compinit
 
 # load every completion after autocomplete loads
-for config_file ($DOTFILES/**/completion) source $config_file
+for config_file ($DOTFILES/**/completion) do
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
+done
