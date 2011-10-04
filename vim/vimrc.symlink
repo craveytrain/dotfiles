@@ -30,7 +30,6 @@ set nojoinspaces " Only insert single space after a '.', '?' and '!' with a join
 set nostartofline " Don't reset cursor to start of line when moving around.
 set nu " Enable line numbers.
 set nosmarttab " At start of line, <Tab> inserts shiftwidth spaces, <Bs> deletes shiftwidth spaces.
-set undofile " Persistent Undo.
 set showmatch "Show matching bracets when text indicator is over them
 set guicursor+=a:blinkon0
 set visualbell t_vb= " turn off the bell
@@ -53,6 +52,7 @@ set smartcase " Ignore 'ignorecase' if search patter contains uppercase characte
 set backup
 set backupdir=~/.backup
 set directory=~/.backup
+set undofile " Persistent Undo.
 set undodir=~/.undo
 
 " Sudo write (<leader>W)
