@@ -8,16 +8,16 @@ git_dirty() {
 		echo ""
 	else
 		if [[ $st == "nothing to commit (working directory clean)" ]] then
-			echo "%{\e[38;5;118m%}$(git_prompt_info)%{$reset_color%}"
+			echo "on %{\e[38;5;118m%}$(git_prompt_info)%{$reset_color%}"
 		else
-			echo "%{\e[38;5;161m%}$(git_prompt_info)%{$reset_color%}"
+			echo "on %{\e[38;5;161m%}$(git_prompt_info)%{$reset_color%}"
 		fi
 	fi
 }
 
 git_prompt_info () {
 	ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null) || return
-	echo "(${ref#refs/heads/})"
+	echo "${ref#refs/heads/}"
 }
 
 directory_name () {
@@ -32,7 +32,11 @@ hostname () {
 	echo "%{\e[38;5;166m%}%m%{$reset_color%}"
 }
 
-export PROMPT=$'$(username) at $(hostname) in $(directory_name) $(git_dirty)\n› '
+if [[ -n $SSH_CONNECTION ]] then
+	export PROMPT=$'$(username) at $(hostname) in $(directory_name) $(git_dirty)\n› '
+else
+	export PROMPT=$'in $(directory_name) $(git_dirty)\n› '
+fi
 
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
