@@ -1,5 +1,5 @@
 # What it is?!
-This is my own personal dotfile repo. If you're interested, feel free to fork, poach, whatever.
+This is my own personal dotfile repo. There are many others like it but this one is mine. If you're interested, feel free to fork, poach, whatever.
 
 ## Prompt
 
