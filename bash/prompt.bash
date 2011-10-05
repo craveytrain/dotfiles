@@ -15,7 +15,11 @@ if [ -z "$BASH_COMPLETION" ]; then
 				export GIT_CLEAN_COLOR="38;5;118m"
 
         # set prompt to show git branch
-        PS1='\[\e[38;5;135m\]\u\[\e[0m\] at \[\e[38;5;166m\]\h\[\e[0m\] in \[\e[38;5;81m\]\w\[\e[0m\]$(__git_ps1 " (%s)")\n$ '
+		if [[ -n $SSH_CONNECTION ]]; then
+	        PS1='\[\e[38;5;135m\]\u\[\e[0m\] at \[\e[38;5;166m\]\h\[\e[0m\] in \[\e[38;5;81m\]\w\[\e[0m\]$(__git_ps1 " %s")\n$ '
+		else
+        	PS1='in \[\e[38;5;81m\]\w\[\e[0m\]$(__git_ps1 "%s")\n$ '
+		fi
       fi
 
       # remove completions I do not want.

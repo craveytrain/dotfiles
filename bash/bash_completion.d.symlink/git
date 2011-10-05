@@ -175,9 +175,9 @@ __git_ps1 ()
 		if [ -n "${1-}" ]; then
 			if [ -n "${GIT_DIRTY_COLOR}" ]; then
 				if [ -n "$w$u$i" ]; then
-					br="\e[${GIT_DIRTY_COLOR}$1\e[m"
+					br=" on \e[${GIT_DIRTY_COLOR}$1\e[m"
 				else
-					br="\e[${GIT_CLEAN_COLOR}$1\e[m"
+					br=" on \e[${GIT_CLEAN_COLOR}$1\e[m"
 				fi
 				printf "$br" "$c${b##refs/heads/}$w$i$s$u$r"
 			else

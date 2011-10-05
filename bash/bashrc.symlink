@@ -6,22 +6,47 @@ export LANG=en_US.UTF-8
 # shortcut to this dotfiles path is $DOTFILES
 export DOTFILES=$HOME/.dotfiles
 
+for f in $DOTFILES/system/functions/*; do source $f; done
+
 # Source global definitions
 if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
+    source /etc/bashrc
 fi
 
+# set paths
+for config_file in $(find $DOTFILES -name "path")
+do
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
+done
 
 # Load all the .bash files
-for config_file in $DOTFILES/*/*.bash
+for config_file in $(find $DOTFILES -name "*.bash")
 do
-	. $config_file
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
 done
 
 # Load all the .sh files
-for config_file in $DOTFILES/*/*.sh
+for config_file in $(find $DOTFILES -name "*.sh")
 do
-	. $config_file
+	if [[ $config_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source $config_file
+		fi
+	else
+		source $config_file
+	fi
 done
 
 if [ -f ~/.localrc ]; then

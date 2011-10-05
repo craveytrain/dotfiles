@@ -1,11 +1,7 @@
-#PSA
-
-Bash is kinda broke in this repo right now. Please come back later.
-
 # What it is?!
-Just adding some config files so I have them for later and have version control. If you're interested, feel free to fork, poach, whatever.
+This is my own personal dotfile repo. If you're interested, feel free to fork, poach, whatever.
 
-# install
+# Install
 Clone the repo (be sure to grab submodules)
 
     git clone --recursive git@github.com:craveytrain/dotfiles.git

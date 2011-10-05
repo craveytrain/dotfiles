@@ -25,5 +25,10 @@ setopt HIST_REDUCE_BLANKS
 #   like: git comm-[tab]
 setopt complete_aliases
 
+salida () {
+	zle kill-whole-line
+	exit
+}
+
 zle -N salida
 bindkey '^D' salida 
