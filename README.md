@@ -19,7 +19,7 @@ I'm not certain the symbols don't cause a slow down when changing into a large g
 1. Clone the repo (be sure to grab submodules)
 
 ```sh
-git clone --recursive git@github.com:craveytrain/dotfiles.git`
+git clone --recursive git@github.com:craveytrain/dotfiles.git
 ```
 2. Get inside the repo
 
