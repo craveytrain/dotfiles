@@ -1,1 +1,1 @@
-path_unshift $HOME/local/node/bin
+path_unshift $HOME/local/bin
