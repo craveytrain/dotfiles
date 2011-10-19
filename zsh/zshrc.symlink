@@ -3,19 +3,8 @@
 # set lang
 export LANG=en_US.UTF-8
 
-# source every .sh file in this rep
-for config_file ($DOTFILES/**/*.sh) do
-	if [[ $config_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source $config_file
-		fi
-	else
-		source $config_file
-	fi
-done
-
-# source every .zsh file in this rep
-for config_file ($DOTFILES/**/*.zsh) do 
+# source every .sh & .zsh file in this rep
+for config_file ($DOTFILES/**/*.(zsh|sh)) do 
 	if [[ $config_file == */osx/* ]]; then
 		if [[ $OSTYPE == darwin* ]]; then
 			source $config_file
