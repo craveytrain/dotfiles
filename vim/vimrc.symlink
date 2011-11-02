@@ -52,11 +52,9 @@ set smartcase " Ignore 'ignorecase' if search patter contains uppercase characte
 set backup
 set backupdir=~/.backup
 set directory=~/.backup
-set undofile " Persistent Undo.
-set undodir=~/.undo
 
 " Sudo write (<leader>W)
-noremap <leader>W :w !sudo tee %<CR>
+cmap w!! %!sudo tee >/dev/null %<CR>
 
 " Trigger NERDTree
 noremap <leader>n :NERDTree<CR>
