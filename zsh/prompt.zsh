@@ -16,8 +16,12 @@ git_dirty() {
 }
 
 git_prompt_info () {
-	ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null) || return
-	echo "${ref#refs/heads/}"
+	ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null)
+	if [[ $ref == "" ]] then 
+		echo "#$(/usr/bin/git describe)"
+	else
+		echo "${ref#refs/heads/}"
+	fi
 }
 
 directory_name () {
