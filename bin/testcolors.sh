@@ -1,1 +1,0 @@
-for code in {0..255}; do echo "\033[38;05;${code}m $code: Test"; done
