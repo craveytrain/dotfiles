@@ -1,6 +1,7 @@
 # prepend an entry to PATH if it is a dir, and not already in path.
 path_unshift() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$1:$PATH"
+    if [ -d "$1" ] ; then
+		TEMPPATH=$(echo $PATH | sed "s;$1;;g" | sed "s;::;:;g")
+        PATH="$1:$TEMPPATH"
     fi
 }
