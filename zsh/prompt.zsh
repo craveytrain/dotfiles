@@ -42,6 +42,8 @@ else
 	export PROMPT=$'in $(directory_name) $(git_dirty)\n› '
 fi
 
+export PROMPT2=$'› '
+
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
 }
