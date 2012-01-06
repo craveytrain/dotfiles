@@ -1,6 +1,6 @@
 # append an entry to PATH if it is a dir, and not already in path.
 path_remove() {
 	if [[ ":$PATH:" == *":$1:"* ]]; then
-		PATH="$(echo $PATH | sed -e 's|'$1'||g' -e 's|::|:|g' -e 's|:$||g')"
+		PATH="$(echo $PATH | sed -e 's;^'$1':;;g' -e 's;:'$1'$;;g' -e 's;:'$1'\(:\);\1;g')"
     fi
 }
