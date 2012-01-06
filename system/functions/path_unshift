@@ -1,6 +1,7 @@
 # prepend an entry to PATH if it is a dir, and not already in path.
 path_unshift() {
     if [ -d "$1" ] ; then
-        PATH="$1:$(echo $PATH | sed -e 's|/usr/local/bin||g' -e 's|::|:|g' -e 's|:$||g')"
+		path_remove $1
+        PATH="$1:$PATH"
     fi
 }
