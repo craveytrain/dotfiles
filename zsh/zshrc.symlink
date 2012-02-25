@@ -22,7 +22,7 @@ for config_file ($DOTFILES/**/path) do
 done
 
 # source every .sh & .zsh file in this repo
-for config_file ($DOTFILES/**/*.(zsh|sh)) do 
+for config_file ($DOTFILES/**/*.zsh) do 
 	if [[ $config_file == */osx/* ]]; then
 		if [[ $OSTYPE == darwin* ]]; then
 			source $config_file
@@ -40,14 +40,3 @@ fi
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload -U compinit
 compinit
-
-# load every completion after autocomplete loads
-for config_file ($DOTFILES/**/completion) do
-	if [[ $config_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source $config_file
-		fi
-	else
-		source $config_file
-	fi
-done

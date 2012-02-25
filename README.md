@@ -9,11 +9,7 @@ However, if I am SSH'd in somewhere, I want to know who I am as and what host I 
 
 ## Shell
 
-Bash and zsh should work both pretty well. I'm using zsh these days, so that will probably have better support but if you find an issue with bash, please let me know.
-
-Having said that, bash has a nicety. The branch name is colored based on it's cleanliness (same as zsh) but I'm also using the symbols with the git bash completion script. The coloring is my own addition, so if you want it, you have to use the bash completion script for git provided in this repo.
-
-I'm not certain the symbols don't cause a slow down when changing into a large git repo. Hence the reason I haven't ported it over to my zsh prompt yet. I'm certainly interested in any feedback you may have.
+I've gone full zsh. Bash utils are not even included any more.
 
 # Install
 1. Clone the repo (be sure to grab submodules)
@@ -33,7 +29,7 @@ cd dotfiles
 rake install
 ```
 
-4. *Optional:* Change shell to zsh
+4. Change shell to zsh
 
 ```sh
 # check to see if zsh is installed
