@@ -31,11 +31,6 @@ unsetopt caseglob
 #   like: git comm-[tab]
 setopt complete_aliases
 
-salida () {
-	zle kill-whole-line
-	exit
-}
-
 zle -N salida
 bindkey '^D' salida 
 bindkey '^A' beginning-of-line
