@@ -4,6 +4,7 @@ alias ...='cd ../..'
 alias ~='cd ~'
 
 # Utilities
+alias ls="ls -F"
 alias d="du -h -d=1"
 alias df="df -h"
 alias h="history"
