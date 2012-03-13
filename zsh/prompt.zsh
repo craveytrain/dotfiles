@@ -23,13 +23,13 @@ git_dirty() {
 directory_name () {
 	echo "%F{cyan}${PWD/#$HOME/~}%F{reset}"
 }
-
+``
 username () {
-	echo "%F{magenta}%n%F{reset}"
+	echo "%F{blue}%n%F{reset}"
 }
 
 hostname () {
-	echo "%F{yellow}%m%F{reset}"
+	echo "%F{magenta}%m%F{reset}"
 }
 
 if [[ -n $SSH_CONNECTION ]] then
