@@ -1,50 +1,48 @@
-autoload colors && colors
-# cheers, @ehrenmurdick
-# http://github.com/ehrenmurdick/config/blob/master/zsh/prompt.zsh
+# load version control helpers
+autoload -Uz vcs_info
+
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' branchformat '%b:%r'
+zstyle ':vcs_info:*' stagedstr '%F{green}+%F{reset}'
+zstyle ':vcs_info:*' unstagedstr '%F{red}*%F{reset}'
+zstyle ':vcs_info:*' check-for-changes true
 
 git_dirty() {
 	st=$(/usr/bin/git status 2>/dev/null | tail -n 1)
-	if [[ $st == "" ]] then
-		echo ""
-	else
+	if [[ $st != "" ]] then
 		if [[ $st == "nothing to commit (working directory clean)" ]] then
-			echo "on %{\e[38;5;118m%}$(git_prompt_info)%{$reset_color%}"
+			zstyle ':vcs_info:*' formats ' on (%F{green}%b%F{reset})%c%u'
+			zstyle ':vcs_info:*' actionformats ' on (%F{green}%b|%a%F{reset})%c%u'
 		else
-			echo "on %{\e[38;5;161m%}$(git_prompt_info)%{$reset_color%}"
+			zstyle ':vcs_info:*' formats ' on (%F{red}%b%F{reset})%c%u'
+			zstyle ':vcs_info:*' actionformats ' on (%F{red}%b|%a%F{reset})%c%u'
 		fi
 	fi
 }
 
-git_prompt_info () {
-	ref=$(/usr/bin/git symbolic-ref HEAD 2>/dev/null)
-	if [[ $ref == "" ]] then 
-		echo "#$(/usr/bin/git describe)"
-	else
-		echo "${ref#refs/heads/}"
-	fi
-}
-
 directory_name () {
-	echo "%{\e[38;5;81m%}${PWD/#$HOME/~}%{$reset_color%}"
+	echo "%F{cyan}${PWD/#$HOME/~}%F{reset}"
 }
 
 username () {
-	echo "%{\e[38;5;135m%}%n%{$reset_color%}"
+	echo "%F{magenta}%n%F{reset}"
 }
 
 hostname () {
-	echo "%{\e[38;5;166m%}%m%{$reset_color%}"
+	echo "%F{yellow}%m%F{reset}"
 }
 
 if [[ -n $SSH_CONNECTION ]] then
-	export PROMPT=$'$(username) at $(hostname) in $(directory_name) $(git_dirty)\n› '
+	export PROMPT=$'$(username) at $(hostname) in $(directory_name)${vcs_info_msg_0_}\n› '
 else
-	export PROMPT=$'in $(directory_name) $(git_dirty)\n› '
+	export PROMPT=$'in $(directory_name)${vcs_info_msg_0_}\n› '
 fi
 
 export PROMPT2=$'› '
 
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
+	git_dirty
+	vcs_info
 }
 
