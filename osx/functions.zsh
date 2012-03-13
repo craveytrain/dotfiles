@@ -16,3 +16,9 @@ rm () {
     fi
   done
 }
+
+# growl
+growl () {
+	echo -e $'\e]9;'${1}'\007';
+	return;
+}
