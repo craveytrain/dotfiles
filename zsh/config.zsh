@@ -36,3 +36,6 @@ bindkey '^D' salida
 bindkey '^A' beginning-of-line
 bindkey '^E' end-of-line
 bindkey 'BACKSPACE' delete-char
+
+#setup autocomplete to use colors
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
