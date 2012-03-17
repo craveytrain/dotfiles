@@ -1,0 +1,28 @@
+[color]
+	ui = true
+[alias]
+	co = checkout
+	br = branch
+	st = status
+	l = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
+	ls = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
+
+	lo = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
+	lso = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
+
+	lg = log --graph --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset'
+	lgo = log --graph --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' HEAD..origin
+
+	ds = diff --stat -r
+	dso = diff --stat -r origin
+
+	up = !sh -c 'git pull --rebase && git new' -
+	new = !sh -c 'git ls $1@{1}..$1@{0} "$@"' -
+[merge]
+	tool = opendiff
+[core]
+	excludesfile = /Users/mcravey/.gitignore
+	autocrlf = input
+	editor = /usr/bin/vim
+[push]
+	default = upstream
