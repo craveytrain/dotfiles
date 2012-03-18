@@ -11,11 +11,6 @@ for config_file ($DOTFILES/**/*.zsh) do
 	fi
 done
 
-# use .localrc for SUPER SECRET CRAP that you don't want in your public, versioned repo.
-if [[ -e ~/.localrc ]] then
-  source ~/.localrc
-fi
-
 # initialize autocomplete here, otherwise functions won't be loaded
 autoload -U compinit
 compinit

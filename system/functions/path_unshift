@@ -1,7 +1,6 @@
 # prepend an entry to PATH if it is a dir, and not already in path.
 path_unshift() {
-    if [ -d "$1" ] ; then
-		path_remove $1
+    if [ -d "$1" ]; then
         PATH="$1:$PATH"
     fi
 }

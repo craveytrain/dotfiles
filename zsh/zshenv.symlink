@@ -20,3 +20,6 @@ for config_file ($DOTFILES/**/path) do
 		source $config_file
 	fi
 done
+
+#remove dupes in the path
+typeset -U PATH
