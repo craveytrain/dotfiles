@@ -24,7 +24,7 @@ def check_for_file(target, file)
     end
   
     FileUtils.rm_rf(target) if overwrite || $overwrite_all
-    mv(target, File.join($home, "#{file}.backup")) if backup || $backup_all
+    mv(target, File.join($home, ".#{file}.backup")) if backup || $backup_all
   end
 end
 
