@@ -1,9 +1,7 @@
 # Dir navigation
-alias ..='cd ..'
-alias 2..='cd ../..'
-alias 3..='cd ../../..'
-alias 4..='cd ../../../..'
-alias ~='cd ~'
+alias -g 2..='../..'
+alias -g 3..='../../..'
+alias -g 4..='../../../..'
 
 # Utilities
 alias ls="ls -F"
