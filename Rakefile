@@ -86,7 +86,6 @@ task :placehold do
 end
 
 desc "Hook our dotfiles into system-standard positions."
-task :install => [:linkify, :tokenize, :placehold] do
-end
+task :install => [:linkify, :tokenize, :placehold]
 
 task :default => 'install'
