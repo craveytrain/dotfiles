@@ -4,7 +4,7 @@
 export LANG=en_US.UTF-8
 
 # shortcut to this dotfiles path is $DOTFILES
-export DOTFILES=$HOME/.dotfiles
+export DOTFILES="$(cd $(dirname $(readlink ~/.zshrc)) && cd .. && pwd)"
 
 # load up local functions
 fpath=($DOTFILES/system/functions $fpath)
