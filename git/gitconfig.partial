@@ -25,4 +25,4 @@
 	autocrlf = input
 	editor = /usr/bin/vim
 [push]
-	default = upstream
+	default = tracking
