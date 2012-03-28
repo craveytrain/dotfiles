@@ -44,5 +44,6 @@ precmd() {
 	title "zsh" "%m" "%55<...<%~"
 	git_dirty
 	vcs_info
+	print -Pn "\e]2; %~/ \a"
 }
 
