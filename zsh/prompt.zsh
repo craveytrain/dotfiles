@@ -32,6 +32,25 @@ hostname () {
 	echo "%F{magenta}%m%F{reset}"
 }
 
+# Don't show anything if the count is zero
+todo(){
+	if $(which todo.sh &> /dev/null); then
+		num=$(echo $(todo.sh ls | wc -l))
+		#compensate for the extra 2 lines of cruft
+		let todos=num-2
+		
+		if [ $todos != 0 ]; then
+			if [ $todos -eq 1 ]; then
+				label="todo "
+			else
+				label="todos"
+			fi
+
+			echo "%F{yellow}$todos%F{reset} $label"
+		fi
+	fi
+}
+
 if [[ -n $SSH_CONNECTION ]] then
 	export PROMPT=$'$(username) at $(hostname) in $(directory_name)${vcs_info_msg_0_}\n› '
 else
@@ -39,6 +58,8 @@ else
 fi
 
 export PROMPT2=$'› '
+
+export RPROMPT='$(todo)'
 
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
