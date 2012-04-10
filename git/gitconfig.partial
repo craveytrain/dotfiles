@@ -4,6 +4,14 @@
 	co = checkout
 	br = branch
 	st = status
+	rb = rebase
+	rbi = rebase -i
+	rba = rebase --abort
+	rbc = rebase --continue
+	rbs = rebase --skip
+	amend = commit --amend
+	ig = ignore
+	undo = reset --soft HEAD^
 	l = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
 	ls = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
 
