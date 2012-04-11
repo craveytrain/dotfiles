@@ -16,7 +16,7 @@
 
 if test "$1" == ""
 then
-	$($EDITOR .)
+	$($EDITOR -n .)
 else
-	$($EDITOR $1)
+	$($EDITOR -n $1)
 fi
