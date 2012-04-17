@@ -5,3 +5,6 @@ alias safari="open -a Safari.app $1"
 
 # GitHub
 alias git=hub
+
+# Flush DNS cache
+alias flushdns="dscacheutil -flushcache"
