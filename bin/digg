@@ -1,0 +1,2 @@
+# All the dig info, 'cause I can never remember it
+dig +nocmd $1 any +multiline +noall +answer
