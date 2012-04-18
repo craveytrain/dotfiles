@@ -1,0 +1,4 @@
+# Remove local branch, remote branch from origin and prune your remote
+branch_name="$1"
+git push origin :$branch_name
+git branch -D $branch_name
