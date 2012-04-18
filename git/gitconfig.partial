@@ -28,6 +28,8 @@
 	new = !sh -c 'git ls $1@{1}..$1@{0} "$@"' -
 [merge]
 	tool = opendiff
+[clean]
+	requireForce = false
 [core]
 	excludesfile = /Users/mcravey/.gitignore
 	autocrlf = input
