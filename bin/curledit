@@ -21,7 +21,6 @@ HELP
 exit; fi
 
 script="$(basename "$0")"
-bin="${script#curl}"
 
 cache_dir=/tmp/"$script"
 
@@ -45,4 +44,4 @@ mv "$tmp" "$file"
 
 # Open file in editor!
 echo -e "\nOpening ~${file#$HOME}"
-"$bin" "$file"
+$(e "$file")
