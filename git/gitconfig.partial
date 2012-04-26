@@ -3,7 +3,7 @@
 [alias]
 	co = checkout
 	br = branch
-	st = status
+	st = status -sb
 	rb = rebase
 	rbi = rebase -i
 	rba = rebase --abort
