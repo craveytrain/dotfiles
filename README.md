@@ -48,4 +48,4 @@ Thanks to [holman](https://github.com/holman) for the Rakefile and inspiration f
 
 # TODO
 - Linux dir colors (dircolors?)
-- Theme console like prompt (oh-my-zsh?)
+- Ease installation (shell script to fetch, install homebrew and formulas & other dependencies cross platform?)
