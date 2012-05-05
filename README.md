@@ -47,5 +47,4 @@ Thanks to [mschout](https://github.com/mschout) for all the help, especially on 
 Thanks to [holman](https://github.com/holman) for the Rakefile and inspiration for things such as the topical organization and prompt.
 
 # TODO
-- Linux dir colors (dircolors?)
 - Ease installation (shell script to fetch, install homebrew and formulas & other dependencies cross platform?)

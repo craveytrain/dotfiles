@@ -8,3 +8,6 @@ alias git=hub
 
 # Flush DNS cache
 alias flushdns="dscacheutil -flushcache"
+
+# ls with those helpful little trailing characters
+alias ls="ls -F"
