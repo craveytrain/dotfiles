@@ -4,8 +4,6 @@ alias -g 3..='../../..'
 alias -g 4..='../../../..'
 
 # Utilities
-# ls with those helpful little trailing characters
-alias ls="ls -F"
 # disk usage of current folder
 alias d="du -h -d=1"
 # Disk free space (human readable numbers)
