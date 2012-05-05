@@ -6,6 +6,10 @@ for config_file ($DOTFILES/**/*.zsh) do
 		if [[ $OSTYPE == darwin* ]]; then
 			source $config_file
 		fi
+	elif [[ $config_file == */linux/* ]]; then
+		if [[ $OSTYPE == linux* ]]; then
+			source $config_file
+		fi
 	else
 		source $config_file
 	fi
