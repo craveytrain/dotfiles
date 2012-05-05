@@ -39,7 +39,7 @@ todo(){
 		#compensate for the extra 2 lines of cruft
 		let todos=num-2
 		
-		if [ $todos != 0 ]; then
+		if [ $todos -gt 0 ]; then
 			if [ $todos -eq 1 ]; then
 				label="todo "
 			else
