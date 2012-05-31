@@ -13,7 +13,7 @@
 	ig = ignore
 	undo = reset --soft HEAD^
 	l = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
-	ls = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
+	ls = log --stat=,80 --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%ar%Creset' --no-merges
 
 	lo = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
 	lso = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
@@ -24,8 +24,8 @@
 	ds = diff --stat -r
 	dso = diff --stat -r origin
 
-	up = !sh -c 'git pull --rebase && git new' -
-	new = !sh -c 'git ls $1@{1}..$1@{0} "$@"' -
+	up = !sh -c 'git fetch && git rebase -p && git new' -
+	new = !sh -c 'git ls $1@{1}..$1@{0} \"$@\"' -
 [merge]
 	tool = opendiff
 [clean]
