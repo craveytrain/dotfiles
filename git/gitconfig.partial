@@ -12,14 +12,14 @@
 	amend = commit --amend
 	ig = ignore
 	undo = reset --soft HEAD^
-	l = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges
-	ls = log --stat=,80 --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%ar%Creset' --no-merges
+	l = log --no-merges
+	ls = log --stat=,80 --no-merges
 
-	lo = log --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
-	lso = log --stat --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' --no-merges HEAD..origin
+	lo = log --no-merges HEAD..origin
+	lso = log --stat --no-merges HEAD..origin
 
-	lg = log --graph --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset'
-	lgo = log --graph --pretty=format:'%C(red)%h%Creset - %C(yellow)%s %Creset%C(green)(%an) %Creset%C(cyan)%cr%Creset' HEAD..origin
+	lg = log --graph
+	lgo = log --graph HEAD..origin
 
 	ds = diff --stat -r
 	dso = diff --stat -r origin
@@ -30,6 +30,10 @@
 	tool = opendiff
 [clean]
 	requireForce = false
+[log]
+	date = relative
+[format]
+	pretty = format:%C(yellow)%h%Creset %C(blue)%d%Creset %s %C(green)(%an)%Creset %C(cyan)%cr%Creset
 [core]
 	excludesfile = /Users/mcravey/.gitignore
 	autocrlf = input
