@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Take a remote override
+[ ! -z "$1" ] && REMOTE="$1" || REMOTE="origin"
+
+git remote prune "$REMOTE" -n | while read line; do
+	branch="$(echo `expr "$line" : '.* \[would prune\] '$REMOTE'/\(.*\)'`)"
+	git branch -D "$branch" &> /dev/null
+done
+
+git remote prune "$REMOTE"
