@@ -13,10 +13,10 @@ git_dirty() {
 	git_st=$(git status --porcelain 2> /dev/null | tail -n 1)
 	if [[ $git_st == "" ]] then
 		zstyle ':vcs_info:git:*' formats ' on %F{green}%b%F{reset}[%F{yellow}%7.7i%F{reset}]%c%u'
-		zstyle ':vcs_info:git:*' actionformats ' on %F{green}%b%F{reset}[%F{yellow}%7.7i%F{reset}]|%a%c%u'
+		zstyle ':vcs_info:git:*' actionformats ' on %F{green}%b%F{reset}[%F{yellow}%7.7i%F{reset}|%F{red}%a%F{reset}]%c%u'
 	else
 		zstyle ':vcs_info:git:*' formats ' on %F{red}%b%F{reset}[%F{yellow}%7.7i%F{reset}]%c%u'
-		zstyle ':vcs_info:git:*' actionformats ' on %F{red}%b%F{reset}[%F{yellow}%7.7i%F{reset}]|%a%F{reset}%c%u'
+		zstyle ':vcs_info:git:*' actionformats ' on %F{red}%b%F{reset}[%F{yellow}%7.7i%F{reset}|%F{red}%a%F{reset}]%c%u'
 	fi
 }
 hg_dirty() {
