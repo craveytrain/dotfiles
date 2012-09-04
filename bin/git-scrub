@@ -1,11 +1,49 @@
-#!/bin/bash
+#!/usr/bin/env python
 
-# Take a remote override
-[ ! -z "$1" ] && REMOTE="$1" || REMOTE="origin"
+import logging
+from argparse import ArgumentParser
+import subprocess
 
-git remote prune "$REMOTE" -n | while read line; do
-	branch="$(echo `expr "$line" : '.* \[would prune\] '$REMOTE'/\(.*\)'`)"
-	git branch -D "$branch" &> /dev/null
-done
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-git remote prune "$REMOTE"
+
+def main():
+    parser = ArgumentParser(description='Scrub remote deleted branches from local and remote tracking branches.')
+    parser.add_argument('remote', nargs='?', help='Specify the remote [origin]')
+
+    args = parser.parse_args()
+
+    remote = args.remote or 'origin'
+
+    branches, _ = call_command('git remote prune %s' % remote)
+    branches = branches.splitlines()
+
+    for branch in branches:
+        branch = branch.strip()
+
+        if branch.startswith('*'):
+            print branch
+            branch = branch.replace('* [pruned] %s/' % remote, '')
+
+            logging.debug('branch: %s' % branch)
+
+            stdout, stderr = call_command('git branch -d %s' % branch)
+            print stdout
+
+            if 'not fully merged' in stderr:
+                print stderr.splitlines()[0]
+                override = raw_input('Delete %s branch with prejudice? ' % branch)
+                if override in ['Y', 'y']:
+                    stdout, stderr = call_command('git branch -D %s' % branch)
+                    print stdout
+                else:
+                    print '%s branch skipped' % branch
+
+
+def call_command(command):
+    process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return process.communicate()
+
+
+if __name__ == "__main__":
+    main()
