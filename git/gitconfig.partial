@@ -40,5 +40,3 @@
 	editor = /usr/bin/vim
 [push]
 	default = tracking
-[rerere]
-	enabled = true
