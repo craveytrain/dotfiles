@@ -61,12 +61,6 @@ todo(){
 	fi
 }
 
-env(){
-	if [ -n "$VIRTUAL_ENV" ]; then
-		echo "env: %F{yellow}$(basename "$VIRTUAL_ENV")%F{reset}"
-	fi
-}
-
 if [[ -n "$SSH_CONNECTION" ]] then
 	export PROMPT=$'$(username) at $(hostname) in $(directory_name)${vcs_info_msg_0_}\n› '
 else
@@ -75,7 +69,7 @@ fi
 
 export PROMPT2=$'› '
 
-export RPROMPT='$(env)'
+export RPROMPT='$(todo)'
 
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
