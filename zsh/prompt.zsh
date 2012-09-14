@@ -33,7 +33,7 @@ hg_dirty() {
 directory_name () {
 	echo "%F{cyan}${PWD/#$HOME/~}%F{reset}"
 }
-``
+
 username () {
 	echo "%F{blue}%n%F{reset}"
 }
@@ -42,8 +42,17 @@ hostname () {
 	echo "%F{magenta}%m%F{reset}"
 }
 
+# Right prompt magic
+rprompt () {
+	if [ "$RB_VERSION" = "system" ]; then
+		echo "$(todo)"
+	else
+		echo "rbenv: %F{yellow}$RB_VERSION%F{reset}"
+	fi
+}
+
 # Don't show anything if the count is zero
-todo(){
+todo () {
 	if $(which todo.sh &> /dev/null); then
 		num=$(echo $(todo.sh ls | wc -l))
 		#compensate for the extra 2 lines of cruft
@@ -69,7 +78,7 @@ fi
 
 export PROMPT2=$'› '
 
-export RPROMPT='$(todo)'
+export RPROMPT='$(rprompt)'
 
 precmd() {
 	title "zsh" "%m" "%55<...<%~"
