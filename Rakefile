@@ -9,7 +9,7 @@ $dotfiles = File.dirname(__FILE__)
 
 def check_for_file(target, file)
   overwrite = false
-  backup = false
+  backup    = false
 
   if File.exists?(target) || File.symlink?(target)
     unless $skip_all || $overwrite_all || $backup_all
@@ -22,7 +22,7 @@ def check_for_file(target, file)
       when 'S' then $skip_all = true
       end
     end
-  
+
     FileUtils.rm_rf(target) if overwrite || $overwrite_all
     mv(target, File.join($home, ".#{file}.backup")) if backup || $backup_all
   end
@@ -32,34 +32,36 @@ end
 desc "Symlink up the files"
 task :linkify do
   linkables = Dir.glob('*/**{.symlink}')
-  
+
   # Create symlinks
   linkables.each do |linkable|
-    file = File.basename(linkable,'.symlink')
-    target = File.join($home, ".#{file}")
+    file      = File.basename(linkable,'.symlink')
+    target    = File.join($home, ".#{file}")
 
-    check_for_file(target, file)
-    
-    symlink(File.join($dotfiles, linkable), target) unless $skip_all
+    unless File.readlink(target) == File.join($dotfiles, linkable)
+      check_for_file(target, file)
+
+      symlink(File.join($dotfiles, linkable), target) unless $skip_all
+    end
   end
 end
 
 desc "Copy partials to the correct dir"
 task :tokenize do
   partials = Dir.glob('*/**{.partial}')
-  
+
   # Create full files from partials
   partials.each do |partial|
-    file = File.basename(partial,'.partial')
+    file   = File.basename(partial,'.partial')
     target = File.join($home, ".#{file}")
-    
+
     check_for_file(target, file)
-    
+
     unless $skip_all
       cp(File.join($dotfiles, partial), target)
-      
+
       privatename = File.join($home, '.localrc', file)
-      
+
       # Concat files
       if File.exists?(privatename)
         puts "Appending #{privatename}"
@@ -76,7 +78,7 @@ task :placehold do
 	  "#{$home}/.backup",
 	  "#{$home}/.undo"
   ]
-  
+
   # Create placeholder directories
   empty_dirs.each do |dir|
 	  unless File.exists?(dir) and File::directory?(dir)
