@@ -3,4 +3,4 @@
 
 PS1="$_OLD_VIRTUAL_PS1"
 _OLD_RPROMPT="$RPROMPT"
-RPROMPT="env: %F{yellow}$(basename "$VIRTUAL_ENV")%F{reset}"
+RPROMPT="virtualenv: %F{yellow}$(basename "$VIRTUAL_ENV")%F{reset}"
