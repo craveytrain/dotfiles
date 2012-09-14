@@ -7,7 +7,8 @@ $backup_all = false
 $home = ENV["HOME"]
 $dotfiles = File.dirname(__FILE__)
 
-def check_for_file(target, file)
+def check_for_file(target)
+  base      = File.basename(target).sub(/^\./,'')
   overwrite = false
   backup    = false
 
@@ -24,7 +25,7 @@ def check_for_file(target, file)
     end
 
     FileUtils.rm_rf(target) if overwrite || $overwrite_all
-    mv(target, File.join($home, ".#{file}.backup")) if backup || $backup_all
+    mv(target, File.join($home, ".#{base}.backup")) if backup || $backup_all
   end
 end
 
@@ -35,12 +36,11 @@ task :linkify do
 
   # Create symlinks
   linkables.each do |linkable|
-    file      = File.basename(linkable,'.symlink')
-    target    = File.join($home, ".#{file}")
+    file      = File.basename linkable,'.symlink'
+    target    = File.join $home, ".#{file}"
 
     unless File.readlink(target) == File.join($dotfiles, linkable)
-      check_for_file(target, file)
-
+      check_for_file(target)
       symlink(File.join($dotfiles, linkable), target) unless $skip_all
     end
   end
@@ -52,10 +52,10 @@ task :tokenize do
 
   # Create full files from partials
   partials.each do |partial|
-    file   = File.basename(partial,'.partial')
-    target = File.join($home, ".#{file}")
+    file   = File.basename partial,'.partial'
+    target = File.join $home, ".#{file}"
 
-    check_for_file(target, file)
+    check_for_file(target)
 
     unless $skip_all
       cp(File.join($dotfiles, partial), target)
@@ -66,6 +66,29 @@ task :tokenize do
       if File.exists?(privatename)
         puts "Appending #{privatename}"
         `cat #{privatename} >> #{target}`
+      end
+    end
+  end
+end
+
+desc "Copy directories and symlink contents"
+task :copy do
+  copyables = Dir.glob('*/**{.copy}')
+
+  copyables.each do |copyable|
+    dir        = File.basename copyable, '.copy'
+    target_dir = File.join $home, ".#{dir}"
+
+    File.mkdir(target_dir) unless File.directory?(target_dir)
+
+    Dir[File.join(copyable, '**')].each do |file|
+      base        = File.basename file
+      target_file = File.join target_dir, base
+      full_file = File.join $dotfiles, file
+
+      unless File.symlink?(target_file) && (File.readlink(target_file) == full_file)
+        check_for_file(target_file)
+        symlink(full_file, target_file) unless $skip_all
       end
     end
   end
@@ -88,6 +111,6 @@ task :placehold do
 end
 
 desc "Hook our dotfiles into system-standard positions."
-task :install => [:linkify, :tokenize, :placehold]
+task :install => [:copy, :linkify, :tokenize, :placehold]
 
 task :default => 'install'
