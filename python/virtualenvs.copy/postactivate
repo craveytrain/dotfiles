@@ -2,5 +2,4 @@
 # This hook is run after every virtualenv is activated.
 
 PS1="$_OLD_VIRTUAL_PS1"
-_OLD_RPROMPT="$RPROMPT"
-RPROMPT="virtualenv: %F{yellow}$(basename "$VIRTUAL_ENV")%F{reset}"
+VIRTUALENV="virtualenv: %F{yellow}$(basename "$VIRTUAL_ENV")%F{reset}"
