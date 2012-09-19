@@ -1,0 +1,10 @@
+#!/bin/bash
+
+COMMIT=${1:-"HEAD"}
+
+git log --stat --pretty=medium "$COMMIT~1..$COMMIT"
+
+if [ -x "$(which pbcopy)" ]; then
+	git log --stat --pretty=medium "$COMMIT~1..$COMMIT" | pbcopy
+	echo -e "\ncopied to clipboard"
+fi
