@@ -38,10 +38,15 @@ task :linkify do
   linkables.each do |linkable|
     file      = File.basename linkable,'.symlink'
     target    = File.join $home, ".#{file}"
-
-    unless File.readlink(target) == File.join($dotfiles, linkable)
+    
+    if File.symlink?(target)
+      if File.readlink(target) != File.join($dotfiles, linkable)
+        check_for_file(target)
+        symlink(File.join($dotfiles, linkable), target) unless $skip_all
+      end
+    else
       check_for_file(target)
-      symlink(File.join($dotfiles, linkable), target) unless $skip_all
+      symlink(File.join($dotfiles, linkable), target) unless $skip_all 
     end
   end
 end
@@ -79,7 +84,7 @@ task :copy do
     dir        = File.basename copyable, '.copy'
     target_dir = File.join $home, ".#{dir}"
 
-    File.mkdir(target_dir) unless File.directory?(target_dir)
+    Dir.mkdir(target_dir) unless File.directory?(target_dir)
 
     Dir[File.join(copyable, '**')].each do |file|
       base        = File.basename file
