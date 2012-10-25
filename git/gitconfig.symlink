@@ -40,3 +40,5 @@
 	editor = /usr/bin/vim
 [push]
 	default = tracking
+[include]
+	path = .localrc/gitconfig
