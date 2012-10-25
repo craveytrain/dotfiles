@@ -38,7 +38,7 @@ task :linkify do
   linkables.each do |linkable|
     file      = File.basename linkable,'.symlink'
     target    = File.join $home, ".#{file}"
-    
+
     if File.symlink?(target)
       if File.readlink(target) != File.join($dotfiles, linkable)
         check_for_file(target)
@@ -46,32 +46,7 @@ task :linkify do
       end
     else
       check_for_file(target)
-      symlink(File.join($dotfiles, linkable), target) unless $skip_all 
-    end
-  end
-end
-
-desc "Copy partials to the correct dir"
-task :tokenize do
-  partials = Dir.glob('*/**{.partial}')
-
-  # Create full files from partials
-  partials.each do |partial|
-    file   = File.basename partial,'.partial'
-    target = File.join $home, ".#{file}"
-
-    check_for_file(target)
-
-    unless $skip_all
-      cp(File.join($dotfiles, partial), target)
-
-      privatename = File.join($home, '.localrc', file)
-
-      # Concat files
-      if File.exists?(privatename)
-        puts "Appending #{privatename}"
-        `cat #{privatename} >> #{target}`
-      end
+      symlink(File.join($dotfiles, linkable), target) unless $skip_all
     end
   end
 end
@@ -116,6 +91,6 @@ task :placehold do
 end
 
 desc "Hook our dotfiles into system-standard positions."
-task :install => [:copy, :linkify, :tokenize, :placehold]
+task :install => [:copy, :linkify, :placehold]
 
 task :default => 'install'
