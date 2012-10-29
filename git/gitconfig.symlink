@@ -26,6 +26,8 @@
 
 	up = !sh -c 'git fetch && git rebase -p && git new' -
 	new = !sh -c 'git ls $1@{1}..$1@{0} \"$@\"' -
+[branch]
+	autosetuprebase = always
 [merge]
 	tool = opendiff
 [clean]
