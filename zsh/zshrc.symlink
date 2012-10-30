@@ -1,7 +1,7 @@
 # .zshrc
 
 # source every .zsh file in this repo
-for config_file ($DOTFILES/**/*.zsh) do 
+for config_file ($DOTFILES/**/*.(z|)sh) do
 	if [[ $config_file == */osx/* ]]; then
 		if [[ $OSTYPE == darwin* ]]; then
 			source $config_file

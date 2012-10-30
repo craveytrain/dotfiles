@@ -49,7 +49,7 @@ rprompt () {
 
 	if [ "$RB_VERSION" = "system" ]; then
 		if [ -z "$VIRTUALENV" ]; then
-			export RPROMPT="$(todo)"
+			export RPROMPT="$(todo_prompt)"
 		else
 			export RPROMPT="$VIRTUALENV"
 		fi
@@ -59,9 +59,9 @@ rprompt () {
 }
 
 # Don't show anything if the count is zero
-todo () {
-	if $(which todo.sh &> /dev/null); then
-		num=$(echo $(todo.sh ls | wc -l))
+todo_prompt () {
+	if $(which todo &> /dev/null); then
+		num=$(echo $(todo ls | wc -l))
 		#compensate for the extra 2 lines of cruft
 		let todos=num-2
 

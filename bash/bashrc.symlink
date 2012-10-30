@@ -1,0 +1,86 @@
+# .bashrc
+
+# set lang
+export LANG=en_US.UTF-8
+
+# shortcut to this dotfiles path is $DOTFILES
+export DOTFILES="$(cd $(dirname $(readlink ~/.bashrc)) && cd .. && pwd)"
+
+# prepend an entry to PATH if it is a dir, and not already in path.
+path_unshift() {
+    if [ -d "$1" ]; then
+		if [[ ":$PATH:" != *":$1:"* ]]; then
+			path_remove "$1"
+		fi
+        PATH="$1:$PATH"
+    fi
+}
+
+# append an entry to PATH if it is a dir, and not already in path.
+path_add() {
+    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+        PATH="$PATH:$1"
+    fi
+}
+
+# remove something from the path
+path_remove() {
+    if [[ ":$PATH:" = *":$1:"* ]]; then
+        PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%*$1*});IFS=':';echo "${t[*]}");
+    fi
+}
+
+source_if_present() {
+    if [ -f "$1" ]; then
+        . "$1"
+    fi
+}
+
+# Source global definitions
+source_if_present /etc/bashrc
+
+# set paths
+for path_file in $(find $DOTFILES -name "path"); do
+	if [[ $path_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source_if_present $path_file
+		fi
+	elif [[ $path_file == */linux/* ]]; then
+		if [[ $OSTYPE == linux* ]]; then
+			source_if_present $path_file
+		fi
+	else
+		source_if_present $path_file
+	fi
+done
+
+
+# source every .bash file in this repo
+for completion_file in $(find $DOTFILES -name "back_completion"); do
+	if [[ $completion_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source_if_present $completion_file
+		fi
+	elif [[ $completion_file == */linux/* ]]; then
+		if [[ $OSTYPE == linux* ]]; then
+			source_if_present $completion_file
+		fi
+	else
+		source_if_present $completion_file
+	fi
+done
+
+# source every .bash file in this repo
+for bash_file in $(find $DOTFILES -name "*.sh" -o -name "*.bash"); do
+	if [[ $bash_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source_if_present $bash_file
+		fi
+	elif [[ $bash_file == */linux/* ]]; then
+		if [[ $OSTYPE == linux* ]]; then
+			source_if_present $bash_file
+		fi
+	else
+		source_if_present $bash_file
+	fi
+done
