@@ -9,42 +9,27 @@ However, if I am SSH'd in somewhere, I want to know who I am as and what host I 
 
 ## Shell
 
-I've gone full zsh. Bash utils are not even included any more.
+While I've gone full zsh on systems I have full control over, occassionally I have to use bash, so I've tried to cobble some basic support for it.
 
 # Install
-1. Clone the repo (be sure to grab submodules)
 
 ```sh
-git clone --recursive git@github.com:craveytrain/dotfiles.git
-```
-2. Get inside the repo
+# Boot the straps!
+curl https://raw.github.com/craveytrain/dotfiles/master/bootstrap | sh
 
-```sh
-cd dotfiles
-```
-
-3. Run the Rakefile
-
-```sh
-rake install
-```
-
-4. Change shell to zsh
-
-```sh
-# check to see if zsh is installed
-which zsh
-
-# if not, install it (sudo apt-get install zsh, sudo brew install zsh, etc)
-
-# change shell
+# Change shell to zsh (optional)
 chsh -s $(which zsh)
+
+# Restart your shell
 ```
 
 # Credits
 Thanks to [mschout](https://github.com/mschout) for all the help, especially on the bash stuff.
 
-Thanks to [holman](https://github.com/holman) for the Rakefile and inspiration for things such as the topical organization and prompt.
+Thanks to [holman](https://github.com/holman) for the inspiration for things such as the topical organization and prompt.
+
+And many others for your insprirations.
 
 # TODO
-- Ease installation (shell script to fetch, install homebrew and formulas & other dependencies cross platform?)
+- install homebrew (if on a mac)
+- install git (optionally install ack, etc?)
