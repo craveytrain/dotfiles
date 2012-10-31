@@ -54,21 +54,7 @@ for path_file in $(find $DOTFILES -name "path"); do
 	fi
 done
 
-
-# source every .bash file in this repo
-for completion_file in $(find $DOTFILES -name "back_completion"); do
-	if [[ $completion_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source_if_present $completion_file
-		fi
-	elif [[ $completion_file == */linux/* ]]; then
-		if [[ $OSTYPE == linux* ]]; then
-			source_if_present $completion_file
-		fi
-	else
-		source_if_present $completion_file
-	fi
-done
+source_if_present ".bash_aliases"
 
 # source every .bash file in this repo
 for bash_file in $(find $DOTFILES -name "*.sh" -o -name "*.bash"); do
@@ -82,5 +68,20 @@ for bash_file in $(find $DOTFILES -name "*.sh" -o -name "*.bash"); do
 		fi
 	else
 		source_if_present $bash_file
+	fi
+done
+
+# source every completion file in this repo
+for completion_file in $(find $DOTFILES -name "bash_completion"); do
+	if [[ $completion_file == */osx/* ]]; then
+		if [[ $OSTYPE == darwin* ]]; then
+			source_if_present $completion_file
+		fi
+	elif [[ $completion_file == */linux/* ]]; then
+		if [[ $OSTYPE == linux* ]]; then
+			source_if_present $completion_file
+		fi
+	else
+		source_if_present $completion_file
 	fi
 done
