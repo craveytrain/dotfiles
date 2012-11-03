@@ -31,15 +31,15 @@ hg_dirty () {
 	fi
 }
 
-directory_name () {
+get_directory_name () {
 	echo "%F{cyan}${PWD/#$HOME/~}%F{reset}"
 }
 
-username () {
+get_username () {
 	echo "%F{blue}%n%F{reset}"
 }
 
-hostname () {
+get_hostname () {
 	echo "%F{magenta}%m%F{reset}"
 }
 
@@ -78,9 +78,9 @@ todo_prompt () {
 }
 
 if [[ -n "$SSH_CONNECTION" ]] then
-	export PROMPT=$'$(username) at $(hostname) in $(directory_name)${vcs_info_msg_0_}\n› '
+	export PROMPT=$'$(get_username) at $(get_hostname) in $(get_directory_name)${vcs_info_msg_0_}\n› '
 else
-	export PROMPT=$'in $(directory_name)${vcs_info_msg_0_}\n› '
+	export PROMPT=$'in $(get_directory_name)${vcs_info_msg_0_}\n› '
 fi
 
 export PROMPT2=$'› '
