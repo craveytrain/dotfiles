@@ -11,3 +11,6 @@ alias ls="ls -F"
 
 # Pipe my public key to my clipboard.
 alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to pasteboard.'"
+
+# JSC for everyone!
+alias jsc="/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc"
