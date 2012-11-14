@@ -45,17 +45,23 @@ get_hostname () {
 
 # Right prompt magic
 rprompt () {
-	RB_VERSION=$(rbenv version-name)
+	RPROMPT=""
 
-	if [ "$RB_VERSION" = "system" ]; then
-		if [ -z "$VIRTUALENV" ]; then
-			export RPROMPT="$(todo_prompt)"
-		else
-			export RPROMPT="$VIRTUALENV"
+	if which rbenv > /dev/null; then
+		if [ "$(rbenv version-name)" != "system" ]; then
+			RPROMPT="$RPROMPT rbenv: %F{yellow}$(rbenv version-name)%F{reset}"
 		fi
-	else
-		export RPROMPT="$VIRTUALENV rbenv: %F{yellow}$RB_VERSION%F{reset}"
 	fi
+
+	if [ -z "$VIRTUALENV" ]; then
+		RPROMPT="$RPROMPT $VIRTUALENV"
+	fi
+
+	if [ -z "$RPROMPT" ]; then
+		RPROMPT="$(todo_prompt)"
+	fi
+
+	export RPROMPT
 }
 
 # Don't show anything if the count is zero
