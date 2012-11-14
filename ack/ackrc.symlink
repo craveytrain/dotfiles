@@ -10,12 +10,15 @@
 --type-add=ruby=.haml,.sass,.scss
 --type-add=html=.haml
 --type-add=css=.sass,.scss
+--type-set=sass=.sass,.scss
 
 # Less
 --type-add=css=.less
+--type-set=less=.less
 
 # Stylus
 --type-add=css=.styl
+--type-set=styl=.styl
 
 # add markdown, textile, and reStructuredText
 --type-set=plaintext=.md,.mdown,.markdown,.mkdn,.textile,.rst,.txt
