@@ -20,7 +20,7 @@ fi
 
 
 ## Create placeholder directories if not already there
-for DIR in $(find $DOTFILES -name "*.copy"); do
+for DIR in $(find $DOTFILES -not -iwholename "*.git*" -name "*.copy"); do
 	DIR_NAME="$(basename ${DIR%.copy})"
 	NEW_DIR="$HOME/.$DIR_NAME"
 	if [ ! -d "$NEW_DIR" ]; then
@@ -48,7 +48,7 @@ for DIR in $(find $DOTFILES -name "*.copy"); do
 done
 
 ## Symlink all the things!
-for SYMLINK in $(find $DOTFILES -name "*.symlink"); do
+for SYMLINK in $(find $DOTFILES -not -iwholename "*.git*" -name "*.symlink"); do
 	BASE_NAME="$(basename ${SYMLINK%.symlink})"
 	NEW_FILE="$HOME/.$BASE_NAME"
 
