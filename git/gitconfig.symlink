@@ -26,12 +26,9 @@
 
 	up = !sh -c 'git fetch && git rebase -p && git new' -
 	new = !sh -c 'git ls $1@{1}..$1@{0} \"$@\"' -
+	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
 [branch]
 	autosetuprebase = always
-[merge]
-	tool = opendiff
-[mergetool]
-	keepBackup = false
 [clean]
 	requireForce = false
 [log]
@@ -44,5 +41,18 @@
 	editor = /usr/bin/vim
 [push]
 	default = tracking
+[diff]
+	tool = Kaleidoscope
+[difftool]
+	prompt = false
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[merge]
+	tool = Kaleidoscope
+[mergetool]
+	keepBackup = false
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 [include]
 	path = .localrc/gitconfig
