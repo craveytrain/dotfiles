@@ -53,34 +53,11 @@ rprompt () {
 		fi
 	fi
 
-	if [ -z "$VIRTUALENV" ]; then
+	if [ "$VIRTUALENV" ]; then
 		RPROMPT="$RPROMPT $VIRTUALENV"
 	fi
 
-	if [ -z "$RPROMPT" ]; then
-		RPROMPT="$(todo_prompt)"
-	fi
-
 	export RPROMPT
-}
-
-# Don't show anything if the count is zero
-todo_prompt () {
-	if $(which todo &> /dev/null); then
-		num=$(echo $(todo ls | wc -l))
-		#compensate for the extra 2 lines of cruft
-		let todos=num-2
-
-		if [ $todos -gt 0 ]; then
-			if [ $todos -eq 1 ]; then
-				label="todo "
-			else
-				label="todos"
-			fi
-
-			echo "%F{yellow}$todos%F{reset} $label"
-		fi
-	fi
 }
 
 if [[ -n "$SSH_CONNECTION" ]] then
