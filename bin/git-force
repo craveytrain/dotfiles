@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Reset current branch to remote branch
-current_branch_name=${1:-$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')}
-
-git fetch
-echo "Reset hard to origin/$current_branch_name"
-git reset --hard origin/$current_branch_name
