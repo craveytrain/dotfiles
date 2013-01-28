@@ -26,6 +26,7 @@
 
 	up = !sh -c 'git fetch && git rebase -p && git new' -
 	new = !sh -c 'git ls $1@{1}..$1@{0} \"$@\"' -
+	force = !sh -c 'git fetch && git reset --hard origin/$(git rev-parse --abbrev-ref HEAD)' -
 	ksreview = "!f() { local SHA=${1:-HEAD}; local BRANCH=${2:-master}; if [ $SHA == $BRANCH ]; then SHA=HEAD; fi; git difftool -y -t Kaleidoscope $BRANCH...$SHA; }; f"
 [branch]
 	autosetuprebase = always
