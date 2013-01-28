@@ -55,3 +55,15 @@ extract () {
          echo "'$1' is not a valid file"
      fi
 }
+
+# go back x directories
+b() {
+    str=""
+    count=0
+    while [ "$count" -lt "$1" ];
+    do
+        str=$str"../"
+        let count=count+1
+    done
+    cd $str
+}
