@@ -58,8 +58,8 @@ extract () {
 
 # go back x directories
 b() {
-    str=""
-    count=0
+    str="../"
+    count=1
     while [ "$count" -lt "$1" ];
     do
         str=$str"../"
