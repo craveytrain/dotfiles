@@ -32,16 +32,19 @@ def main():
             stdout, stderr = call_command('git branch -d %s' % branch)
             print stdout
 
-            if 'not fully merged' in stderr and delete_all is False:
-                print stderr.splitlines()[0]
-                override = raw_input('Delete %s branch with prejudice? (Y, N, A)' % branch)
-                if override in ['A', 'a']:
-                    delete_all = True
-                    delete_local_branch(branch)
-                elif override in ['Y', 'y']:
-                    delete_local_branch(branch)
+            if 'not fully merged' in stderr:
+                if delete_all is True:
+                    delete_local_branch(bran)
                 else:
-                    print '%s branch skipped' % branch
+                    print stderr.splitlines()[0]
+                    override = raw_input('Delete %s branch with prejudice? (Y, N, A)' % branch)
+                    if override in ['A', 'a']:
+                        delete_all = True
+                        delete_local_branch(branch)
+                    elif override in ['Y', 'y']:
+                        delete_local_branch(branch)
+                    else:
+                        print '%s branch skipped' % branch
 
 
 def delete_local_branch(branch):
