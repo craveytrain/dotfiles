@@ -1,6 +1,7 @@
 # Browser Aliases
 alias ff="open -a Firefox.app $1"
 alias chrome="open -a 'Google Chrome.app' $1"
+alias canary="open -a 'Google Chrome Canary.app' $1"
 alias safari="open -a Safari.app $1"
 
 # Flush DNS cache
