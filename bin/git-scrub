@@ -34,7 +34,7 @@ def main():
 
             if 'not fully merged' in stderr:
                 if delete_all is True:
-                    delete_local_branch(bran)
+                    delete_local_branch(branch)
                 else:
                     print stderr.splitlines()[0]
                     override = raw_input('Delete %s branch with prejudice? (Y, N, A)' % branch)
