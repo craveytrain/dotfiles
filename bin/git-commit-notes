@@ -3,15 +3,13 @@
 COMMIT_ID=$(git rev-parse --short ${1:-"HEAD"})
 COMMIT_ID_LONG=$(git rev-parse ${1:-"HEAD"})
 COMMIT_MSG="$(git log $COMMIT_ID~1..$COMMIT_ID --pretty=%B)"
-ORIGIN="$(git config --get remote.origin.url)"
-ORIGIN_PATH="${ORIGIN#*github.com\:}"
-ORIGIN_PATH_SANS_EXT="${ORIGIN_PATH%.git}"
 COMMIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-COMMIT_URL="https://github.com/$ORIGIN_PATH_SANS_EXT/commit/$COMMIT_ID"
+COMMIT_URL="https://stash.rmn.com/projects/RMN/repos/retailmenot/commits/$COMMIT_ID_LONG"
+BRANCH_URL="https://stash.rmn.com/projects/RMN/repos/retailmenot/commits?until=$COMMIT_BRANCH"
 
 COMMIT_NOTES="{panel:title=Commit: $COMMIT_ID}\n"
-COMMIT_NOTES+="\tBranch: [$COMMIT_BRANCH|https://github.com/$ORIGIN_PATH_SANS_EXT/tree/$COMMIT_BRANCH]\n"
-COMMIT_NOTES+="\tGithub: [$COMMIT_ID|https://github.com/$ORIGIN_PATH_SANS_EXT/commit/$COMMIT_ID]\n\n"
+COMMIT_NOTES+="\tBranch: [$COMMIT_BRANCH|$BRANCH_URL]\n"
+COMMIT_NOTES+="\tGithub: [$COMMIT_ID|$COMMIT_URL]\n\n"
 COMMIT_NOTES+="\t$COMMIT_MSG\n"
 COMMIT_NOTES+="{panel}"
 
