@@ -11,3 +11,5 @@ alias ip="curl -s http://checkip.dyndns.com/ | sed 's/[^0-9\.]//g'"
 alias grep='GREP_COLOR="1;37;45" LANG=C grep --color=auto'
 # Concatenate and print content of files (add line numbers)
 alias catn="cat -n"
+# list directory contents in a readable format
+alias ll="ls -ahl"
