@@ -6,82 +6,40 @@ export LANG=en_US.UTF-8
 # shortcut to this dotfiles path is $DOTFILES
 export DOTFILES="$(cd $(dirname $(readlink ~/.bashrc)) && cd .. && pwd)"
 
-# prepend an entry to PATH if it is a dir, and not already in path.
-path_unshift() {
-    if [ -d "$1" ]; then
-		if [[ ":$PATH:" != *":$1:"* ]]; then
-			path_remove "$1"
-		fi
-        PATH="$1:$PATH"
-    fi
-}
+# keeping the paths simple
+export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/coreutils:$PATH
 
-# append an entry to PATH if it is a dir, and not already in path.
-path_add() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$PATH:$1"
-    fi
-}
+# Don't clear the screen after quitting a manual page
+export MANPAGER="less -X"
 
-# remove something from the path
-path_remove() {
-    if [[ ":$PATH:" = *":$1:"* ]]; then
-        PATH=$(IFS=':';t=($PATH);unset IFS;t=(${t[@]%%*$1*});IFS=':';echo "${t[*]}");
-    fi
-}
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-F -g -i -M -R -S -w -X -z-4'
 
 source_if_present() {
-    if [ -f "$1" ]; then
-        . "$1"
-    fi
+	if [ -f "$1" ]; then
+		. "$1"
+	fi
+}
+
+source_files_by_name() {
+	for source_file in $(find $DOTFILES -name "$1"); do
+		source_if_present $source_file
+	done
 }
 
 # Source global definitions
 source_if_present /etc/bashrc
 
-# set paths
-for path_file in $(find $DOTFILES -name "path"); do
-	if [[ $path_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source_if_present $path_file
-		fi
-	elif [[ $path_file == */linux/* ]]; then
-		if [[ $OSTYPE == linux* ]]; then
-			source_if_present $path_file
-		fi
-	else
-		source_if_present $path_file
-	fi
-done
+# Makeup for lack of zprezto
+source_if_present "$DOTFILES/bash/prompt.bash"
+source_if_present "$DOTFILES/bash/aliases.bash"
+source_if_present "$DOTFILES/python/virtualenvwraper.sh"
+source_if_present "$DOTFILES/ruby/rbenv.sh"
 
-source_if_present ".bash_aliases"
+# Load all the shared files
+source_if_present "$DOTFILES/system/load.sh"
 
-# source every .bash file in this repo
-for bash_file in $(find $DOTFILES -name "*.sh" -o -name "*.bash"); do
-	if [[ $bash_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source_if_present $bash_file
-		fi
-	elif [[ $bash_file == */linux/* ]]; then
-		if [[ $OSTYPE == linux* ]]; then
-			source_if_present $bash_file
-		fi
-	else
-		source_if_present $bash_file
-	fi
-done
-
-# source every completion file in this repo
-for completion_file in $(find $DOTFILES -name "bash_completion"); do
-	if [[ $completion_file == */osx/* ]]; then
-		if [[ $OSTYPE == darwin* ]]; then
-			source_if_present $completion_file
-		fi
-	elif [[ $completion_file == */linux/* ]]; then
-		if [[ $OSTYPE == linux* ]]; then
-			source_if_present $completion_file
-		fi
-	else
-		source_if_present $completion_file
-	fi
-done
+# Load completion scripts
+source_files_by_name "bash_completion"

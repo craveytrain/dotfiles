@@ -1,9 +1,18 @@
 #!/bin/bash
 DOTFILES_DIR=".dotfiles"
-DOTFILES="$HOME/$DOTFILES_DIR"
+export DOTFILES="$HOME/$DOTFILES_DIR"
 GIT_REPO="craveytrain/dotfiles"
 
-## Grab dotfiles
+## If the file already exists (just not a symlink), back it up
+backup_file () {
+	if [ -e "$NEW_FILE" ]; then
+		echo "Backup: $(basename $NEW_FILE) -> $(basename $NEW_FILE).backup"
+		mv "$NEW_FILE" "$NEW_FILE.backup"
+	fi
+}
+
+
+## Grab dotfiles if they aren't already installed
 if [ ! -d "$DOTFILES" ]; then
 	## Prefer git clone
 	if [ -x "$(which git)" ]; then
@@ -12,11 +21,11 @@ if [ ! -d "$DOTFILES" ]; then
 	else
 		if [ ! -x $(which curl) ]; then echo "Curl not found, giving up."; exit 1; fi
 
-		echo "Git not found. Copying instead."
-		mkdir "$DOTFILES_DIR";
-		curl -L "https://github.com/$GIT_REPO/tarball/master" | tar zx -C "$DOTFILES_DIR" --strip-components 1
+			echo "Git not found. Copying instead."
+			mkdir "$DOTFILES_DIR";
+			curl -L "https://github.com/$GIT_REPO/tarball/master" | tar zx -C "$DOTFILES_DIR" --strip-components 1
+		fi
 	fi
-fi
 
 
 ## Create placeholder directories if not already there
@@ -34,11 +43,7 @@ for DIR in $(find $DOTFILES -not -iwholename "*.git*" -name "*.copy"); do
 			## If not a symlink already
 			if [ ! -L "$NEW_FILE" ]; then
 
-				## If the file exists (just not a symlink), back it up
-				if [ -e "$NEW_FILE" ]; then
-					echo "Backup: ${NEW_FILE/$HOME/~} -> ${NEW_FILE/$HOME/~}.backup"
-					mv "$NEW_FILE" "$NEW_FILE.backup"
-				fi
+				backup_file $NEW_FILE
 
 				## Create the symlink
 				ln -s "$DIR/$FILE" "$NEW_FILE"
@@ -47,7 +52,7 @@ for DIR in $(find $DOTFILES -not -iwholename "*.git*" -name "*.copy"); do
 	fi
 done
 
-## Symlink all the things!
+## Symlink all the other things!
 for SYMLINK in $(find $DOTFILES -not -iwholename "*.git*" -name "*.symlink"); do
 	BASE_NAME="$(basename ${SYMLINK%.symlink})"
 	NEW_FILE="$HOME/.$BASE_NAME"
@@ -55,15 +60,28 @@ for SYMLINK in $(find $DOTFILES -not -iwholename "*.git*" -name "*.symlink"); do
 	## If the new file isn't a symlink
 	if [ ! -L "$NEW_FILE" ]; then
 
-		## If the file already exists (just not a symlink), back it up
-		if [ -e "$NEW_FILE" ]; then
-			echo "Backup: $(basename $NEW_FILE) -> $(basename $NEW_FILE).backup"
-			mv "$NEW_FILE" "$NEW_FILE.backup"
-		fi
+		backup_file $NEW_FILE
 
 		## Create the symlink
 		ln -s "$SYMLINK" "$NEW_FILE"
 
+	fi
+done
+
+## Install zprezto for zsh lovers
+for rcfile in $DOTFILES/zprezto/runcoms/*; do
+	BASE_NAME="$(basename ${rcfile:t})"
+
+	if [[ $BASE_NAME != "README.md" ]]; then
+		NEW_FILE="${ZDOTDIR:-$HOME}/.$BASE_NAME"
+
+		## If the new file isn't a symlink
+		if [ ! -L "$NEW_FILE" ]; then
+
+			backup_file $NEW_FILE
+
+			ln -s "$rcfile" "$NEW_FILE"
+		fi
 	fi
 done
 

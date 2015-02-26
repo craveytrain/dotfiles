@@ -22,3 +22,6 @@
 [submodule "vim/vim.symlink/bundle/vim-javascript"]
 	path = vim/vim.symlink/bundle/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
+[submodule "zprezto"]
+	path = zprezto
+	url = https://github.com/craveytrain/prezto.git

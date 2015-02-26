@@ -1,6 +1,0 @@
-# append an entry to PATH if it is a dir, and not already in path.
-path_add() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$PATH:$1"
-    fi
-}
