@@ -60,4 +60,4 @@
 [include]
 	path = .localrc/gitconfig
 [hub]
-protocol = https
+	protocol = https
