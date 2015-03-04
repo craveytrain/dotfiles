@@ -15,11 +15,11 @@ backup_file () {
 ## Grab dotfiles if they aren't already installed
 if [ ! -d "$DOTFILES" ]; then
 	## Prefer git clone
-	if [ -x "$(which git)" ]; then
+	if hash git 2>/dev/null; then
 		## CLone git repo if not already there
 		git clone --recursive "git://github.com/$GIT_REPO.git" "$DOTFILES"
 	else
-		if [ ! -x $(which curl) ]; then echo "Curl not found, giving up."; exit 1; fi
+		hash curl 2>/dev/null || { echo >&2 "Curl not found, giving up."; exit 1; }
 
 			echo "Git not found. Copying instead."
 			mkdir "$DOTFILES_DIR";
@@ -86,7 +86,7 @@ for rcfile in $DOTFILES/zprezto/runcoms/*; do
 done
 
 ## Fix origin to use SSH variant (TODO: need to check if able to commit)
-# if [ -x "$(which git)" ]; then
+# if hash git 2>/dev/null; then
 #	cd "$DOTFILES";
 #	git remote set-url origin "git@github.com:$GIT_REPO.git"
 # fi

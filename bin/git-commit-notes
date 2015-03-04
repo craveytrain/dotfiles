@@ -15,6 +15,6 @@ COMMIT_NOTES+="{panel}"
 
 echo -e "$(git log $COMMIT_ID~1..$COMMIT_ID)"
 
-if [ -x "$(which pbcopy)" ]; then
+if hash pbcopy 2>/dev/null; then
 	echo -e "$COMMIT_NOTES" | pbcopy
 fi
