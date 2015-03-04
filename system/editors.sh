@@ -3,14 +3,14 @@
 #
 
 # use vim if possible, otherwise vi
-if [ -x `which vim` ]; then
+if hash vim 2>/dev/null; then
 	export EDITOR=vim
 else
 	export EDITOR=vi
 fi
 
 # if sublime is here, use it
-if [ -x `which subl` ]; then
+if hash subl 2>/dev/null; then
 	export VISUAL='subl -n'
 fi
 
