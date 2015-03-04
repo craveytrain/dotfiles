@@ -15,7 +15,7 @@ While I've gone full zsh on systems I have full control over, occassionally I ha
 
 ```sh
 # Boot the straps!
-curl https://raw.github.com/craveytrain/dotfiles/master/bootstrap | sh
+curl https://raw.githubusercontent.com/craveytrain/dotfiles/master/bootstrap | sh
 
 # Change shell to zsh (optional)
 chsh -s $(which zsh)
