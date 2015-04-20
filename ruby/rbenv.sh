@@ -1,1 +1,1 @@
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+if hash rbenv 2> /dev/null; then eval "$(rbenv init -)"; fi
