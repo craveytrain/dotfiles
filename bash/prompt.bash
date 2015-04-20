@@ -59,15 +59,17 @@ build_prompt () {
 	prompt_segment 6 '\w'
 
 	# If in a git repo
-	git_ref="$(git symbolic-ref HEAD 2>&1)"
-	if [[ $git_ref != fatal* ]]; then
-		# git branch in yellow and commit hash in default
-		prompt_segment 3 "⭠ $(git_branch_name $git_ref) [$(get_prompt_color)$(git_commit_hash)$(get_prompt_color 3)]"
+	if hash git 2>/dev/null; then
+		git_ref="$(git symbolic-ref HEAD 2>&1)"
+		if [[ $git_ref != fatal* ]]; then
+			# git branch in yellow and commit hash in default
+			prompt_segment 3 "⭠ $(git_branch_name $git_ref) [$(get_prompt_color)$(git_commit_hash)$(get_prompt_color 3)]"
 
-		# If git symbols has anything, show it in red
-		local git_symbols="$(git_status)"
-		if [[ $git_symbols != "" ]]; then
-			prompt_segment 1 "$git_symbols"
+			# If git symbols has anything, show it in red
+			local git_symbols="$(git_status)"
+			if [[ $git_symbols != "" ]]; then
+				prompt_segment 1 "$git_symbols"
+			fi
 		fi
 	fi
 
