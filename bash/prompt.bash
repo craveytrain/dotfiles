@@ -73,8 +73,10 @@ build_prompt () {
 		fi
 	fi
 
+	# Line break needs to not have colors wrapped around it otherwise it holds onto characters from the previous command
 	# cursor prompt in light blue
-	prompt_segment 12 "\n❯ "
+	# https://superuser.com/questions/382456/why-does-this-bash-prompt-sometimes-keep-part-of-previous-commands-when-scrollin/820451#820451
+	echo -n "\n\e[38;5;12m❯ \e[0m"
 }
 
 git_branch_name () {
