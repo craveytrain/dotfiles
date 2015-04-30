@@ -13,7 +13,7 @@ brew tap homebrew/dupes
 
 binaries=(
 	ack
-	apple-gcc42
+#	apple-gcc42
 	bash
 	boot2docker
 	coreutils
@@ -23,7 +23,7 @@ binaries=(
 	imagemagick
 	jq
 	libyaml
-	mercurial
+# 	mercurial
 	mobile-shell
 	ngrep
 	node
@@ -40,55 +40,55 @@ binaries=(
 echo "Installing binaries"
 brew install ${binaries[@]}
 
-echo "Installing casks"
-brew install caskroom/cask/brew-cask
-brew tap caskroom/versions
+# echo "Installing casks"
+# brew install caskroom/cask/brew-cask
+# brew tap caskroom/versions
 
-apps=(
-	adobe-creative-cloud
-	alfred
-	atom
-	dropbox
-	firefox
-	firefox-aurora
-	google-chrome
-	google-chrome-canary
-	google-drive
-	hipchat
-	imagealpha
-	imageoptim
-	iterm2
-	kaleidoscope
-	onepassword
-	querious
-	skype
-	spotify
-	sublime-text3
-	transmission
-	transmit
-	tunnelblick-beta
-	vagrant
-	virtualbox
-	)
+# apps=(
+# 	adobe-creative-cloud
+# 	alfred
+#	atom
+#	dropbox
+#	firefox
+#	firefox-aurora
+#	google-chrome
+#	google-chrome-canary
+#	google-drive
+#	hipchat
+#	imagealpha
+#	imageoptim
+#	iterm2
+#	kaleidoscope
+#	onepassword
+#	querious
+#	skype
+#	spotify
+#	sublime-text3
+#	transmission
+#	transmit
+#	tunnelblick-beta
+#	vagrant
+#	virtualbox
+#	)
 
-brew cask install --appdir="/Applications" ${apps[@]}
+# brew cask install --appdir="/Applications" ${apps[@]}
 
 # Linking up for Alfred
-brew cask alfred link
+# brew cask alfred link
 
-echo "Installing fonts"
-brew tap caskroom/fonts
-fonts=(
-	font-inconsolata-dz
-	font-inconsolata-dz-for-powerline
-	font-open-sans
-	)
+# echo "Installing fonts"
+# brew tap caskroom/fonts
+# fonts=(
+# 	font-inconsolata-dz
+#	font-inconsolata-dz-for-powerline
+#	font-open-sans
+#	)
 
-brew cask install ${fonts[@]}
+# brew cask install ${fonts[@]}
 
 echo "Cleaning up your mess"
 brew cleanup
-brew cask cleanup
+# brew cask cleanup
 
 # echo "Making OSX for elite hackerz"
 ./osx-for-hackers.sh
