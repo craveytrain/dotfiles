@@ -1,3 +1,5 @@
+#! /bin/bash
+
 export PROMPT_COMMAND=__prompt_command
 
 # Returns prompt encoded color.
@@ -24,7 +26,7 @@ prompt_segment () {
 	# If 2 params, 1st one is foreground
 	if [[ -n $2 ]]; then
 		# insert color supporting 256 colors
-		fg="$(get_prompt_color $1)"
+		fg="$(get_prompt_color "$1")"
 		message="$2"
 	else
 		fg="$(get_prompt_color)"
@@ -40,6 +42,7 @@ prompt_segment () {
 
 build_prompt () {
 	local EXIT="$?"
+	local git_symbols
 
 	# If exit status is non-zero show an x in red
 	if [ $EXIT != 0 ]; then
@@ -63,10 +66,10 @@ build_prompt () {
 		git_ref="$(git symbolic-ref HEAD 2>&1)"
 		if [[ $git_ref != fatal* ]]; then
 			# git branch in yellow and commit hash in default
-			prompt_segment 3 "⭠ $(git_branch_name $git_ref) [$(get_prompt_color)$(git_commit_hash)$(get_prompt_color 3)]"
+			prompt_segment 3 "⭠ $(git_branch_name "$git_ref") [$(get_prompt_color)$(git_commit_hash)$(get_prompt_color 3)]"
 
 			# If git symbols has anything, show it in red
-			local git_symbols="$(git_status)"
+			git_symbols="$(git_status)"
 			if [[ $git_symbols != "" ]]; then
 				prompt_segment 1 "$git_symbols"
 			fi
@@ -76,6 +79,8 @@ build_prompt () {
 	# Line break needs to not have colors wrapped around it otherwise it holds onto characters from the previous command
 	# cursor prompt in light blue
 	# https://superuser.com/questions/382456/why-does-this-bash-prompt-sometimes-keep-part-of-previous-commands-when-scrollin/820451#820451
+
+	# shellcheck disable=SC2028
 	echo -n "\n\e[38;5;12m❯ \e[0m"
 }
 
@@ -84,15 +89,16 @@ git_branch_name () {
 }
 
 git_commit_hash () {
-	echo "$(git rev-parse --short HEAD)"
+	git rev-parse --short HEAD
 }
 
 git_status () {
 	local symbols
-	local git_st="$(git diff --name-status 2>&1)"
+	local git_st
+	git_st="$(git diff --name-status 2>&1)"
 
 	# If untracked files
-	[[ "$(git ls-files --others --exclude-standard $(git rev-parse --show-cdup))" != "" ]] && symbols+="?"
+	[[ "$(git ls-files --others --exclude-standard "$(git rev-parse --show-cdup)")" != "" ]] && symbols+="?"
 
 	# If modified files
 	[[ $(echo "$git_st" | egrep -c "^M") != 0 ]] && symbols+="✱"
@@ -113,6 +119,7 @@ git_status () {
 count_lines() { echo "$1" | egrep -c "^$2" ; }
 
 __prompt_command () {
-	export PS1="$(build_prompt)"
+	PS1="$(build_prompt)"
+	export PS1
 	export PS2="❯ "
 }

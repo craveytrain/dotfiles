@@ -1,4 +1,5 @@
-#!/bin/bash
+#! /bin/sh
+
 echo "System colors:"
 for color in {0..15} ; do
 	if [ ${#color} == 1 ]; then
@@ -7,7 +8,7 @@ for color in {0..15} ; do
 		spacer=" "
 	fi
 	echo -en "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
-	if [ $((($color + 1) % 8)) == 0 ] ; then
+	if [ $(((color + 1) % 8)) == 0 ] ; then
 		echo #New line
 	fi
 done; echo
@@ -20,9 +21,9 @@ for color in {16..231} ; do
 		spacer=" "
 	fi
 	echo -en "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
-	if [ $((($color + 3) % 6)) == 0 ] ; then
+	if [ $(((color + 3) % 6)) == 0 ] ; then
 		echo #New line
-		if [ $((($color + 21) % 36)) == 0 ] ; then
+		if [ $(((color + 21) % 36)) == 0 ] ; then
 			echo #New line
 		fi
 	fi

@@ -1,5 +1,6 @@
-VENV_WRAPPER=$(which virtualenvwrapper.sh)
+#! /bin/sh
 
-if [ -x "$VENV_WRAPPER" ]; then source $VENV_WRAPPER; fi
+source_if_present "$(which virtualenvwrapper.sh)"
 
 WORKON_HOME="$HOME/.virtualenvs"
+export $WORKON_HOME
