@@ -1,22 +1,23 @@
 #!/bin/bash
+
 DOTFILES_DIR=".dotfiles"
 export DOTFILES="$HOME/$DOTFILES_DIR"
 GIT_REPO="craveytrain/dotfiles"
 
-## If the file already exists (just not a symlink), back it up
+# If the file already exists (just not a symlink), back it up
 backup_file () {
 	if [ -e "$NEW_FILE" ]; then
-		echo "Backup: $(basename $NEW_FILE) -> $(basename $NEW_FILE).backup"
+		echo "Backup: $(basename "$NEW_FILE") -> $(basename "$NEW_FILE").backup"
 		mv "$NEW_FILE" "$NEW_FILE.backup"
 	fi
 }
 
 
-## Grab dotfiles if they aren't already installed
+# Grab dotfiles if they aren't already installed
 if [ ! -d "$DOTFILES" ]; then
-	## Prefer git clone
+	# Prefer git clone
 	if hash git 2>/dev/null; then
-		## CLone git repo if not already there
+		# CLone git repo if not already there
 		git clone --recursive "git://github.com/$GIT_REPO.git" "$DOTFILES"
 	else
 		hash curl 2>/dev/null || { echo >&2 "Curl not found, giving up."; exit 1; }
@@ -28,64 +29,64 @@ if [ ! -d "$DOTFILES" ]; then
 	fi
 
 
-## Create placeholder directories if not already there
-for DIR in $(find $DOTFILES -not -iwholename "*.git*" -name "*.copy"); do
-	DIR_NAME="$(basename ${DIR%.copy})"
+# Create placeholder directories if not already there
+find "$DOTFILES" -not -iwholename "*.git*" -name "*.copy" | while read DIR; do
+	DIR_NAME="$(basename "${DIR%.copy}")"
 	NEW_DIR="$HOME/.$DIR_NAME"
 	if [ ! -d "$NEW_DIR" ]; then
 		mkdir "$NEW_DIR"
 	fi
 
-	## Symlink contents of placeholder directories (if they are directories)
+	# Symlink contents of placeholder directories (if they are directories)
 	if [ -d "$DIR" ]; then
-		for FILE in $(ls $DIR); do
-			NEW_FILE="$NEW_DIR/$FILE"
-			## If not a symlink already
+		for FILE in $DIR/*; do
+			NEW_FILE="$NEW_DIR/${FILE##*/}"
+			# If not a symlink already
 			if [ ! -L "$NEW_FILE" ]; then
 
-				backup_file $NEW_FILE
+				backup_file "$NEW_FILE"
 
-				## Create the symlink
+				# Create the symlink
 				ln -s "$DIR/$FILE" "$NEW_FILE"
 			fi
 		done
 	fi
 done
 
-## Symlink all the other things!
-for SYMLINK in $(find $DOTFILES -not -iwholename "*.git*" -name "*.symlink"); do
-	BASE_NAME="$(basename ${SYMLINK%.symlink})"
+# Symlink all the other things!
+find "$DOTFILES" -not -iwholename "*.git*" -name "*.symlink" | while read SYMLINK; do
+	BASE_NAME="$(basename "${SYMLINK%.symlink}")"
 	NEW_FILE="$HOME/.$BASE_NAME"
 
-	## If the new file isn't a symlink
+	# If the new file isn't a symlink
 	if [ ! -L "$NEW_FILE" ]; then
 
-		backup_file $NEW_FILE
+		backup_file "$NEW_FILE"
 
-		## Create the symlink
+		# Create the symlink
 		ln -s "$SYMLINK" "$NEW_FILE"
 
 	fi
 done
 
-## Install zprezto for zsh lovers
+# Install zprezto for zsh lovers
 for rcfile in $DOTFILES/zprezto/runcoms/*; do
-	BASE_NAME="$(basename ${rcfile:t})"
+	BASE_NAME="$(basename "${rcfile:t}")"
 
 	if [[ $BASE_NAME != "README.md" ]]; then
 		NEW_FILE="${ZDOTDIR:-$HOME}/.$BASE_NAME"
 
-		## If the new file isn't a symlink
+		# If the new file isn't a symlink
 		if [ ! -L "$NEW_FILE" ]; then
 
-			backup_file $NEW_FILE
+			backup_file "$NEW_FILE"
 
 			ln -s "$rcfile" "$NEW_FILE"
 		fi
 	fi
 done
 
-## Fix origin to use SSH variant (TODO: need to check if able to commit)
+# Fix origin to use SSH variant (TODO: need to check if able to commit)
 # if hash git 2>/dev/null; then
 #	cd "$DOTFILES";
 #	git remote set-url origin "git@github.com:$GIT_REPO.git"

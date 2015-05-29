@@ -61,3 +61,8 @@ serve () {
 		python -m SimpleHTTPServer "${1:-8080}"
 	fi
 }
+
+# All the dig info, 'cause I can never remember it
+digg() {
+	dig +nocmd "$1" any +multiline +noall +answer
+}

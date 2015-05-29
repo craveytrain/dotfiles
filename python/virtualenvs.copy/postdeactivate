@@ -1,4 +1,4 @@
-#!/bin/zsh
+#! /bin/zsh
 # This hook is run after every virtualenv is deactivated.
 
 VIRTUALENV=""

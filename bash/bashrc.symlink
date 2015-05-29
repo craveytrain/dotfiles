@@ -1,10 +1,13 @@
+#! /bin/bash
+
 # .bashrc
 
 # set lang
 export LANG=en_US.UTF-8
 
 # shortcut to this dotfiles path is $DOTFILES
-export DOTFILES="$(cd $(dirname $(readlink ~/.bashrc)) && cd .. && pwd)"
+DOTFILES="$(cd "$(dirname "$(readlink ~/.bashrc)")" && cd .. && pwd)"
+export DOTFILES
 
 # keeping the paths simple
 export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/coreutils:$PATH
@@ -24,8 +27,8 @@ source_if_present() {
 }
 
 source_files_by_name() {
-	for source_file in $(find $DOTFILES -name "$1"); do
-		source_if_present $source_file
+	find "$DOTFILES" -name "$1" | while read source_file; do
+		source_if_present "$source_file"
 	done
 }
 

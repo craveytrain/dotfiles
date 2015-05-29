@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/sh
 
 if [[ ! "$1" || "$1" == "-h" || "$1" == "--help" ]]; then cat <<HELP
 Curl a remote file into an editor.
@@ -44,4 +44,5 @@ mv "$tmp" "$file"
 
 # Open file in editor!
 echo -e "\nOpening ~${file#$HOME}"
-$(e "$file")
+
+${VISUAL:-$EDITOR} "$file"

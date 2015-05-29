@@ -1,10 +1,10 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Install if we don't have it
-if test ! $(which brew); then
+hash brew 2>/dev/null || {
 	echo "Installing homebrew..."
 	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-fi
+}
 
 echo "Updating and upgrading homebrew recipes"
 brew update
@@ -13,7 +13,6 @@ brew tap homebrew/dupes
 
 binaries=(
 	ack
-#	apple-gcc42
 	bash
 	boot2docker
 	coreutils
@@ -23,7 +22,7 @@ binaries=(
 	imagemagick
 	jq
 	libyaml
-# 	mercurial
+	mercurial
 	mobile-shell
 	ngrep
 	node
@@ -31,66 +30,20 @@ binaries=(
 	phantomjs
 	rbenv
 	ruby-build
-	steam
 	the_silver_searcher
 	wget
 	zsh
 	)
 
 echo "Installing binaries"
-brew install ${binaries[@]}
-
-# echo "Installing casks"
-# brew install caskroom/cask/brew-cask
-# brew tap caskroom/versions
-
-# apps=(
-# 	adobe-creative-cloud
-# 	alfred
-#	atom
-#	dropbox
-#	firefox
-#	firefox-aurora
-#	google-chrome
-#	google-chrome-canary
-#	google-drive
-#	hipchat
-#	imagealpha
-#	imageoptim
-#	iterm2
-#	kaleidoscope
-#	onepassword
-#	querious
-#	skype
-#	spotify
-#	sublime-text3
-#	transmission
-#	transmit
-#	tunnelblick-beta
-#	vagrant
-#	virtualbox
-#	)
-
-# brew cask install --appdir="/Applications" ${apps[@]}
-
-# Linking up for Alfred
-# brew cask alfred link
-
-# echo "Installing fonts"
-# brew tap caskroom/fonts
-# fonts=(
-# 	font-inconsolata-dz
-#	font-inconsolata-dz-for-powerline
-#	font-open-sans
-#	)
-
-# brew cask install ${fonts[@]}
+brew install "${binaries[@]}"
 
 echo "Cleaning up your mess"
 brew cleanup
-# brew cask cleanup
 
-# echo "Making OSX for elite hackerz"
+echo "Making OSX for elite hackerz"
 ./osx-for-hackers.sh
 
+printf "\n#################\n\n"
 echo "Bounce your shell"
+printf "\n#################\n\n"

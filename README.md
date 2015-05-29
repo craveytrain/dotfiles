@@ -9,11 +9,11 @@ However, if I am SSH'd in somewhere, I want to know who I am as and what host I 
 
 ## Shell
 
-While I've gone full zsh on systems I have full control over, occassionally I have to use bash, so I've tried to cobble some basic support for it.
+While I've gone full zsh on systems I have full control over, occasionally I have to use bash, so I've tried to cobble some basic support for it.
 
 # Install
 
-```sh
+```bash
 # Boot the straps!
 curl https://raw.githubusercontent.com/craveytrain/dotfiles/master/bootstrap | bash
 

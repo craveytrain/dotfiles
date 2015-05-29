@@ -1,3 +1,5 @@
+#! /bin/sh
+
 #
 # Editors
 #
@@ -9,8 +11,8 @@ else
 	export EDITOR=vi
 fi
 
-# if sublime is here, use it
-if hash subl 2>/dev/null; then
+# if atom is here, use it
+if hash atom 2>/dev/null; then
 	# export VISUAL='subl -n'
 	export VISUAL='atom -n'
 fi

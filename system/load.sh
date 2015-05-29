@@ -1,3 +1,5 @@
+#! /bin/sh
+
 # Load shared things with bash
 source_if_present "$HOME/.dir_colors"
 source_if_present "$DOTFILES/system/aliases.sh"
