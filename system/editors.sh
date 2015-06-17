@@ -13,8 +13,7 @@ fi
 
 # if atom is here, use it
 if hash atom 2>/dev/null; then
-	# export VISUAL='subl -n'
-	export VISUAL='atom -n'
+	export VISUAL='atom'
 fi
 
 export PAGER='less'
