@@ -40,6 +40,7 @@ source_if_present "$DOTFILES/bash/prompt.bash"
 source_if_present "$DOTFILES/bash/aliases.bash"
 source_if_present "$DOTFILES/python/virtualenvwraper.sh"
 source_if_present "$DOTFILES/ruby/rbenv.sh"
+source_if_present "$DOTFILES/system/unarchive.sh"
 
 # Load all the shared files
 source_if_present "$DOTFILES/system/load.sh"
