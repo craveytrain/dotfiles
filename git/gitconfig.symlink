@@ -41,10 +41,29 @@
 	excludesfile = /Users/mcravey/.gitignore
 	autocrlf = input
 	editor = /usr/bin/vim
+	pager = bash -lc 'diff-highlight | strip_diff_leading_symbols | less -r' -
 [push]
 	default = tracking
 [diff]
 	tool = Kaleidoscope
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+[color "diff-highlight"]
+	oldNormal = "red bold"
+	oldHighlight = "red bold 52"
+	newNormal = "green bold"
+	newHighlight = "green bold 22"
 [difftool]
 	prompt = false
 [difftool "Kaleidoscope"]
