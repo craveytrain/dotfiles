@@ -28,7 +28,7 @@ Thanks to [mschout](https://github.com/mschout) for all the help, especially on 
 
 Thanks to [holman](https://github.com/holman) for the inspiration for things such as the topical organization and prompt.
 
-And many others for your insprirations.
+And many others for your inspirations and perspirations.
 
 # TODO
 - install homebrew (if on a mac)
