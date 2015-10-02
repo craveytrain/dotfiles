@@ -1,17 +1,6 @@
 #!/bin/bash
 
-# Install if we don't have it
-hash brew 2>/dev/null || {
-	echo "Installing homebrew..."
-	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-}
-
-echo "Updating and upgrading homebrew recipes"
-brew update
-brew upgrade
-brew tap homebrew/dupes
-
-binaries=(
+brews=(
 	ack
 	bash
 	boot2docker
@@ -35,15 +24,63 @@ binaries=(
 	zsh
 	)
 
-echo "Installing binaries"
-brew install "${binaries[@]}"
+nodes=(
+	babel
+	bookmarklet
+	bower
+	browserify
+	csscomb
+	csslint
+	eslint
+	gulp
+	grunt-cli
+	js-beautify
+	jscs
+	jsdoc
+	jshint
+	sitespeed.io
+	svgo
+)
+
+# Install if we don't have it
+hash brew 2>/dev/null || {
+	echo "Installing homebrew..."
+	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+}
+
+echo "Updating and upgrading homebrew recipes"
+brew update
+brew upgrade
+brew tap homebrew/dupes
+
+echo "Brewing binaries"
+brew install "${brews[@]}"
+
+echo "Making option utils available"
+ln -sf "$(brew --prefix)/share/git-core/contrib/diff-highlight/diff-highlight" /usr/local/bin/diff-highlight
 
 echo "Cleaning up your mess"
 brew cleanup
+
+echo "Installing the nodes"
+npm install "${nodes[@]}"
 
 echo "Making OSX for elite hackerz"
 ./osx-for-hackers.sh
 
 printf "\n#################\n\n"
-echo "Bounce your shell"
-printf "\n#################\n\n"
+echo -n "Bounce your shell"
+
+# Interesting spinners
+# http://stackoverflow.com/questions/2685435/cooler-ascii-spinners
+chars="⢀⠠⠐⠈⠐⠠"
+
+# hide cursor
+tput civis
+
+while :; do
+  for (( i=0; i<${#chars}; i++ )); do
+    sleep 0.15
+    echo -n "${chars:$i:1}"
+  done
+done
