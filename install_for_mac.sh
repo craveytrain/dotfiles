@@ -8,6 +8,7 @@ brews=(
 	findutils
 	git
 	homebrew/dupes/grep
+	httpie
 	imagemagick
 	jq
 	libyaml
