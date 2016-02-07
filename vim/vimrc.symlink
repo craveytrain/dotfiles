@@ -4,15 +4,15 @@ set nocompatible
 " Turn on 256 colors
 set t_Co=256
 " Turn out the lights
+syntax enable
 set background=dark
-syntax on
-colorscheme molokai
 
 " Change mapleader
 let mapleader=" "
 
 " Pathogen stuff
 call pathogen#infect()
+colorscheme solarized
 filetype plugin indent on
 
 set autoread " Set to auto read when a file is changed from the outside

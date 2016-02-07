@@ -1,5 +1,5 @@
 " Set font
-set gfn=Consolas:h13
+set gfn=Inconsolata-g:h13
 
 
 " VIM settings for GUI
