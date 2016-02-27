@@ -61,21 +61,14 @@
 	untracked = cyan
 [color "diff-highlight"]
 	oldNormal = "red bold"
-	oldHighlight = "red bold 52"
+	oldHighlight = "0 bold red"
 	newNormal = "green bold"
-	newHighlight = "green bold 22"
+	newHighlight = "0 bold green"
 [difftool]
 	prompt = false
-[difftool "Kaleidoscope"]
-	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[merge]
-	tool = Kaleidoscope
 [mergetool]
 	keepBackup = false
 	prompt = false
-[mergetool "Kaleidoscope"]
-	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-	trustExitCode = true
 [include]
 	path = .localrc/gitconfig
 [hub]
