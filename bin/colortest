@@ -7,7 +7,7 @@ for color in {0..15} ; do
 	else
 		spacer=" "
 	fi
-	echo -en "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
+	printf "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
 	if [ $(((color + 1) % 8)) == 0 ] ; then
 		echo #New line
 	fi
@@ -20,7 +20,7 @@ for color in {16..231} ; do
 	else
 		spacer=" "
 	fi
-	echo -en "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
+	printf "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m${spacer}"
 	if [ $(((color + 3) % 6)) == 0 ] ; then
 		echo #New line
 		if [ $(((color + 21) % 36)) == 0 ] ; then
@@ -31,7 +31,7 @@ done; echo
 
 echo "Grayscale ramp:"
 for color in {232..255} ; do
-	echo -en "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m "
+	printf "\033[48;5;${color}m \033[0m \033[38;5;${color}m${color}\033[0m "
 done; echo
 
 exit 0
