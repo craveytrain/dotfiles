@@ -1,70 +1,10 @@
 #!/bin/bash
 
-brews=(
-	ack
-	bash
-	boot2docker
-	coreutils
-	findutils
-	git
-	homebrew/dupes/grep
-	httpie
-	imagemagick
-	jq
-	libyaml
-	mercurial
-	mobile-shell
-	ngrep
-	node
-	nvm
-	phantomjs
-	rbenv
-	ruby-build
-	the_silver_searcher
-	wget
-	zsh
-	)
+./install_homebrews.sh
+./install_npm_packages.sh
 
-nodes=(
-	babel
-	bookmarklet
-	bower
-	browserify
-	csscomb
-	csslint
-	eslint
-	gulp
-	grunt-cli
-	js-beautify
-	jscs
-	jsdoc
-	jshint
-	sitespeed.io
-	svgo
-)
-
-# Install if we don't have it
-hash brew 2>/dev/null || {
-	echo "Installing homebrew..."
-	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-}
-
-echo "Updating and upgrading homebrew recipes"
-brew update
-brew upgrade
-brew tap homebrew/dupes
-
-echo "Brewing binaries"
-brew install "${brews[@]}"
-
-echo "Making option utils available"
-ln -sf "$(brew --prefix)/share/git-core/contrib/diff-highlight/diff-highlight" /usr/local/bin/diff-highlight
-
-echo "Cleaning up your mess"
-brew cleanup
-
-echo "Installing the nodes"
-npm install -g "${nodes[@]}"
+echo "Cloning down helpful repos"
+./install_repos.sh
 
 echo "Making OSX for elite hackerz"
 ./osx-for-hackers.sh
