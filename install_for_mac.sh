@@ -64,7 +64,7 @@ echo "Cleaning up your mess"
 brew cleanup
 
 echo "Installing the nodes"
-npm install "${nodes[@]}"
+npm install -g "${nodes[@]}"
 
 echo "Making OSX for elite hackerz"
 ./osx-for-hackers.sh
