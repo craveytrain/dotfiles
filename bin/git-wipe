@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 # Remove local branch, remote branch from origin and prune your remote
 branch_name="$1"

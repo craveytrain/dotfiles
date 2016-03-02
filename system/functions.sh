@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Show the IP addresses of this machine, with each interface that the address is on.
 ips () {

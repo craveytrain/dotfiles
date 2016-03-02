@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/usr/bin/env bash
 
 export PROMPT_COMMAND=__prompt_command
 

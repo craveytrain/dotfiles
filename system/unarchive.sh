@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 # Extract most know archives with one command
 unarchive () {

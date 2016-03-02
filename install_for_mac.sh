@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ./install_homebrews.sh
 ./install_npm_packages.sh
