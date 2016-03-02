@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 DOTFILES_DIR=".dotfiles"
 export DOTFILES="$HOME/$DOTFILES_DIR"

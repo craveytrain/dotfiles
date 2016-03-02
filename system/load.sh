@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 # Load shared things with bash
 source_if_present "$HOME/.dir_colors"

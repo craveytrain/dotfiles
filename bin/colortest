@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 echo "System colors:"
 for color in {0..15} ; do

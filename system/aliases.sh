@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
 # Check my ip
 alias ip="curl -s http://checkip.dyndns.com/ | sed 's/[^0-9\.]//g'"
@@ -13,4 +13,4 @@ alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to cl
 alias dotme="echo 'curl https://raw.githubusercontent.com/craveytrain/dotfiles/master/bootstrap | bash' | pbcopy | echo '=> Dotfiles bootstrapper copied to clipboard.'"
 
 # Go to .dotfiles
-alias dot="cd $DOTFILES"
+alias dot="cd \$DOTFILES"
