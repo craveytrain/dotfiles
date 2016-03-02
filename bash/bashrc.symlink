@@ -22,6 +22,7 @@ export LESS='-F -g -i -M -R -S -w -X -z-4'
 
 source_if_present() {
 	if [ -f "$1" ]; then
+		# shellcheck source=$1
 		. "$1"
 	fi
 }
