@@ -5,6 +5,7 @@ brews=(
 	bash
 	boot2docker
 	coreutils
+	doctl
 	findutils
 	git
 	homebrew/dupes/grep
