@@ -10,6 +10,7 @@ brews=(
 	git
 	homebrew/dupes/grep
 	httpie
+	hub
 	imagemagick
 	jq
 	libyaml
