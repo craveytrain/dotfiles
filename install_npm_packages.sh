@@ -14,6 +14,7 @@ nodes=(
 	jscs
 	jsdoc
 	jshint
+	node-inspector
 	sitespeed.io
 	svgo
 )
