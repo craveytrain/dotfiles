@@ -20,6 +20,7 @@ brews=(
 	node
 	nvm
 	phantomjs
+	python
 	rbenv
 	ruby-build
 	the_silver_searcher
