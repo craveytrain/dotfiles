@@ -23,6 +23,7 @@ brews=(
 	python
 	rbenv
 	ruby-build
+	shellcheck
 	the_silver_searcher
 	wget
 	zsh
