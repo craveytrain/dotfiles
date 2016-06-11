@@ -3,8 +3,8 @@
 create:
 	docker build -t prompt .
 
-bash:
+bash: create
 	docker run -it -v $(shell pwd):/root/.dotfiles prompt /bin/bash
 
-zsh:
+zsh: create
 	docker run -it -v $(shell pwd):/root/.dotfiles prompt /bin/zsh
