@@ -2,6 +2,7 @@
 
 nodes=(
 	babel
+	babel-eslint
 	bookmarklet
 	bower
 	browserify
