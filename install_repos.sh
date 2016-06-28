@@ -2,8 +2,10 @@
 # to enforce bash 4
 
 declare -A repos
-repos["fonts"]="https://github.com/powerline/fonts.git"
+repos["powerline_fonts"]="https://github.com/powerline/fonts.git"
 repos["solarized"]="https://github.com/altercation/solarized.git"
+repos["google_fonts"]="https://github.com/google/fonts.git"
+repos["tomorrow_theme"]="https://github.com/chriskempson/tomorrow-theme.git"
 
 DIR="$HOME/Src"
 
