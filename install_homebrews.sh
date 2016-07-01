@@ -11,6 +11,7 @@ brews=(
 	homebrew/dupes/grep
 	httpie
 	hub
+	hugo
 	imagemagick
 	jq
 	libyaml
