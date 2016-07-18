@@ -25,6 +25,7 @@ brews=(
 	rbenv
 	ruby-build
 	shellcheck
+	sudolikeaboss
 	the_silver_searcher
 	wget
 	zsh
@@ -40,6 +41,7 @@ brews=(
     brew update
     brew upgrade
     brew tap homebrew/dupes
+	brew tap ravenac95/sudolikeaboss
 
     echo "Brewing binaries"
     brew install "${brews[@]}"
