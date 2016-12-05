@@ -2,7 +2,10 @@
 set nocompatible
 
 " Turn on 256 colors
-set t_Co=256
+" set t_Co=256
+call pathogen#infect()
+filetype plugin indent on
+
 " Turn out the lights
 syntax enable
 set background=dark
@@ -11,9 +14,8 @@ set background=dark
 let mapleader=" "
 
 " Pathogen stuff
-call pathogen#infect()
+let g:solarized_termcolors=256
 colorscheme solarized
-filetype plugin indent on
 
 set autoread " Set to auto read when a file is changed from the outside
 set showmode " Show mode in bottom of window
