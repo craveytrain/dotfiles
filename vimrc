@@ -1,9 +1,11 @@
+runtime bundle/vim-pathogen/autoload/pathogen.vim
+
 " Make vim more useful
 set nocompatible
 
 " Turn on 256 colors
 " set t_Co=256
-call pathogen#infect()
+execute pathogen#infect()
 filetype plugin indent on
 
 " Turn out the lights
@@ -48,13 +50,6 @@ set incsearch " Highlight dynamically as pattern is typed.
 set ignorecase " Ignore case of searches.
 set smartcase " Ignore 'ignorecase' if search patter contains uppercase characters.
 
-
-" directories
-" set backup locations and enable
-set backup
-set backupdir=~/.backup
-set directory=~/.backup
-
 " Sudo write (<leader>W)
 cmap w!! %!sudo tee >/dev/null %<CR>
 
@@ -89,3 +84,13 @@ function! StripWhitespace ()
     call setreg('/', old_query)
 endfunction
 noremap <leader>ss :call StripWhitespace ()<CR>
+
+" syntastic defaults
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0

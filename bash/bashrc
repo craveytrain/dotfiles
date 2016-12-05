@@ -21,16 +21,16 @@ export MANPAGER="less -X"
 export LESS='-F -g -i -M -R -S -w -X -z-4'
 
 source_if_present() {
-	if [ -f "$1" ]; then
-		# shellcheck source=$1
-		. "$1"
-	fi
+  if [ -f "$1" ]; then
+    # shellcheck source=$1
+    . "$1"
+  fi
 }
 
 source_files_by_name() {
-	find "$DOTFILES" -name "$1" | while read source_file; do
-		source_if_present "$source_file"
-	done
+  find "$DOTFILES" -name "$1" | while read source_file; do
+    source_if_present "$source_file"
+  done
 }
 
 # Source global definitions
@@ -39,12 +39,11 @@ source_if_present /etc/bashrc
 # Makeup for lack of zprezto
 source_if_present "$DOTFILES/bash/prompt.bash"
 source_if_present "$DOTFILES/bash/aliases.bash"
-source_if_present "$DOTFILES/python/virtualenvwraper.sh"
-source_if_present "$DOTFILES/ruby/rbenv.sh"
-source_if_present "$DOTFILES/system/unarchive.sh"
+source_if_present "$DOTFILES/bash/unarchive.sh"
 
 # Load all the shared files
 source_if_present "$DOTFILES/system/load.sh"
 
 # Load completion scripts
-source_files_by_name "bash_completion"
+
+source_if_present "$(brew --prefix)/etc/bash_completion"

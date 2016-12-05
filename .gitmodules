@@ -1,27 +1,30 @@
-[submodule "vim/vim.symlink/bundle/nerdtree"]
-	path = vim/vim.symlink/bundle/nerdtree
+[submodule "vim/bundle/nerdtree"]
+	path = vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree.git
-[submodule "vim/vim.symlink/bundle/snipmate.vim"]
-	path = vim/vim.symlink/bundle/snipmate.vim
+[submodule "vim/bundle/snipmate.vim"]
+	path = vim/bundle/snipmate.vim
 	url = https://github.com/msanders/snipmate.vim.git
-[submodule "vim/vim.symlink/bundle/vim-markdown"]
-	path = vim/vim.symlink/bundle/vim-markdown
+[submodule "vim/bundle/vim-markdown"]
+	path = vim/bundle/vim-markdown
 	url = https://github.com/hallison/vim-markdown.git
-[submodule "vim/vim.symlink/bundle/vim-ragtag"]
-	path = vim/vim.symlink/bundle/vim-ragtag
+[submodule "vim/bundle/vim-ragtag"]
+	path = vim/bundle/vim-ragtag
 	url = https://github.com/tpope/vim-ragtag.git
-[submodule "vim/vim.symlink/bundle/vim-repeat"]
-	path = vim/vim.symlink/bundle/vim-repeat
+[submodule "vim/bundle/vim-repeat"]
+	path = vim/bundle/vim-repeat
 	url = https://github.com/tpope/vim-repeat.git
-[submodule "vim/vim.symlink/bundle/vim-surround"]
-	path = vim/vim.symlink/bundle/vim-surround
+[submodule "vim/bundle/vim-surround"]
+	path = vim/bundle/vim-surround
 	url = https://github.com/tpope/vim-surround.git
-[submodule "vim/vim.symlink/bundle/jshint.vim"]
-	path = vim/vim.symlink/bundle/jshint.vim
-	url = https://github.com/wookiehangover/jshint.vim.git
-[submodule "vim/vim.symlink/bundle/vim-javascript"]
-	path = vim/vim.symlink/bundle/vim-javascript
+[submodule "vim/bundle/vim-javascript"]
+	path = vim/bundle/vim-javascript
 	url = git://github.com/pangloss/vim-javascript.git
 [submodule "zprezto"]
 	path = zprezto
 	url = https://github.com/craveytrain/prezto.git
+[submodule "vim/bundle/vim-pathogen"]
+	path = vim/bundle/vim-pathogen
+	url = https://github.com/tpope/vim-pathogen.git
+[submodule "vim/bundle/syntastic"]
+	path = vim/bundle/syntastic
+	url = https://github.com/vim-syntastic/syntastic.git

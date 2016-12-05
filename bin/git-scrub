@@ -1,61 +1,35 @@
-#!/usr/bin/env python
+#!/bin/bash
+# git-cleanup-repo
+#
+# Author: Rob Miller <rob@bigfish.co.uk>
+# Adapted from the original by Yorick Sijsling
 
-import logging
-from argparse import ArgumentParser
-import subprocess
+git checkout master &> /dev/null
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+# Make sure we're working with the most up-to-date version of master.
+git fetch
 
+# Prune obsolete remote tracking branches. These are branches that we
+# once tracked, but have since been deleted on the remote.
+git remote prune origin
 
-def main():
-    parser = ArgumentParser(description='Scrub remote deleted branches from local and remote tracking branches.')
-    parser.add_argument('remote', nargs='?', help='Specify the remote [origin]')
+# List all the branches that have been merged fully into master, and
+# then delete them. We use the remote master here, just in case our
+# local master is out of date.
+git branch --merged origin/master | grep -v 'master$' | xargs git branch -d
 
-    args = parser.parse_args()
+# Now the same, but including remote branches.
+MERGED_ON_REMOTE=`git branch -r --merged origin/master | sed 's/ *origin\///' | grep -v 'master$'`
 
-    remote = args.remote or 'origin'
+if [ "$MERGED_ON_REMOTE" ]; then
+	echo "The following remote branches are fully merged and will be removed:"
+	echo $MERGED_ON_REMOTE
 
-    delete_all = False
-
-    branches, _ = call_command('git remote prune %s' % remote)
-    branches = branches.splitlines()
-
-    for branch in branches:
-        branch = branch.strip()
-
-        if branch.startswith('*'):
-            print branch
-            branch = branch.replace('* [pruned] %s/' % remote, '')
-
-            logging.debug('branch: %s' % branch)
-
-            stdout, stderr = call_command('git branch -d %s' % branch)
-            print stdout
-
-            if 'not fully merged' in stderr:
-                if delete_all is True:
-                    delete_local_branch(branch)
-                else:
-                    print stderr.splitlines()[0]
-                    override = raw_input('Delete %s branch with prejudice? (Y, N, A)' % branch)
-                    if override in ['A', 'a']:
-                        delete_all = True
-                        delete_local_branch(branch)
-                    elif override in ['Y', 'y']:
-                        delete_local_branch(branch)
-                    else:
-                        print '%s branch skipped' % branch
-
-
-def delete_local_branch(branch):
-    stdout, stderr = call_command('git branch -D %s' % branch)
-    print stdout
-
-
-def call_command(command):
-    process = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return process.communicate()
-
-
-if __name__ == "__main__":
-    main()
+	read -p "Continue (y/N)? "
+	if [ "$REPLY" == "y" ]; then
+		git branch -r --merged origin/master | sed 's/ *origin\///' \
+			| grep -v 'master$' | xargs -I% git push origin :% 2>&1 \
+			| grep --colour=never 'deleted'
+		echo "Done!"
+	fi
+fi
