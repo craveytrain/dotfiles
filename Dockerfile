@@ -6,11 +6,11 @@ ENV SSH_CONNECTION=1
 
 # Create mount point for host directory
 VOLUME /root/.dotfiles
-# Copy files over so you can run bootstrap but will be overwritten
+# Copy files over so you can run `install` but will be overwritten
 COPY . /root/.dotfiles/
 
 # Install ZSH
 RUN apt-get update
-RUN apt-get install -y zsh git
+RUN apt-get install -y zsh git python
 
-RUN /root/.dotfiles/bootstrap
+RUN /root/.dotfiles/install

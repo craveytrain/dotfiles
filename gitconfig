@@ -1,0 +1,114 @@
+[alias]
+  co = checkout
+  br = branch
+  st = status -sb
+  rb = rebase
+  rbi = rebase -i
+  rba = rebase --abort
+  rbc = rebase --continue
+  rbs = rebase --skip
+  amend = commit --amend
+  ig = ignore
+  undo = reset --soft HEAD^
+  l = log --no-merges
+  ls = log --stat=,80 --no-merges
+
+  lo = log --no-merges HEAD..origin
+  lso = log --stat --no-merges HEAD..origin
+
+  lg = log --graph
+  lgo = log --graph HEAD..origin
+
+  ds = diff --stat -r
+  dso = diff --stat -r origin
+
+  up = !sh -c 'git fetch && git rebase -p origin/master' -
+  force = !sh -c 'git fetch && git reset --hard origin/${1:-$(git rev-parse --abbrev-ref HEAD)}' -
+  review = difftool origin/master...
+
+  branch-name = "!git rev-parse --abbrev-ref HEAD"
+  publish = "!git push -u origin $(git branch-name)"
+  unpublish = "!git push origin :$(git branch-name)"
+
+  message = log --format=%B -n 1
+
+  wipe = !sh -c 'git branch -D $1 && git push origin :$1' -
+
+  upgrade-submodules = submodule update --init --remote
+
+[branch]
+  autosetuprebase = always
+[clean]
+  requireForce = false
+[log]
+  date = relative
+[format]
+  pretty = format:%C(yellow)%h%Creset %C(blue)%d%Creset %s %C(green)(%an)%Creset %C(cyan)%cr%Creset
+[core]
+  excludesfile = ~/.gitignore_global
+  autocrlf = input
+  editor = /usr/bin/vim
+[pager]
+  diff = diff-so-fancy | less --tabs=4 -RFX
+  show = diff-so-fancy | less --tabs=4 -RFX
+[push]
+  default = current
+[fetch]
+  prune = true
+
+[color]
+  ui = always
+[color "diff"]
+  meta = yellow bold
+  commit = green bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+  whitespace = red reverse
+[color "diff-highlight"]
+  oldNormal = red bold
+  oldHighlight = "red bold 52"
+  newNormal = "green bold"
+  newHighlight = "green bold 22"
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[difftool]
+  prompt = false
+[mergetool]
+  keepBackup = false
+  prompt = false
+
+[filter "lfs"]
+  clean = git lfs clean %f
+  smudge = git lfs smudge %f
+  required = true
+
+# rewrites of repo paths
+[url "git@github.com:"]
+  insteadOf = "https://github.com/"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
+  pushInsteadOf = "https://github.com/"
+
+[url "git://github.com/"]
+  insteadOf = "github:"
+
+[url "git@gist.github.com:"]
+  pushInsteadOf = "gist:"
+  pushInsteadOf = "git://gist.github.com/"
+
+[url "git://gist.github.com/"]
+  insteadOf = "gist:"
+
+[include]
+  path = .gitconfig_local
+
+[credential]
+  helper = osxkeychain
