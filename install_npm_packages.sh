@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
 nodes=(
-  babel
+  babel-cli
   babel-eslint
   bookmarklet
   bower
   browserify
-  csscomb
-  csslint
   diff-so-fancy
   eslint
   eslint-plugin-json
@@ -16,10 +14,11 @@ nodes=(
   esformatter
   gulp
   grunt-cli
-  js-beautify
   sitespeed.io
+  stylefmt
+  stylelint
   svgo
 )
 
 echo "Installing the nodes"
-yarn global add "${nodes[@]}"
+yarn global add "${nodes[@]}" --prefix /usr/local

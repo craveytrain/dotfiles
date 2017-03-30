@@ -18,6 +18,7 @@ symlinks=(
   "gitignore_global"
   "gvimrc"
   "hgignore_global"
+  "stylelintrc.yaml"
   "vim"
   "vimrc"
   "zprezto/runcoms/zlogin"
