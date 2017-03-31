@@ -1,5 +1,5 @@
-#!/bin/bash
-# git-cleanup-repo
+#!/usr/bin/env bash
+# git-scrub
 #
 # Author: Rob Miller <rob@bigfish.co.uk>
 # Adapted from the original by Yorick Sijsling
