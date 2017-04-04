@@ -16,20 +16,16 @@ git remote prune origin
 # List all the branches that have been merged fully into master, and
 # then delete them. We use the remote master here, just in case our
 # local master is out of date.
-git branch --merged origin/master | grep -v 'master$' | xargs git branch -d
 
-# Now the same, but including remote branches.
-MERGED_ON_REMOTE=`git branch -r --merged origin/master | sed 's/ *origin\///' | grep -v 'master$'`
+MERGED_ON_REMOTE=`git branch --color=never --merged origin/master | grep -v "\*"`
 
 if [ "$MERGED_ON_REMOTE" ]; then
 	echo "The following remote branches are fully merged and will be removed:"
-	echo $MERGED_ON_REMOTE
+	echo $MERGED_ON_REMOTE | tr " " "\n"
 
 	read -p "Continue (y/N)? "
 	if [ "$REPLY" == "y" ]; then
-		git branch -r --merged origin/master | sed 's/ *origin\///' \
-			| grep -v 'master$' | xargs -I% git push origin :% 2>&1 \
-			| grep --colour=never 'deleted'
-		echo "Done!"
+    git push origin --delete $MERGED_ON_REMOTE
+    git br -d $MERGED_ON_REMOTE
 	fi
 fi
