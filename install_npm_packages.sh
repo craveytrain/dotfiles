@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 nodes=(
+  alfred-coolors
   babel-cli
   babel-eslint
   bookmarklet
