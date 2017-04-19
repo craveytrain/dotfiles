@@ -10,10 +10,6 @@ parserOptions:
     experimentalObjectRestSpread: true
   ecmaVersion: 6
   sourceType: module
-plugins:
-  - json
-  - html
-  - markdown
 root: true
 rules:
   accessor-pairs: 2

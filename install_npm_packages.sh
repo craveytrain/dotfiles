@@ -10,9 +10,6 @@ nodes=(
   browserify
   diff-so-fancy
   eslint
-  eslint-plugin-json
-  eslint-plugin-html
-  eslint-plugin-markdown
   esformatter
   generator-alfred
   gulp
