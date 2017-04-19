@@ -2,6 +2,7 @@
 
 nodes=(
   alfred-coolors
+  alfred-updater
   babel-cli
   babel-eslint
   bookmarklet
@@ -13,12 +14,14 @@ nodes=(
   eslint-plugin-html
   eslint-plugin-markdown
   esformatter
+  generator-alfred
   gulp
   grunt-cli
   sitespeed.io
   stylefmt
   stylelint
   svgo
+  yo
 )
 
 echo "Installing the nodes"
