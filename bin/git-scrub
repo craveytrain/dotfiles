@@ -25,7 +25,7 @@ if [ "$MERGED_ON_REMOTE" ]; then
 
 	read -p "Continue (y/N)? "
 	if [ "$REPLY" == "y" ]; then
-    git push origin --delete $MERGED_ON_REMOTE
     git br -d $MERGED_ON_REMOTE
+    git push origin --delete $MERGED_ON_REMOTE
 	fi
 fi
