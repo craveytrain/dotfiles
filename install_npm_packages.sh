@@ -6,7 +6,6 @@ nodes=(
   babel-cli
   babel-eslint
   bookmarklet
-  bower
   browserify
   diff-so-fancy
   eslint

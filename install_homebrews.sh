@@ -3,12 +3,11 @@
 brews=(
   ack
   bash
-  bash_completion
   coreutils
   doctl
   findutils
   git
-  homebrew/dupes/grep
+  grep
   httpie
   hub
   hugo
@@ -41,9 +40,7 @@ hash brew 2>/dev/null || {
 echo "Updating and upgrading homebrew recipes"
 brew update
 brew upgrade
-brew tap homebrew/dupes
 brew tap ravenac95/sudolikeaboss
-brew tap homebrew/completions
 
 echo "Brewing binaries"
 brew install "${brews[@]}"
