@@ -5,28 +5,30 @@ DOTFILES="$HOME/$DIR"
 GIT_REPO="${DOTFILES_GIT_REPO-craveytrain/dotfiles}"
 
 # Symlink all the things!
-symlinks=(
-  "ackrc"
-  "bash/bash_profile"
-  "bash/bashrc"
-  "dir_colors"
-  "editorconfig"
-  "esformatter"
-  "eslintrc.yaml"
-  "eslintignore"
-  "gitconfig"
-  "gitignore_global"
-  "gvimrc"
-  "hgignore_global"
-  "stylelintrc.yaml"
-  "vim"
-  "vimrc"
-  "zprezto/runcoms/zlogin"
-  "zprezto/runcoms/zpreztorc"
-  "zprezto/runcoms/zprofile"
-  "zprezto/runcoms/zshenv"
-  "zprezto/runcoms/zshrc"
-)
+declare -A symlinks
+symlinks["ackrc"]=
+symlinks["atom/config.cson"]=".atom/config.cson"
+symlinks["atom/package.list"]=".atom/package.list"
+symlinks["atom/snippets.cson"]=".atom/snippets.cson"
+symlinks["bash/bash_profile"]=
+symlinks["bash/bashrc"]=
+symlinks["dir_colors"]=
+symlinks["editorconfig"]=
+symlinks["esformatter"]=
+symlinks["eslintrc.yaml"]=
+symlinks["eslintignore"]=
+symlinks["gitconfig"]=
+symlinks["gitignore_global"]=
+symlinks["gvimrc"]=
+symlinks["hgignore_global"]=
+symlinks["stylelintrc.yaml"]=
+symlinks["vim"]=
+symlinks["vimrc"]=
+symlinks["zprezto/runcoms/zlogin"]=
+symlinks["zprezto/runcoms/zpreztorc"]=
+symlinks["zprezto/runcoms/zprofile"]=
+symlinks["zprezto/runcoms/zshenv"]=
+symlinks["zprezto/runcoms/zshrc"]=
 
 # Grab dotfiles if they aren't already installed
 if [ ! -d "$DOTFILES" ]; then
@@ -44,23 +46,18 @@ if [ ! -d "$DOTFILES" ]; then
   fi
 fi
 
-for file in "${symlinks[@]}"; do
-  NEW_FILE="$HOME/.$(basename $file)"
+for src in "${!symlinks[@]}"; do
+  NEW_FILE="$HOME/${symlinks[$src]:-.$(basename $src)}"
 
   # If the file already exists (just not a symlink), back it up
-  if [ -e "$NEW_FILE" ]; then
-    if [ -L "$NEW_FILE" ]; then
-      rm "$NEW_FILE"
-    else
-      BASE="$(basename $NEW_FILE)"
-      echo "Backup: $BASE => ${BASE#.}.backup"
-      mv "$NEW_FILE" "$HOME/${BASE#.}.backup"
-    fi
+  if [ -e "$NEW_FILE" ] && [ ! -L "$NEW_FILE" ]; then
+    BASE="$(basename $NEW_FILE)"
+    echo "Backup: $BASE -> ${BASE#.}.backup"
+    mv "$NEW_FILE" "$HOME/${BASE#.}.backup"
   fi
 
   # Symlink the file, replacing the old one
-  echo "Symlink: $NEW_FILE -> $DOTFILES/$file";
-  ln -s "$DOTFILES/$file" "$NEW_FILE"
+  ln -fs "$DOTFILES/$src" "$NEW_FILE"
 done
 
 echo "Please restart your shell"
