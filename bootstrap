@@ -48,12 +48,23 @@ fi
 
 for src in "${!symlinks[@]}"; do
   NEW_FILE="$HOME/${symlinks[$src]:-.$(basename $src)}"
+  DIR="$(dirname $NEW_FILE)"
 
   # If the file already exists (just not a symlink), back it up
   if [ -e "$NEW_FILE" ] && [ ! -L "$NEW_FILE" ]; then
     BASE="$(basename $NEW_FILE)"
     echo "Backup: $BASE -> ${BASE#.}.backup"
-    mv "$NEW_FILE" "$HOME/${BASE#.}.backup"
+    mv "$NEW_FILE" "$DIR/${BASE#.}.backup"
+  fi
+
+  # If the diretory for the file does't not exist, create it
+  if [ ! -d $DIR ]; then
+    mkdir -p $DIR
+  fi
+
+  # if directory, remove it so it will be created again
+  if [ -d "$NEW_FILE" ]; then
+    rm "$NEW_FILE"
   fi
 
   # Symlink the file, replacing the old one
