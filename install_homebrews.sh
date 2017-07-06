@@ -18,7 +18,6 @@ brews=(
   mobile-shell
   ngrep
   node
-  nvm
   phantomjs
   python
   rbenv

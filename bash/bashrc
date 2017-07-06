@@ -40,6 +40,7 @@ source_if_present /etc/bashrc
 source_if_present "$DOTFILES/bash/prompt.bash"
 source_if_present "$DOTFILES/bash/aliases.bash"
 source_if_present "$DOTFILES/bash/unarchive.sh"
+source_if_present "$DOTFILES/bash/nvm.sh"
 
 # Load all the shared files
 source_if_present "$DOTFILES/system/load.sh"
