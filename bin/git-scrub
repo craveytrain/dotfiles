@@ -12,6 +12,16 @@ git fetch
 # Prune obsolete remote tracking branches. These are branches that we
 # once tracked, but have since been deleted on the remote.
 git remote prune origin
+ORPHANED_LOCAL_BRANCHES=`git branch -vv --color=never | grep 'origin/.*: gone]' | awk '{print $1}'`
+if [ "$ORPHANED_LOCAL_BRANCHES" ]; then
+	echo "Local orphaned branches:"
+	echo $ORPHANED_LOCAL_BRANCHES | tr " " "\n"
+
+	read -p "Force delete (y/N)? "
+	if [ "$REPLY" == "y" ]; then
+		git br -D $ORPHANED_LOCAL_BRANCHES
+	fi
+fi
 
 # List all the branches that have been merged fully into master, and
 # then delete them. We use the remote master here, just in case our
