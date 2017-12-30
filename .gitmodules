@@ -28,3 +28,6 @@
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
 	url = https://github.com/vim-syntastic/syntastic.git
+[submodule "zsh/zsh-nvm"]
+	path = zsh/zsh-nvm
+	url = git@github.com:lukechilds/zsh-nvm.git
