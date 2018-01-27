@@ -7,11 +7,10 @@
 git checkout master &> /dev/null
 
 # Make sure we're working with the most up-to-date version of master.
-git fetch
-
 # Prune obsolete remote tracking branches. These are branches that we
 # once tracked, but have since been deleted on the remote.
-git remote prune origin
+git fetch -p origin
+
 ORPHANED_LOCAL_BRANCHES=`git branch -vv --color=never | grep 'origin/.*: gone]' | awk '{print $1}'`
 if [ "$ORPHANED_LOCAL_BRANCHES" ]; then
 	echo "Local orphaned branches:"
