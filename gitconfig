@@ -9,7 +9,7 @@
   rbs = rebase --skip
   amend = commit --amend
   ig = ignore
-  undo = reset --soft HEAD^
+  undo = reset HEAD~
   l = log --no-merges
   ls = log --stat=,80 --no-merges
 
