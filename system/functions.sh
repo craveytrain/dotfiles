@@ -49,3 +49,9 @@ digg () {
 rule () {
   printf "%$(tput cols)s\n"|tr " " "─"
 }
+
+## What is running on provided port
+## Currently mac only
+port () {
+  lsof -n -i4TCP:"$1" | grep LISTEN
+}
