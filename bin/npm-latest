@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# echo nicely formatted upgrade results
+npm outdated
+
+UPGRADE_ALL=false
+UPGRADABLES=""
+
+# iterate through
+for pkg in $(npm outdated --parseable | cut -d: -f4) ; do
+  if [ $UPGRADE_ALL = false ]; then
+    read -p "Upgrade $pkg (Y/n/a)? "
+    # if no, skip this package
+  	if [ "$REPLY" == "n" ]; then
+      continue
+    # if (a)ll, don't ask any more
+    elif [ "$REPLY" == "a" ]; then
+      UPGRADE_ALL=true
+  	fi
+  fi
+
+  # add current package to upgradeables
+  UPGRADABLES="$UPGRADABLES $pkg"
+done
+
+if [ -n  "$UPGRADABLES" ]; then
+  npm install $UPGRADABLES
+fi
