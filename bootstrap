@@ -7,9 +7,6 @@ GIT_REPO="${DOTFILES_GIT_REPO-craveytrain/dotfiles}"
 # Symlink all the things!
 declare -A symlinks
 symlinks["ackrc"]=
-symlinks["atom/config.cson"]=".atom/config.cson"
-symlinks["atom/package.list"]=".atom/package.list"
-symlinks["atom/snippets.cson"]=".atom/snippets.cson"
 symlinks["bash/bash_profile"]=
 symlinks["bash/bashrc"]=
 symlinks["dir_colors"]=
