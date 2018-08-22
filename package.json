@@ -10,5 +10,11 @@
   "private": true,
   "preferGlobal": true,
   "author": "Mike Cravey <techie@craveytrain.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "nativefier": "^7.6.7"
+  },
+  "scripts": {
+    "postinstall": "./install_apps.js"
+  }
 }
