@@ -18,6 +18,12 @@ brews=(
   mobile-shell
   ngrep
   node
+  nodenv
+  "nodenv/nodenv/nodenv-aliases"
+  "nodenv/nodenv/nodenv-default-packages"
+  "nodenv/nodenv/nodenv-man"
+  "nodenv/nodenv/nodenv-package-rehash"
+  "nodenv/nodenv/nodenv-vars"
   phantomjs
   python
   rbenv
@@ -39,10 +45,12 @@ hash brew 2>/dev/null || {
 echo "Updating and upgrading homebrew recipes"
 brew update
 brew upgrade
-brew tap ravenac95/sudolikeaboss
+brew tap "ravenac95/sudolikeaboss"
+brew tap "nodenv/nodenv"
 
 echo "Brewing binaries"
 brew install "${brews[@]}"
+
 
 echo "Cleaning up your mess"
 brew cleanup
