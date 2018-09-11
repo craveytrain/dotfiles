@@ -3,22 +3,18 @@
 nodes=(
   alfred-coolors
   alfred-updater
+  bash-language-server
   babel-cli
   babel-eslint
   bookmarklet
-  browserify
   diff-so-fancy
   eslint
-  esformatter
   generator-alfred
-  gulp
-  grunt-cli
   sitespeed.io
-  stylefmt
   stylelint
   svgo
   yo
 )
 
 echo "Installing the nodes"
-yarn global add "${nodes[@]}" --prefix /usr/local
+npm i -g "${nodes[@]}"
