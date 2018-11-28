@@ -5,8 +5,6 @@ declare -A repos
 repos["powerline_fonts"]="https://github.com/powerline/fonts.git"
 repos["solarized"]="https://github.com/altercation/solarized.git"
 repos["google_fonts"]="https://github.com/google/fonts.git"
-repos["tomorrow_theme"]="https://github.com/chriskempson/tomorrow-theme.git"
-repos["FiraCode"]="https://github.com/tonsky/FiraCode.git"
 
 DIR="$HOME/Src"
 

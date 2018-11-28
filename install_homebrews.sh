@@ -10,11 +10,9 @@ brews=(
   grep
   httpie
   hub
-  hugo
   imagemagick
   jq
   libyaml
-  mercurial
   mobile-shell
   ngrep
   node
@@ -24,10 +22,6 @@ brews=(
   "nodenv/nodenv/nodenv-man"
   "nodenv/nodenv/nodenv-package-rehash"
   "nodenv/nodenv/nodenv-vars"
-  phantomjs
-  python
-  rbenv
-  ruby-build
   shellcheck
   sudolikeaboss
   the_silver_searcher
