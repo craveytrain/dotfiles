@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# .bashrc
+
+# shortcut to this dotfiles path is $DOTFILES
+export DOT=".dotfiles"
+export DOTFILES="$HOME/$DOT"
+
+# keeping the paths simple
+export PATH=$HOME/bin:$DOTFILES/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/coreutils:$PATH
+
+# Don't clear the screen after quitting a manual page
+export MANPAGER="less -X"
+
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-F -g -i -M -R -S -w -X -z-4'
+
+# shellcheck source=.dotfiles
+source "$DOTFILES/bash/aliases.bash"
+
+# Load all the shared files
+# shellcheck source=.dotfiles
+source "$DOTFILES/system/init.bash"
+
+if type brew &>/dev/null; then
+  HOMEBREW_PREFIX=$(brew --prefix)
+  for COMPLETION in "$HOMEBREW_PREFIX"/etc/bash_completion.d/*
+  do
+    # shellcheck source=.dotfiles
+    [[ -f $COMPLETION ]] && source "$COMPLETION"
+  done
+  if [[ -f ${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh ]];
+  then
+    # shellcheck source=.dotfiles
+    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  fi
+fi
+
+# shellcheck source=.dotfiles
+source "$DOTFILES/bash/prompt.bash"
+
+# load nodenv
+if hash nodenv 2>/dev/null; then
+  eval "$(nodenv init - --no-rehash bash)"
+fi

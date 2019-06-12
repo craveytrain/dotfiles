@@ -1,0 +1,28 @@
+[submodule "zsh/modules/zsh-async"]
+	path = zsh/modules/zsh-async
+	url = https://github.com/mafredri/zsh-async.git
+	branch = master
+[submodule "zsh/modules/spaceship-prompt"]
+	path = zsh/modules/spaceship-prompt
+	url = https://github.com/craveytrain/spaceship-prompt.git
+	branch = master
+[submodule "zsh/modules/zsh-syntax-highlighting"]
+	path = zsh/modules/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+	branch = master
+[submodule "zsh/modules/zsh-history-substring-search"]
+	path = zsh/modules/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search.git
+	branch = master
+[submodule "zsh/modules/completion/external"]
+	path = zsh/modules/completion/external/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions.git
+	branch = master
+[submodule "zsh/modules/completion/external/zsh-better-npm-completion"]
+	path = zsh/modules/completion/external/zsh-better-npm-completion
+	url = https://github.com/lukechilds/zsh-better-npm-completion.git
+	branch = master
+[submodule "zsh/modules/autosuggestions/external"]
+	path = zsh/modules/autosuggestions/external
+	url = https://github.com/zsh-users/zsh-autosuggestions.git
+	branch = master
