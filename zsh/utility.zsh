@@ -2,6 +2,7 @@
 
 # Correct commands.
 setopt CORRECT
+setopt RC_QUOTES            # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
 
 # Reload profile
 alias reload!=". $HOME/.zshrc"
@@ -11,10 +12,16 @@ alias reload!=". $HOME/.zshrc"
 # noglob, you don't even need to quote the arguments.  For example,
 #
 # Usage: mmv *.c.orig orig/*.c
-
 alias mmv='noglob zmv -W'
 
-setopt RC_QUOTES            # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
+# emacs keyboard shortcuts
+bindkey -e
+
+# some nice shortcuts for iTerm2 to hook into
+bindkey "[D" backward-word
+bindkey "[C" forward-word
+bindkey "^[a" beginning-of-line
+bindkey "^[e" end-of-line
 
 # Expands .... to ../..
 function expand-dot-to-parent-directory-path {
@@ -26,11 +33,3 @@ function expand-dot-to-parent-directory-path {
 }
 zle -N expand-dot-to-parent-directory-path
 bindkey "." expand-dot-to-parent-directory-path
-
-# emacs keyboard shortcuts
-bindkey -e
-# some nice shortcuts for iTerm2 to hook into
-bindkey "[D" backward-word
-bindkey "[C" forward-word
-bindkey "^[a" beginning-of-line
-bindkey "^[e" end-of-line
