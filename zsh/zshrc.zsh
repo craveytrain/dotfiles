@@ -16,9 +16,9 @@ source "$ZSHDIR/history.zsh"
 source "$MODULES_DIR/completion/init.zsh"
 
 # These 3 must be at the end
-source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-source "$MODULES_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
 source "$MODULES_DIR/autosuggestions/init.zsh"
+source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
 source "$ZSHDIR/prompt.zsh"
 
 # load nodenv
