@@ -25,7 +25,7 @@ export LSCOLORS='gxfxcxdxbxGxDxabagacad'
 export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=1;36:cd=1;33:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
 
 # Grep
-export GREP_COLOR='37;45'           # BSD.
+export GREP_COLOR='1;90;103'           # BSD.
 export GREP_COLORS="mt=$GREP_COLOR" # GNU.
 
 # Browser
