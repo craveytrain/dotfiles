@@ -99,13 +99,14 @@ git_status () {
   git_root_dir="$(git rev-parse --show-cdup)"
 
   # If untracked files
+  # shellcheck disable=SC2086
   [[ "$(git ls-files --others --exclude-standard ${git_root_dir:-.})" != "" ]] && symbols+="?"
 
   # If modified files
-  [[ $(echo "$git_st" | egrep -c "^M") != 0 ]] && symbols+="✱"
+  [[ $(echo "$git_st" | grep -c -E "^M") != 0 ]] && symbols+="✱"
 
   # If modified files
-  [[ $(echo "$git_st" | egrep -c "^D") != 0 ]] && symbols+="✖"
+  [[ $(echo "$git_st" | grep -c -E "^D") != 0 ]] && symbols+="✖"
 
   # If added files
   [[ "$(git diff --staged --name-status)" != "" ]] && symbols+="✚"
@@ -117,7 +118,7 @@ git_status () {
 }
 
 # helper function
-count_lines() { echo "$1" | egrep -c "^$2" ; }
+count_lines() { echo "$1" | grep -c -E "^$2" ; }
 
 __prompt_command () {
   PS1="$(build_prompt)"

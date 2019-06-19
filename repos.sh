@@ -9,10 +9,10 @@ repos["google_fonts"]="https://github.com/google/fonts.git"
 DIR="$HOME/Src"
 
 if [ ! -d "$DIR" ]; then
-  mkdir $DIR
+  mkdir "$DIR"
 fi
 
-cd $DIR || exit
+cd "$DIR" || exit
 
 for repo in "${!repos[@]}"; do
   if [ ! -d "$repo" ]; then
