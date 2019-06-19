@@ -1,8 +1,9 @@
-workflow "Test on push" {
-  resolves = ["shellcheck"]
+workflow "Test" {
+  resolves = ["ShellCheck"]
   on = "push"
 }
 
-action "shellcheck" {
-  uses = "ludeeus/action-shellcheck@0.1.0"
+action "ShellCheck" {
+  uses = "actions/bin/shellcheck@master"
+  args = "*.sh"
 }
