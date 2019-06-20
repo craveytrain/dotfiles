@@ -12,7 +12,9 @@ headers () {
 # Status web server
 # Takes an optional argument of port, otherwise defaults to '8080'
 serve () {
-  if [[ $OSTYPE == linux* ]]; then
+  if command -v static-server >/dev/null 2>&1; then
+    static-server "$@"
+  elif [[ $OSTYPE == linux* ]]; then
     python2 -m SimpleHTTPServer "${1:-8080}"
   else
     python -m SimpleHTTPServer "${1:-8080}"
