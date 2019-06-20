@@ -1,0 +1,8 @@
+syntax on
+
+filetype indent plugin on
+
+set spelllang=en_us
+set spellfile=~/.vim/spell/en.utf-8.add
+
+set autoindent     " Use indent of previous line on new lines
