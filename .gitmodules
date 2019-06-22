@@ -3,7 +3,7 @@
 	url = https://github.com/mafredri/zsh-async.git
 	branch = master
 [submodule "zsh/modules/spaceship-prompt"]
-	path = zsh/modules/spaceship-prompt
+	path = zsh/modules/prompt/external/spaceship-prompt
 	url = https://github.com/craveytrain/spaceship-prompt.git
 	branch = master
 [submodule "zsh/modules/zsh-syntax-highlighting"]

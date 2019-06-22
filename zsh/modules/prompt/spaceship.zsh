@@ -1,6 +1,3 @@
-autoload -U promptinit; promptinit
-prompt spaceship
-
 # Spaceship Prompt config
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section

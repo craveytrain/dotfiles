@@ -19,7 +19,7 @@ source "$MODULES_DIR/completion/init.zsh"
 source "$MODULES_DIR/autosuggestions/init.zsh"
 source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
-source "$ZSHDIR/prompt.zsh"
+source "$MODULES_DIR/prompt/init.zsh"
 
 # load nodenv
 if whence nodenv >/dev/null; then
