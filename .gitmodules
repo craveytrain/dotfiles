@@ -26,3 +26,7 @@
 	path = zsh/modules/autosuggestions/external
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
 	branch = master
+[submodule "zsh/modules/zsh-prompt-benchmark"]
+	path = zsh/modules/zsh-prompt-benchmark
+	url = https://github.com/romkatv/zsh-prompt-benchmark.git
+	branch = master
