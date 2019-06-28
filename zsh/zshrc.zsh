@@ -14,12 +14,17 @@ source "$ZSHDIR/utility.zsh"
 # source_if_present "$DOTFILES/system/load.sh"
 source "$ZSHDIR/history.zsh"
 source "$MODULES_DIR/completion/init.zsh"
+source "$MODULES_DIR/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
 
 # These 3 must be at the end
 source "$MODULES_DIR/autosuggestions/init.zsh"
 source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
 source "$MODULES_DIR/prompt/init.zsh"
+
+plugins=(
+  zsh-prompt-benchmark
+)
 
 # load nodenv
 if whence nodenv >/dev/null; then
