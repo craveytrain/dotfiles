@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 autoload -U promptinit; promptinit
 
 source "${0:h}/spaceship.zsh"

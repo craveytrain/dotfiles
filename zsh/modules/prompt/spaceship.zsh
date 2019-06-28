@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 # Spaceship Prompt config
 SPACESHIP_PROMPT_ORDER=(
   user          # Username section

@@ -19,9 +19,11 @@ brews=(
   nodenv
   "nodenv/nodenv/nodenv-aliases"
   "nodenv/nodenv/nodenv-default-packages"
+  "nodenv/nodenv/nodenv-package-json-engine"
   "nodenv/nodenv/nodenv-man"
   "nodenv/nodenv/nodenv-package-rehash"
   "nodenv/nodenv/nodenv-vars"
+  nodenv-nvmrc
   shellcheck
   sudolikeaboss
   the_silver_searcher
@@ -41,6 +43,7 @@ brew update
 brew upgrade
 brew tap "ravenac95/sudolikeaboss"
 brew tap "nodenv/nodenv"
+brew tap "ouchxp/nodenv"
 
 echo "Brewing binaries"
 brew install "${brews[@]}"

@@ -1,5 +1,9 @@
+#!/usr/bin/env zsh
+
 # Original location: https://github.com/romkatv/dotfiles-public/blob/master/.purepower.
 # If you copy this file, keep the link to the original and this sentence intact; you are encouraged to change everything else.
+
+autoload -Uz async && async
 
 # if not on a capable terminal, dumb it down
 [[ $TERM == xterm* ]] || : ${PURE_POWER_MODE:=portable}
@@ -45,6 +49,7 @@
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
+    custom_nodenv
   )
 
   # general
@@ -125,12 +130,7 @@
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_COLOR=2
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_ICON=$(_pp_s '%%' '⇶')
 
-  # node
-  typeset -g POWERLEVEL9K_NODE_ICON=$'\uf7d7'
-  typeset -g POWERLEVEL9K_NODE_VERSION_BACKGROUND='none'
-  typeset -g POWERLEVEL9K_NODE_VERSION_FOREGROUND='green'
-
   unfunction _pp_c _pp_s
 } "$@"
 
-# source "${0:h}/external/powerlevel10k/powerlevel10k.zsh-theme"
+source "${0:h}/plugins/nodenv.zsh"
