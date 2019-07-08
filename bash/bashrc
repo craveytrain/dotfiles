@@ -24,6 +24,10 @@ source "$DOTFILES/bash/aliases.bash"
 # shellcheck source=.dotfiles
 source "$DOTFILES/system/init.bash"
 
+# auto cd into directories
+shopt -s autocd
+shopt -s cdable_vars
+
 if type brew &>/dev/null; then
   HOMEBREW_PREFIX=$(brew --prefix)
   for COMPLETION in "$HOMEBREW_PREFIX"/etc/bash_completion.d/*

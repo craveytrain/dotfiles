@@ -32,3 +32,14 @@ export GREP_COLORS="mt=$GREP_COLOR" # GNU.
 if [[ "$OSTYPE" == darwin* ]]; then
   export BROWSER='open'
 fi
+
+CDPATH=".:~"
+add_to_cdpath() {
+  if [[ -d "$1" ]]; then
+    cdpath+=$1
+    CDPATH="$CDPATH:$1"
+  fi
+}
+add_to_cdpath "$HOME/Work"
+add_to_cdpath "$HOME/Projects"
+add_to_cdpath "$HOME/.dotfiles"
