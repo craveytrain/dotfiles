@@ -15,6 +15,7 @@ source "$ZSHDIR/utility.zsh"
 source "$ZSHDIR/history.zsh"
 source "$MODULES_DIR/completion/init.zsh"
 source "$MODULES_DIR/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
+source "$MODULES_DIR/alias-tips/alias-tips.plugin.zsh"
 
 # These 3 must be at the end
 source "$MODULES_DIR/autosuggestions/init.zsh"
