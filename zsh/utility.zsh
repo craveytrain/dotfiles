@@ -33,3 +33,6 @@ function expand-dot-to-parent-directory-path {
 }
 zle -N expand-dot-to-parent-directory-path
 bindkey "." expand-dot-to-parent-directory-path
+
+# auto change directory
+setopt auto_cd
