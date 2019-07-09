@@ -42,4 +42,3 @@ add_to_cdpath() {
 }
 add_to_cdpath "$HOME/Work"
 add_to_cdpath "$HOME/Projects"
-add_to_cdpath "$HOME/.dotfiles"
