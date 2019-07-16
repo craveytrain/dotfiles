@@ -45,6 +45,7 @@
     status                  # exit code of the last command
     command_execution_time  # duration of the last command
     background_jobs         # presence of background jobs
+    nodenv
   )
 
   # general
@@ -126,9 +127,9 @@
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_ICON=$(_pp_s '%%' '⇶')
 
   # node
-  typeset -g POWERLEVEL9K_NODE_ICON=$'\uf7d7'
-  typeset -g POWERLEVEL9K_NODE_VERSION_BACKGROUND='none'
-  typeset -g POWERLEVEL9K_NODE_VERSION_FOREGROUND='green'
+  typeset -g POWERLEVEL9K_NODE_ICON=$' \uf7d7'
+  typeset -g POWERLEVEL9K_NODENV_BACKGROUND='none'
+  typeset -g POWERLEVEL9K_NODENV_FOREGROUND='green'
 
   unfunction _pp_c _pp_s
 } "$@"
