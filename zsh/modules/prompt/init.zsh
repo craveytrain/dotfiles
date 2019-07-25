@@ -1,6 +1,2 @@
-autoload -U promptinit; promptinit
-
-source "${0:h}/spaceship.zsh"
-source "${0:h}/powerlevel10k.zsh"
-
-prompt powerlevel10k
+source "${0:h}/external/powerlevel10k/powerlevel10k.zsh-theme"
+source "${0:h}/p10k.zsh"
