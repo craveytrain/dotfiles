@@ -28,7 +28,8 @@ fi
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
       # =========================[ Line #1 ]=========================
-      # os_icon               # os identifier
+      os_icon                 # os identifier
+      context                 # user@host
       dir                     # current directory
       vcs                     # git status
       # =========================[ Line #2 ]=========================
@@ -48,13 +49,12 @@ fi
       # virtualenv            # python virtual environment (https://docs.python.org/3/library/venv.html)
       # anaconda              # conda environment (https://conda.io/)
       # pyenv                 # python environment (https://github.com/pyenv/pyenv)
-      # nodenv                # node.js version from nodenv (https://github.com/nodenv/nodenv)
-      # nvm                   # node.js version from nvm (https://github.com/nvm-sh/nvm)
+      nodenv                # node.js version from nodenv (https://github.com/nodenv/nodenv)
+      nvm                   # node.js version from nvm (https://github.com/nvm-sh/nvm)
       # nodeenv               # node.js environment (https://github.com/ekalinin/nodeenv)
       # node_version          # node.js version
       # kubecontext           # current kubernetes context (https://kubernetes.io/)
       # nordvpn               # nordvpn connection status, linux only (https://nordvpn.com/)
-      context                 # user@host
       # =========================[ Line #2 ]=========================
       newline
       # public_ip             # public IP address
@@ -89,9 +89,10 @@ fi
   # such as POWERLEVEL9K_LOCK_ICON='⭐'. This will change the icon in every segment that uses
   # LOCK_ICON as default icon. If this paragraph looks confusing, forget what it says.
   #
+
   # Note: Many default icons cannot be displayed with system fonts. You'll need to install a
   # Powerline font to use them. See POWERLEVEL9K_MODE below.
-  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=
+  typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION='${P9K_VISUAL_IDENTIFIER}'
 
   # This option doesn't make a difference unless you've enabled default icons for all or some
   # prompt segments (see POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION above). Default icons depend on
@@ -135,7 +136,7 @@ fi
   typeset -g POWERLEVEL9K_RULER_FOREGROUND=237
 
   # Filler between left and right prompt on the first prompt line. You can set it to '·' or '─'
-  # to make it easier to see the alignment between left and right prompt and to separate prompt
+  # to make it easier to see the alignment between left xand right prompt and to separate prompt
   # from command output. It serves the same purpose as ruler (see above) without increasing
   # the number of prompt lines. You'll probably want to set POWERLEVEL9K_SHOW_RULER=false
   # if using this. You might also like POWERLEVEL9K_PROMPT_ADD_NEWLINE=false for more compact
@@ -156,7 +157,7 @@ fi
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=212
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=7
   # Display this icon instead of the default.
   # typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⭐'
 
@@ -258,7 +259,7 @@ fi
   vcs+='${${VCS_STATUS_COMMITS_BEHIND:#0}:+ %76F⇣${VCS_STATUS_COMMITS_BEHIND}}'
   # ⇡42 if ahead of the remote; no leading space if also behind the remote: ⇣42⇡42.
   # If you want '⇣42 ⇡42' instead, replace '${${(M)VCS_STATUS_COMMITS_BEHIND:#0}:+ }' with ' '.
-  vcs+='${${VCS_STATUS_COMMITS_AHEAD:#0}:+${${(M)VCS_STATUS_COMMITS_BEHIND:#0}:+ }%76F⇡${VCS_STATUS_COMMITS_AHEAD}}'
+  vcs+='${${VCS_STATUS_COMMITS_AHEAD:#0}:+ %76F⇡${VCS_STATUS_COMMITS_AHEAD}}'
   # *42 if have stashes.
   vcs+='${${VCS_STATUS_STASHES:#0}:+ %76F*${VCS_STATUS_STASHES}}'
   # 'merge' if the repo is in an unusual state.
@@ -275,7 +276,7 @@ fi
   vcs="\${P9K_CONTENT:-$vcs}"
 
   # Branch icon. Set this parameter to '\uF126 ' for the popular Powerline branch icon.
-  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON=
+  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\uF126 '
 
   # Disable the default Git status formatting.
   typeset -g POWERLEVEL9K_VCS_DISABLE_GITSTATUS_FORMATTING=true
@@ -326,6 +327,8 @@ fi
   # Duration format: 1d 2h 3m 4s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FORMAT='d h m s'
 
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_VISUAL_IDENTIFIER_EXPANSION=
+
   #######################[ background_jobs: presence of background jobs ]#######################
   # Don't show the number of background jobs.
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=false
@@ -347,7 +350,7 @@ fi
   typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=244
   # Context color when running with privileges.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=11
-  # Don't show context unless running with privileges on in SSH.
+  # Don't show context unless running with privileges or in SSH.
   typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_{CONTENT,VISUAL_IDENTIFIER}_EXPANSION=
   typeset -g POWERLEVEL9K_ALWAYS_SHOW_CONTEXT=true
 
