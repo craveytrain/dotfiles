@@ -1,8 +1,5 @@
 #!/usr/bin/env zsh
 
-# enable for profiling
-# zmodload zsh/zprof
-
 # Executes commands at the start of an interactive session.
 ZSHDIR="$DOTFILES/zsh"
 MODULES_DIR="$ZSHDIR/modules"
@@ -31,6 +28,3 @@ plugins=(
 if whence nodenv >/dev/null; then
   eval "$(nodenv init - --no-rehash zsh)"
 fi
-
-# enable for profiling
-# zprof
