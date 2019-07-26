@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
 brews=(
-  ack
   bash
   coreutils
-  doctl
   findutils
   fontforge
   git
@@ -13,7 +11,7 @@ brews=(
   hub
   imagemagick
   jq
-  libyaml
+  mas
   mobile-shell
   ngrep
   node
@@ -24,7 +22,6 @@ brews=(
   "nodenv/nodenv/nodenv-package-rehash"
   "nodenv/nodenv/nodenv-vars"
   shellcheck
-  sudolikeaboss
   the_silver_searcher
   wget
   yarn
@@ -32,6 +29,16 @@ brews=(
 )
 
 casks=(
+  1password
+  alfred
+  anylist
+  atom
+  bettertouchtool
+  blue-jeans
+  docker
+  dropbox
+  figma
+  firefox
   font-fira-code
   font-firacode-nerd-font
   font-firacode-nerd-font-mono
@@ -42,6 +49,25 @@ casks=(
   font-source-code-pro
   font-sourcecodepro-nerd-font
   font-sourcecodepro-nerd-font-mono
+  google-chrome
+  homebrew/cask-versions/google-chrome-canary
+  graphiql
+  imagealpha
+  imageoptim
+  iterm2
+  kaleidoscope
+  lego-mindstorms-ev3
+  postman
+  rocket
+  signal
+  slack
+  homebrew/cask-drivers/sonos
+  spotify
+  textexpander
+  typora
+  visual-studio-code
+  ubiquiti-unifi-controller
+  zoomus
 )
 
 # Install if we don't have it
