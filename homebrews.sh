@@ -33,7 +33,6 @@ casks=(
   alfred
   anylist
   atom
-  bettertouchtool
   blue-jeans
   docker
   dropbox

@@ -18,5 +18,6 @@ apps["408981434"]="iMovie"
 apps["1091189122"]="Bear"
 apps["1176895641"]="Spark"
 apps["924726344"]="Deliveries"
+apps["419330170"]="Moom"
 
 mas install "${!apps[@]}"
