@@ -1,1 +1,3 @@
-.zwc
+*.zwc
+.zcompdump
+.zhistory

@@ -16,10 +16,7 @@ symlinks["git/gitconfig"]=
 symlinks["git/gitignore_global"]=
 symlinks["vim/vimrc"]=".vim/vimrc"
 symlinks["vim/spell/en.utf-8.add"]=".vim/spell/en.utf-8.add"
-symlinks["zsh/zlogin.zsh"]=".zlogin"
-symlinks["zsh/zprofile.zsh"]=".zprofile"
-symlinks["zsh/zshenv.zsh"]=".zshenv"
-symlinks["zsh/zshrc.zsh"]=".zshrc"
+symlinks["zsh/zshenv"]=
 
 # Grab dotfiles if they aren't already installed
 if [ ! -d "$DOTFILES" ]; then
@@ -59,7 +56,7 @@ for src in "${!symlinks[@]}"; do
   fi
 
   # Symlink the file, replacing the old one
-  ln -fs "$DOTFILES/$src" "$NEW_FILE"
+  ln -fs "$DOT/$src" "$NEW_FILE"
 done
 
 echo "Please restart your shell"
