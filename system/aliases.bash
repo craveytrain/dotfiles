@@ -20,15 +20,13 @@ alias e='${(z)VISUAL:-${(z)EDITOR}}'
 # shellcheck disable=SC2139
 alias mkdir="${aliases[mkdir]:-mkdir} -p"
 
-if hash dircolors 2>/dev/null; then
-  # alias ls to use symbols
-  # shellcheck disable=SC2139
-  alias ls="${aliases[ls]:-ls} --color=auto -F"
+if [ $PLATFORM = 'LINUX' ]; then
+  alias ls='ls --color=auto -F'
+elif hash gls 2>/dev/null; then
+  # use GNU ls cause it supports 256 colors and symbols
+  alias ls='gls --color=auto -F'
 else
-  export CLICOLOR=1
-  # alias ls to use symbols
-  # shellcheck disable=SC2139
-  alias ls="${aliases[ls]:-ls} -F"
+  alias ls="${aliases[ls]:-ls} -F -G"
 fi
 
 alias l='ls -1A'         # Lists in one column, hidden files.
