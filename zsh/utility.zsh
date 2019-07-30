@@ -5,7 +5,7 @@ setopt CORRECT
 setopt RC_QUOTES            # Allow 'Henry''s Garage' instead of 'Henry'\''s Garage'.
 
 # Reload profile
-alias reload!=". $HOME/.zshrc"
+alias reload!="exec zsh"
 
 # This does the same thing as the first command, but with automatic conversion
 # of the wildcards into the appropriate syntax.  If you combine this with

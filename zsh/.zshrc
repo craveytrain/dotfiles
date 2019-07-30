@@ -8,8 +8,8 @@ fpath=($MODULES_DIR/functions $fpath)
 
 source "$DOTFILES/system/init.bash"
 source "$ZSHDIR/utility.zsh"
-# source_if_present "$DOTFILES/system/load.sh"
 source "$ZSHDIR/history.zsh"
+source "$ZSHDIR/title.zsh"
 source "$MODULES_DIR/completion/init.zsh"
 source "$MODULES_DIR/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
 source "$MODULES_DIR/alias-tips/alias-tips.plugin.zsh"
