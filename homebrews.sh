@@ -2,6 +2,7 @@
 
 brews=(
   bash
+  brooklyn
   coreutils
   findutils
   fontforge
