@@ -2,10 +2,6 @@
 	path = zsh/modules/zsh-async
 	url = https://github.com/mafredri/zsh-async.git
 	branch = master
-[submodule "zsh/modules/spaceship-prompt"]
-	path = zsh/modules/prompt/external/spaceship-prompt
-	url = https://github.com/craveytrain/spaceship-prompt.git
-	branch = master
 [submodule "zsh/modules/zsh-syntax-highlighting"]
 	path = zsh/modules/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
@@ -14,7 +10,7 @@
 	path = zsh/modules/zsh-history-substring-search/external
 	url = https://github.com/zsh-users/zsh-history-substring-search.git
 	branch = master
-[submodule "zsh/modules/completion/external"]
+[submodule "zsh/modules/completion/external/zsh-completions"]
 	path = zsh/modules/completion/external/zsh-completions
 	url = https://github.com/zsh-users/zsh-completions.git
 	branch = master
@@ -33,4 +29,8 @@
 [submodule "zsh/modules/alias-tips"]
 	path = zsh/modules/alias-tips
 	url = https://github.com/djui/alias-tips.git
+	branch = master
+[submodule "zsh/modules/prompt/external/powerlevel10k"]
+	path = zsh/modules/prompt/external/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git
 	branch = master
