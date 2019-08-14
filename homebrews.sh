@@ -2,8 +2,8 @@
 
 brews=(
   bash
-  brooklyn
   coreutils
+  diff-so-fancy
   findutils
   fontforge
   git
@@ -30,11 +30,12 @@ brews=(
 )
 
 casks=(
-  1password
   alfred
   anylist
   atom
-  blue-jeans
+  brooklyn
+  caret
+  caprine
   docker
   dropbox
   figma
@@ -56,7 +57,6 @@ casks=(
   imageoptim
   iterm2
   kaleidoscope
-  lego-mindstorms-ev3
   postman
   rocket
   signal
@@ -67,6 +67,7 @@ casks=(
   typora
   visual-studio-code
   ubiquiti-unifi-controller
+  whatsapp
   zoomus
 )
 
