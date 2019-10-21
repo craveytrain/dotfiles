@@ -47,3 +47,6 @@ alias du='du -kh'
 
 # shellcheck disable=SC2139
 alias grep="${aliases[grep]:-grep} --color=auto"
+
+# nodenv build definitions
+export NODE_BUILD_DEFINITIONS="/usr/local/opt/node-build-update-defs/share/node-build"
