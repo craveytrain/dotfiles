@@ -22,6 +22,7 @@ brews=(
   "nodenv/nodenv/nodenv-man"
   "nodenv/nodenv/nodenv-package-rehash"
   "nodenv/nodenv/nodenv-vars"
+  "nodenv/nodenv/node-build-update-defs"
   shellcheck
   the_silver_searcher
   wget
@@ -37,7 +38,6 @@ casks=(
   caret
   caprine
   docker
-  dropbox
   figma
   firefox
   font-fira-code
@@ -51,7 +51,6 @@ casks=(
   font-sourcecodepro-nerd-font
   font-sourcecodepro-nerd-font-mono
   google-chrome
-  homebrew/cask-versions/google-chrome-canary
   graphiql
   imagealpha
   imageoptim
