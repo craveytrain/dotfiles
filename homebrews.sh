@@ -25,6 +25,7 @@ brews=(
   "nodenv/nodenv/node-build-update-defs"
   shellcheck
   the_silver_searcher
+  tldr
   wget
   yarn
   zsh
