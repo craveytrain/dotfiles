@@ -26,6 +26,7 @@ brews=(
   shellcheck
   the_silver_searcher
   tldr
+  trash
   wget
   yarn
   zsh
