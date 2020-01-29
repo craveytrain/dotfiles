@@ -36,3 +36,8 @@ rule () {
 port () {
   lsof -n -i4TCP:"$1" | grep LISTEN
 }
+
+lanscan () {
+  IP="$(ipconfig getifaddr en0)"
+  nmap -sn $IP/24
+}

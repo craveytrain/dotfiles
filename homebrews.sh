@@ -15,6 +15,7 @@ brews=(
   mas
   mobile-shell
   ngrep
+  nmap
   node
   nodenv
   "nodenv/nodenv/nodenv-aliases"
