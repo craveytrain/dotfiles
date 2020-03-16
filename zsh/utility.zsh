@@ -7,12 +7,15 @@ setopt RC_QUOTES            # Allow 'Henry''s Garage' instead of 'Henry'\''s Gar
 # Reload profile
 alias reload!="exec zsh"
 
+autoload zmv
 # This does the same thing as the first command, but with automatic conversion
 # of the wildcards into the appropriate syntax.  If you combine this with
 # noglob, you don't even need to quote the arguments.  For example,
 #
 # Usage: mmv *.c.orig orig/*.c
-alias mmv='noglob zmv -W'
+alias zmv='noglob zmv -W'
+alias zcp='zmv -C'
+alias zln='zmv -L'
 
 # emacs keyboard shortcuts
 bindkey -e
