@@ -21,8 +21,9 @@ brews=(
   "nodenv/nodenv/nodenv-aliases"
   "nodenv/nodenv/nodenv-default-packages"
   "nodenv/nodenv/nodenv-man"
+  "nodenv/nodenv/nodenv-nvmrc"
   "nodenv/nodenv/nodenv-package-rehash"
-  "nodenv/nodenv/nodenv-vars"
+  # "nodenv/nodenv/nodenv-vars"
   "nodenv/nodenv/node-build-update-defs"
   shellcheck
   the_silver_searcher
