@@ -111,7 +111,7 @@
   insteadOf = "gist:"
 
 [include]
-  path = .gitconfig_local
+  path = ~/.gitconfig_local
 
 [credential]
   helper = osxkeychain

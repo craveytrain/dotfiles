@@ -34,3 +34,7 @@
 	path = zsh/modules/prompt/external/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k.git
 	branch = master
+[submodule "dotbot"]
+	path = dotbot
+	url = https://github.com/anishathalye/dotbot
+	ignore = dirty

@@ -1,4 +1,5 @@
 # What it is?!
+
 This is my own personal dotfile repo. There are many others like it but this one is mine. If you're interested, feel free to fork, poach, whatever.
 
 ## Prompt
@@ -15,7 +16,7 @@ While I've gone full zsh on systems I have full control over, occasionally I hav
 
 ```bash
 # Boot the straps!
-curl https://raw.githubusercontent.com/craveytrain/dotfiles/master/bootstrap | bash
+git clone -q https://github.com/craveytrain/dotfiles .dotfiles && ./.dotfiles/install >/dev/null
 
 # Change shell to zsh (optional)
 chsh -s $(which zsh)
@@ -24,12 +25,11 @@ chsh -s $(which zsh)
 ```
 
 # Credits
+
+Thanks to [dotbot](https://github.com/anishathalye/dotbot) for finally getting me to throw out my custom bootstrapper.
+
 Thanks to [mschout](https://github.com/mschout) for all the help, especially on the bash stuff.
 
 Thanks to [holman](https://github.com/holman) for the inspiration for things such as the topical organization and prompt.
 
 And many others for your inspirations and perspirations.
-
-# TODO
-- install homebrew (if on a mac)
-- install git (optionally install ack, etc?)
