@@ -34,6 +34,8 @@
 
   message = log --format=%B -n 1
 
+  hash = "!git rev-parse --short HEAD"
+
   wipe = !sh -c 'git branch -D $1 && git push origin :$1' -
 
   upgrade-submodules = submodule update --init --remote
