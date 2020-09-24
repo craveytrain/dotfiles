@@ -60,9 +60,10 @@
   show = diff-so-fancy | less --tabs=4 -RFX
 [push]
   default = current
+[pull]
+	rebase = true
 [fetch]
   prune = true
-
 [color]
   ui = always
 [color "diff"]
