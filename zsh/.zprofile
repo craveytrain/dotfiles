@@ -30,6 +30,7 @@ typeset -gU cdpath fpath mailpath path
 path=(
   $HOME/bin
   $DOTFILES/bin
+  $HOME/.deno/bin
   /usr/local/{bin,sbin}
   /usr/local/opt/coreutils
   $path
