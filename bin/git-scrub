@@ -4,9 +4,9 @@
 # Author: Rob Miller <rob@bigfish.co.uk>
 # Adapted from the original by Yorick Sijsling
 
-git checkout master &> /dev/null
+git checkout $(git config init.defaultBranch) &> /dev/null
 
-# Make sure we're working with the most up-to-date version of master.
+# Make sure we're working with the most up-to-date version of main.
 # Prune obsolete remote tracking branches. These are branches that we
 # once tracked, but have since been deleted on the remote.
 git fetch -p origin
