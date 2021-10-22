@@ -22,11 +22,6 @@ else
   export EDITOR=vi
 fi
 
-# if atom is here, use it
-if hash atom 2>/dev/null; then
-  export VISUAL='atom'
-fi
-
 export PAGER='less'
 
 # Define colors for BSD ls
@@ -58,3 +53,9 @@ add_to_cdpath() {
 }
 add_to_cdpath "$HOME/Work"
 add_to_cdpath "$HOME/Projects"
+
+# include env file, if available
+if [ -f $HOME/.env ]; then
+  # shellcheck source=$HOME/.env
+  . $HOME/.env
+fi
