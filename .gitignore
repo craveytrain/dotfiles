@@ -2,3 +2,4 @@
 .zcompdump
 .zhistory
 .zcompcache
+.zsh_sessions
