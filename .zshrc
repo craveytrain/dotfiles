@@ -26,7 +26,7 @@ source "$HOME/.zsh/title.zsh"
 # source "$MODULES_DIR/autosuggestions/init.zsh"
 # source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
-# source "$HOME/.zsh/prompt/init.zsh"
+source "$HOME/.zsh/prompt/init.zsh"
 
 plugins=(
   zsh-prompt-benchmark
