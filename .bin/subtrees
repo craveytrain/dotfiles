@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# TODO: pass verb in?
+
+dot subtree pull --prefix .zsh/prompt/external/powerlevel10k https://github.com/romkatv/powerlevel10k.git master --squash
+
+dot subtree add --prefix .zsh/completion/external/zsh-completions https://github.com/zsh-users/zsh-completions.git master --squash
+
+dot subtree add --prefix .zsh/completion/external/zsh-better-npm-completion https://github.com/lukechilds/zsh-better-npm-completion.git  master --squash
