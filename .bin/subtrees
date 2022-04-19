@@ -13,3 +13,5 @@ dot subtree add --prefix .zsh/zsh-prompt-benchmark https://github.com/romkatv/zs
 dot subtree add --prefix .zsh/alias-tips https://github.com/djui/alias-tips.git master --squash
 
 dot subtree add --prefix .zsh/autosuggestions/external/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions master --squash
+
+dot subtree add --prefix .zsh/zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git master --squash

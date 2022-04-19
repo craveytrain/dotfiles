@@ -24,7 +24,7 @@ source "$HOME/.zsh/alias-tips/alias-tips.plugin.zsh"
 
 # # These 3 must be at the end
 source "$HOME/.zsh/autosuggestions/init.zsh"
-# source "$MODULES_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
 source "$HOME/.zsh/prompt/init.zsh"
 
