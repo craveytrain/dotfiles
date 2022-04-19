@@ -116,10 +116,14 @@
 [url "git://gist.github.com/"]
   insteadOf = "gist:"
 
-[include]
-  path = ~/.gitconfig_local
+[github]
+  user = craveytrain
 
 [credential]
   helper = osxkeychain
+
 [init]
 	defaultBranch = main
+
+[user]
+  name = Mike Cravey
