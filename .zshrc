@@ -19,13 +19,15 @@ source "$HOME/.zsh/utility.zsh"
 source "$HOME/.zsh/history.zsh"
 source "$HOME/.zsh/title.zsh"
 source "$HOME/.zsh/completion/init.zsh"
-source "$HOME/.zsh/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
+source "$HOME/.zsh/prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
 source "$HOME/.zsh/alias-tips/alias-tips.plugin.zsh"
 
-# # These 3 must be at the end
+# These 3 must be at the end
 source "$HOME/.zsh/autosuggestions/init.zsh"
-source "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-# source "$MODULES_DIR/zsh-history-substring-search/init.zsh"
+source "$HOME/.zsh/syntax-highlighting/zsh-syntax-highlighting.zsh"
+source "$HOME/.zsh/history-substring-search/init.zsh"
+
+# Prompt goes last
 source "$HOME/.zsh/prompt/init.zsh"
 
 plugins=(

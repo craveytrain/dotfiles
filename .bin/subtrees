@@ -8,10 +8,12 @@ dot subtree add --prefix .zsh/completion/external/zsh-completions https://github
 
 dot subtree add --prefix .zsh/completion/external/zsh-better-npm-completion https://github.com/lukechilds/zsh-better-npm-completion.git  master --squash
 
-dot subtree add --prefix .zsh/zsh-prompt-benchmark https://github.com/romkatv/zsh-prompt-benchmark.git master --squash
+dot subtree add --prefix .zsh/prompt-benchmark https://github.com/romkatv/zsh-prompt-benchmark.git master --squash
 
 dot subtree add --prefix .zsh/alias-tips https://github.com/djui/alias-tips.git master --squash
 
 dot subtree add --prefix .zsh/autosuggestions/external/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions master --squash
 
-dot subtree add --prefix .zsh/zsh-syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git master --squash
+dot subtree add --prefix .zsh/syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git master --squash
+
+dot subtree add --prefix .zsh/history-substring-search/external/zsh-history-substring-search https://github.com/zsh-users/zsh-history-substring-search.git master --squash
