@@ -14,12 +14,4 @@
   if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
     zcompile "$zcompdump"
   fi
-
-  # not needed, atm
-  # autoload -U zrecompile
-  #
-  # # zcompile .zshrc
-  #    zrecompile -pq ${ZDOTDIR:-${HOME}}/.zshrc
-  #    zrecompile -pq ${ZDOTDIR:-${HOME}}/.zprofile
-  #    zrecompile -pq ${ZDOTDIR:-${HOME}}/.zshenv
 } &!

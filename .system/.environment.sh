@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 #
 # Environment
@@ -32,8 +32,8 @@ export CLICOLOR=1
 export LS_COLORS='di=34:ln=35:so=31:pi=33:ex=32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
 # if dircolors or gdircolors, run them
-hash dircolors 2>/dev/null && eval "$(dircolors -b "$DOTFILES/system/dir_colors")"
-hash gdircolors 2>/dev/null && eval "$(gdircolors -b "$DOTFILES/system/dir_colors")"
+hash dircolors 2>/dev/null && eval "$(dircolors -b "$HOME/.system/.dir_colors")"
+hash gdircolors 2>/dev/null && eval "$(gdircolors -b "$HOME/.system/.dir_colors")"
 
 # Grep
 export GREP_COLOR='1;90;103'           # BSD.

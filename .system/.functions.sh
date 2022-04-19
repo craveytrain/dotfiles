@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Create a data URL from an image (works for other file types too, if you tweak the Content-Type afterwards)
 dataurl () {

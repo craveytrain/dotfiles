@@ -2,12 +2,8 @@
 
 # .bashrc
 
-# shortcut to this dotfiles path is $DOTFILES
-export DOT=".dotfiles"
-export DOTFILES="$HOME/$DOT"
-
 # keeping the paths simple
-export PATH=$HOME/bin:$DOTFILES/bin:$HOME/.deno/bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/coreutils:$PATH
+export PATH=$HOME/.bin:/usr/local/bin:/usr/local/sbin:/usr/local/opt/coreutils:$PATH
 
 # Don't clear the screen after quitting a manual page
 export MANPAGER="less -X"
@@ -17,12 +13,13 @@ export MANPAGER="less -X"
 # Remove -X and -F (exit if the content fits on one screen) to enable it.
 export LESS='-F -g -i -M -R -S -w -X -z-4'
 
-# shellcheck source=.dotfiles
-source "$DOTFILES/bash/aliases.bash"
+# Profile reload
+alias reload!='. ~/.bashrc'
 
 # Load all the shared files
-# shellcheck source=.dotfiles
-source "$DOTFILES/system/init.bash"
+source "$HOME/.system/.environment.sh"
+source "$HOME/.system/.aliases.sh"
+source "$HOME/.system/.functions.sh"
 
 # auto cd into directories
 shopt -s autocd
@@ -43,7 +40,7 @@ if type brew &>/dev/null; then
 fi
 
 # shellcheck source=.dotfiles
-source "$DOTFILES/bash/prompt.bash"
+source "./bash/prompt.bash"
 
 # load nodenv
 if hash nodenv 2>/dev/null; then

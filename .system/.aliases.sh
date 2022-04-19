@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+alias dot='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+
 # Check my ip
 alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
 
@@ -11,9 +13,6 @@ alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to cl
 
 # Copy dotfiles installation command to clipboard
 alias dotme="echo 'git clone -q https://github.com/craveytrain/dotfiles .dotfiles && ./.dotfiles/install >/dev/null' | pbcopy | echo '=> Dotfiles bootstrapper copied to clipboard.'"
-
-# Go to .dotfiles
-alias dot="cd \$DOTFILES"
 
 alias e='${(z)VISUAL:-${(z)EDITOR}}'
 
