@@ -4,7 +4,7 @@ This is my own personal dotfile repo. There are many others like it but this one
 
 ## Prompt
 
-The user and host is gone for a local prompt. I work on a mac or ubuntu primarily, both of which promote heavy use of `sudo`. As such showing the user on my local system is unnecessary. I know what user I am logged in as, I know what system I am on.
+The user and host is gone for a local prompt. I work on a mac primarily, which promotes heavy use of `sudo`. As such showing the user on my local system is unnecessary. I know what user I am logged in as, I know what system I am on.
 
 However, if I am SSH'd in somewhere, I want to know who I am as and what host I am on. So, if I am ssh'd somewhere, I show the user and hostname, otherwise just start off in the directory.
 
@@ -16,7 +16,7 @@ While I've gone full zsh on systems I have full control over, occasionally I hav
 
 ```bash
 # Boot the straps!
-git clone -q https://github.com/craveytrain/dotfiles .dotfiles && ./.dotfiles/install >/dev/null
+curl -Lks https://raw.githubusercontent.com/craveytrain/dotfiles/main/.bin/install.sh | /bin/bash
 
 # Change shell to zsh (optional)
 chsh -s $(which zsh)
@@ -25,8 +25,6 @@ chsh -s $(which zsh)
 ```
 
 # Credits
-
-Thanks to [dotbot](https://github.com/anishathalye/dotbot) for finally getting me to throw out my custom bootstrapper.
 
 Thanks to [mschout](https://github.com/mschout) for all the help, especially on the bash stuff.
 
