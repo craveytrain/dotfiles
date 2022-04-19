@@ -18,7 +18,7 @@ source "$HOME/.system/.functions.sh"
 source "$HOME/.zsh/utility.zsh"
 source "$HOME/.zsh/history.zsh"
 source "$HOME/.zsh/title.zsh"
-# source "$MODULES_DIR/completion/init.zsh"
+source "$HOME/.zsh/completion/init.zsh"
 # source "$MODULES_DIR/zsh-prompt-benchmark/zsh-prompt-benchmark.plugin.zsh"
 # source "$MODULES_DIR/alias-tips/alias-tips.plugin.zsh"
 
