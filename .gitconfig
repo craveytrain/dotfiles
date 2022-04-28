@@ -42,7 +42,7 @@
 
   upgrade-submodules = submodule update --init --remote
 
-  ancestor = merge-base HEAD master
+  ancestor = merge-base HEAD origin/HEAD
 [branch]
   autosetuprebase = always
 [clean]

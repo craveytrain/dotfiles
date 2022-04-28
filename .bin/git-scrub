@@ -26,7 +26,7 @@ fi
 # then delete them. We use the remote master here, just in case our
 # local master is out of date.
 
-MERGED_ON_REMOTE=`git branch --color=never --merged origin/master | grep -v "\*"`
+MERGED_ON_REMOTE=`git branch --color=never --merged origin/main | grep -v "\*"`
 
 if [ "$MERGED_ON_REMOTE" ]; then
 	echo "The following remote branches are fully merged and will be removed:"
