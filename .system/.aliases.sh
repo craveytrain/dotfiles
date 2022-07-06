@@ -12,7 +12,7 @@ alias catn="cat -n"
 alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to clipboard.'"
 
 # Copy dotfiles installation command to clipboard
-alias dotme="echo 'git clone -q https://github.com/craveytrain/dotfiles .dotfiles && ./.dotfiles/install >/dev/null' | pbcopy | echo '=> Dotfiles bootstrapper copied to clipboard.'"
+alias dotme="echo 'curl -Lks https://raw.githubusercontent.com/craveytrain/dotfiles/main/.bin/install.sh | /bin/bash' | pbcopy | echo '=> Dotfiles bootstrapper copied to clipboard.'"
 
 alias e='${(z)VISUAL:-${(z)EDITOR}}'
 
