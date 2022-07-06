@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Reference: https://www.atlassian.com/git/tutorials/dotfiles
 
 git clone --bare https://github.com/craveytrain/dotfiles.git $HOME/.dotfiles
 function dot {
