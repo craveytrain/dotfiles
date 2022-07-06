@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
+# why subtree? https://www.atlassian.com/git/tutorials/git-subtree
 
-# TODO: pass verb (add/pull) in?
+function dot {
+   git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME $@
+}
 
-dot subtree add --prefix .zsh/prompt/external/powerlevel10k https://github.com/romkatv/powerlevel10k.git master --squash
+declare -A SUBTREES=(
+	[".zsh/prompt/external/powerlevel10k"]="https://github.com/romkatv/powerlevel10k.git"
+	[".zsh/completion/external/zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
+	[".zsh/completion/external/zsh-better-npm-completion"]="https://github.com/lukechilds/zsh-better-npm-completion.git"
+	[".zsh/prompt-benchmark"]="https://github.com/romkatv/zsh-prompt-benchmark.git"
+	[".zsh/alias-tips"]="https://github.com/djui/alias-tips.git"
+	[".zsh/autosuggestions/external/zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions"
+	[".zsh/syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
+	[".zsh/history-substring-search/external/zsh-history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
+)
 
-dot subtree add --prefix .zsh/completion/external/zsh-completions https://github.com/zsh-users/zsh-completions.git master --squash
-
-dot subtree add --prefix .zsh/completion/external/zsh-better-npm-completion https://github.com/lukechilds/zsh-better-npm-completion.git  master --squash
-
-dot subtree add --prefix .zsh/prompt-benchmark https://github.com/romkatv/zsh-prompt-benchmark.git master --squash
-
-dot subtree add --prefix .zsh/alias-tips https://github.com/djui/alias-tips.git master --squash
-
-dot subtree add --prefix .zsh/autosuggestions/external/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions master --squash
-
-dot subtree add --prefix .zsh/syntax-highlighting https://github.com/zsh-users/zsh-syntax-highlighting.git master --squash
-
-dot subtree add --prefix .zsh/history-substring-search/external/zsh-history-substring-search https://github.com/zsh-users/zsh-history-substring-search.git master --squash
+# iterate over subtrees
+for path in "${!SUBTREES[@]}"; do
+	# if path exists, pull
+	if [ -d "$path" ]; then
+		dot subtree pull --prefix "$path" "${SUBTREES[$path]}" master --squash
+	# else add
+	else
+		dot subtree add --prefix "$path" "${SUBTREES[$path]}" master --squash
+	fi
+done
