@@ -20,6 +20,7 @@ alias reload!='. ~/.bashrc'
 source "$HOME/.system/.environment.sh"
 source "$HOME/.system/.aliases.sh"
 source "$HOME/.system/.functions.sh"
+source "$HOME/.system/.common.sh"
 
 # auto cd into directories
 shopt -s autocd
@@ -43,6 +44,6 @@ fi
 source "./bash/prompt.bash"
 
 # load nodenv
-if hash nodenv 2>/dev/null; then
-  eval "$(nodenv init - --no-rehash bash)"
+if hash asdf 2>/dev/null; then
+  source "$(brew --prefix asdf)/libexec/asdf.sh"
 fi

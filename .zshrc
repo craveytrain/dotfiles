@@ -34,7 +34,7 @@ plugins=(
   zsh-prompt-benchmark
 )
 
-# load nodenv
-if whence nodenv >/dev/null; then
-  eval "$(nodenv init - --no-rehash zsh)"
+# load asdf
+if whence asdf >/dev/null; then
+  source "$(brew --prefix asdf)/libexec/asdf.sh"
 fi
