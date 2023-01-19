@@ -52,11 +52,9 @@ If you are using a different terminal, proceed with manual font installation. �
      *Custom font* under *Text Appearance* and select `MesloLGS NF Regular`.
    - **Windows Console Host** (the old thing): Click the icon in the top left corner, then
      *Properties → Font* and set *Font* to `MesloLGS NF`.
-   - **Windows Terminal** by Microsoft (the new thing): Open `settings.json` (<kbd>Ctrl+Shift+,</kbd>),
-     search for `fontFace` and set the value to `MesloLGS NF` for every profile. If you don't find
-     `fontFace`, add it under *profiles → defaults*. See [this settings file](
-       https://raw.githubusercontent.com/romkatv/dotfiles-public/aba0e6c4657d705ed6c344d700d659977385f25c/dotfiles/microsoft-terminal-settings.json)
-     for example.
+   - **Windows Terminal** by Microsoft (the new thing): Open *Settings* (<kbd>Ctrl+,</kbd>), click
+     either on the selected profile under *Profiles* or on *Defaults*, click *Appearance* and set
+     *Font face* to `MesloLGS NF`.
    - **IntelliJ** (and other IDEs by Jet Brains): Open *IDE → Edit → Preferences → Editor →
      Color Scheme → Console Font*. Select *Use console font instead of the default* and set the font
      name to `MesloLGS NF`.
@@ -117,6 +115,36 @@ If you are using a different terminal, proceed with manual font installation. �
      ```
      After changing the config run `xrdb ~/.Xresources` to reload it. The new config is applied to
      all new terminals.
+   - Crostini (Linux on Chrome OS): Open
+     chrome-untrusted://terminal/html/nassh_preferences_editor.html, set *Text font family* to
+      `'MesloLGS NF'` (including the quotes) and *Custom CSS (inline text)* to the following:
+     ```css
+     @font-face {
+      font-family: "MesloLGS NF";
+      src: url("https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Regular.ttf");
+      font-weight: normal;
+      font-style: normal;
+     }
+     @font-face {
+         font-family: "MesloLGS NF";
+         src: url("https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold.ttf");
+         font-weight: bold;
+         font-style: normal;
+     }
+     @font-face {
+         font-family: "MesloLGS NF";
+         src: url("https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Italic.ttf");
+         font-weight: normal;
+         font-style: italic;
+     }
+     @font-face {
+         font-family: "MesloLGS NF";
+         src: url("https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold%20Italic.ttf");
+         font-weight: bold;
+         font-style: italic;
+     }
+     ```
+     **_CAVEAT_**: If you open the normal terminal preferences these settings will be overwritten.
 1. Run `p10k configure` to generate a new `~/.p10k.zsh`. The old config may work
    incorrectly with the new font.
 

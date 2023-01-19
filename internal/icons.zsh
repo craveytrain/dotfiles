@@ -134,6 +134,7 @@ function _p9k_init_icons() {
         LUA_ICON                       'lua'
         PERL_ICON                      'perl'
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               'tw'
         TASKWARRIOR_ICON               'task'
@@ -148,6 +149,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     'jl'
         SCALA_ICON                     'scala'
         TOOLBOX_ICON                   '\u2B22'               # ⬢
+        ARCH_ICON                      'arch'
       )
     ;;
     'awesome-fontconfig')
@@ -266,6 +268,7 @@ function _p9k_init_icons() {
         LUA_ICON                       'lua'
         PERL_ICON                      'perl'
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               'tw'
         TASKWARRIOR_ICON               'task'
@@ -280,6 +283,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     'jl'
         SCALA_ICON                     'scala'
         TOOLBOX_ICON                   '\u2B22'               # ⬢
+        ARCH_ICON                      'arch'
       )
     ;;
     'awesome-mapped-fontconfig')
@@ -401,6 +405,7 @@ function _p9k_init_icons() {
         LUA_ICON                       'lua'
         PERL_ICON                      'perl'
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               'tw'
         TASKWARRIOR_ICON               'task'
@@ -415,6 +420,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     'jl'
         SCALA_ICON                     'scala'
         TOOLBOX_ICON                   '\u2B22'                                       # ⬢
+        ARCH_ICON                      'arch'
       )
     ;;
     'nerdfont-complete'|'nerdfont-fontconfig')
@@ -534,6 +540,7 @@ function _p9k_init_icons() {
         LUA_ICON                       '\uE620'               # 
         PERL_ICON                      '\uE769'               # 
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               '\uF49B'               # 
         TASKWARRIOR_ICON               '\uF4A0 '              # 
@@ -548,6 +555,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     '\uE624'               # 
         SCALA_ICON                     '\uE737'               # 
         TOOLBOX_ICON                   '\uE20F'$s             # 
+        ARCH_ICON                      '\uE266'               # 
       )
     ;;
     ascii)
@@ -664,6 +672,7 @@ function _p9k_init_icons() {
         LUA_ICON                       'lua'
         PERL_ICON                      'perl'
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               'tw'
         TASKWARRIOR_ICON               'task'
@@ -678,6 +687,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     'jl'
         SCALA_ICON                     'scala'
         TOOLBOX_ICON                   'toolbox'
+        ARCH_ICON                      'arch'
       )
     ;;
     *)
@@ -796,6 +806,7 @@ function _p9k_init_icons() {
         LUA_ICON                       'lua'
         PERL_ICON                      'perl'
         NNN_ICON                       'nnn'
+        LF_ICON                        'lf'
         XPLR_ICON                      'xplr'
         TIMEWARRIOR_ICON               'tw'
         TASKWARRIOR_ICON               'task'
@@ -810,6 +821,7 @@ function _p9k_init_icons() {
         JULIA_ICON                     'jl'
         SCALA_ICON                     'scala'
         TOOLBOX_ICON                   '\u2B22'               # ⬢
+        ARCH_ICON                      'arch'
       )
     ;;
   esac
