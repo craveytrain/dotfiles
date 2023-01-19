@@ -2,7 +2,7 @@
 #autoload
 
 # ------------------------------------------------------------------------------
-# Copyright (c) 2016 Github zsh-users - http://github.com/zsh-users
+# Copyright (c) 2016 Github zsh-users - https://github.com/zsh-users
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -104,6 +104,7 @@ _1st_arguments=(
     'phoenix.server:Starts applications and their servers'
     'phx.digest:Digests and compresses static files'
     'phx.digest.clean:Removes old versions of static assets.'
+    'phx.gen.auth:Generates a flexible, pre-built authentication system'
     'phx.gen.channel:Generates a Phoenix channel'
     'phx.gen.context:Generates a context with functions around an Ecto schema'
     'phx.gen.html:Generates controller, views, and context for an HTML resource'
@@ -188,6 +189,7 @@ __task_list ()
         'phoenix.server'
         'phx.digest'
         'phx.digest.clean'
+        'phx.gen.auth'
         'phx.gen.channel'
         'phx.gen.context'
         'phx.gen.html'
