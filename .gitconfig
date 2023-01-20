@@ -87,11 +87,22 @@
   changed = green
   untracked = cyan
 
+[diff]
+	tool = Kaleidoscope
 [difftool]
-  prompt = false
+	prompt = false
+	trustExitCode = true
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[merge]
+	tool = Kaleidoscope
 [mergetool]
-  keepBackup = false
-  prompt = false
+	keepBackup = false
+	prompt = false
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+
 
 [filter "lfs"]
   clean = git lfs clean %f
