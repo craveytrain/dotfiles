@@ -123,5 +123,7 @@
 
 [user]
   name = Mike Cravey
-  email = mike@craveytrain.com
+  email = mcravey@expedia.com
 
+[hub]
+	host = github.expedia.biz
