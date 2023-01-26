@@ -9,6 +9,10 @@ alias catn="cat -n"
 # Pipe my public key to my clipboard.
 alias pubkey="more ~/.ssh/id_rsa.pub | pbcopy | echo '=> Public key copied to clipboard.'"
 
+
+# Change dir to $DOTFILES
+alias dot="cd \$DOTFILES"
+
 # Copy dotfiles installation command to clipboard
 # alias dotme="echo 'curl -Lks https://raw.githubusercontent.com/craveytrain/dotfiles/main/.bin/bootstrap.sh | /bin/bash' | pbcopy | echo '=> Dotfiles bootstrapper copied to clipboard.'"
 
