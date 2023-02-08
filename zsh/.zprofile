@@ -29,6 +29,8 @@ typeset -gU cdpath fpath mailpath path
 # Set the list of directories that Zsh searches for programs.
 path=(
   $HOME/.bin
+	# Homebrew location on M1s
+	/opt/*/bin
   /usr/local/{bin,sbin}
   /usr/local/opt/coreutils
   $path
