@@ -29,12 +29,15 @@ typeset -gU cdpath fpath mailpath path
 # Set the list of directories that Zsh searches for programs.
 path=(
   $HOME/.bin
-	# Homebrew location on M1s
-	/opt/*/bin
-  /usr/local/{bin,sbin}
+	# Unnecessary as long as using p10k
+  # /usr/local/{bin,sbin}
   /usr/local/opt/coreutils
   $path
 )
+
+# Homebrew location on M1s
+files=(/opt/*/bin(N))
+(($#files == 0)) || path+=($files)
 
 # Set PATH, MANPATH, etc., for Homebrew.
 eval "$(brew shellenv)"
