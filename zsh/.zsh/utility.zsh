@@ -17,25 +17,5 @@ alias zmv='noglob zmv -W'
 alias zcp='zmv -C'
 alias zln='zmv -L'
 
-# emacs keyboard shortcuts
-bindkey -e
-
-# some nice shortcuts for iTerm2 to hook into
-bindkey "[D" backward-word
-bindkey "[C" forward-word
-bindkey "^[a" beginning-of-line
-bindkey "^[e" end-of-line
-
-# Expands .... to ../..
-function expand-dot-to-parent-directory-path {
-  if [[ $LBUFFER = *.. ]]; then
-    LBUFFER+='/..'
-  else
-    LBUFFER+='.'
-  fi
-}
-zle -N expand-dot-to-parent-directory-path
-bindkey "." expand-dot-to-parent-directory-path
-
 # auto change directory
 setopt auto_cd
