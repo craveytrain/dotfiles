@@ -35,9 +35,4 @@ path=(
   $path
 )
 
-# Homebrew location on M1s
-files=(/opt/*/bin(N))
-(($#files == 0)) || path+=($files)
-
-# Set PATH, MANPATH, etc., for Homebrew.
-eval "$(brew shellenv)"
+eval "$(/opt/homebrew/bin/brew shellenv)"

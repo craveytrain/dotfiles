@@ -119,6 +119,10 @@
 [init]
 	defaultBranch = main
 
+[safe]
+	directory = /opt/homebrew
+
 [user]
   name = Mike Cravey
   email = mike@craveytrain.com
+

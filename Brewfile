@@ -1,0 +1,7 @@
+tap "homebrew/bundle"
+tap "jandedobbeleer/oh-my-posh"
+brew "asdf"
+brew "diff-so-fancy"
+brew "nmap"
+brew "stow"
+brew "jandedobbeleer/oh-my-posh/oh-my-posh"
