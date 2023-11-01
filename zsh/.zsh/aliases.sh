@@ -26,10 +26,13 @@ alias mkdir="${aliases[mkdir]:-mkdir} -p"
 if whence exa >/dev/null; then
 	alias ls="exa -F"
 	alias l='ls -1a'		# Lists in one column, hidden files.
+	alias ll='ls -lh --git --color-scale'	# Lists human readable sizes.
 	alias la='ll -a'		# Lists human readable sizes, hidden files.
 	alias lx='ll -s=ext'	# Lists sorted by extension (GNU only).
 	alias lk='ll -s=size'	# Lists sorted by size, largest last.
-	alias lt='ll -T'		# Lists sorted by date, most recent last.
+	alias lt='ls -T'		# Lists sorted by date, most recent last.
+	alias lta='ls -Ta'		# Lists sorted by date, most recent last.
+	alias llt='ll -T'		# Lists sorted by date, most recent last.
 else
 	if [ $PLATFORM = 'LINUX' ]; then
   		alias ls='ls --color=auto -F'
@@ -40,6 +43,7 @@ else
 	  	alias ls="${aliases[ls]:-ls} -F -G"
 	fi
 	alias l='ls -1A'         # Lists in one column, hidden files.
+	alias ll='ls -lh'		 # Lists human readable sizes.
 	alias la='ll -A'         # Lists human readable sizes, hidden files.
 	alias lx='ll -XB'        # Lists sorted by extension (GNU only).
 	alias lk='ll -Sr'        # Lists sorted by size, largest last.
@@ -49,7 +53,6 @@ else
 fi
 
 # These work across exa and ls
-alias ll='ls -lh'			# Lists human readable sizes.
 alias lm='la | "$PAGER"'	# Lists human readable sizes, hidden files through pager.
 alias sl='ls'				# I often screw this up.
 
