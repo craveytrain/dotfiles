@@ -22,6 +22,11 @@ else
   export EDITOR=vi
 fi
 
+# use Nova, if possible
+if hash nova 2>/dev/null; then
+	export VISUAL=nova
+fi
+
 export PAGER='less'
 
 # Define colors for BSD ls
