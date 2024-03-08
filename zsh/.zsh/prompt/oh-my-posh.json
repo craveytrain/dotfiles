@@ -12,7 +12,7 @@
 					"style": "diamond",
 					"leading_diamond": "",
 					"trailing_diamond": "",
-					"foreground": "p:black",
+					"foreground": "p:white",
 					"background": "p:orange",
 					"template": "  {{ path .Path .Location }} ",
 					"properties": {
@@ -41,6 +41,19 @@
 						"branch_max_length": 25,
 						"fetch_status": true,
 						"fetch_upstream_icon": true
+					}
+				},
+				{
+					"type": "executiontime",
+					"style": "powerline",
+					"powerline_symbol": "",
+					"foreground": "#ffffff",
+					"background": "#8800dd",
+					"template": " <#fefefe></> {{ .FormattedMs }} ",
+					"properties": {
+						"threshold": 500,
+						"style": "austin",
+						"always_enabled": false
 					}
 				}
 			]

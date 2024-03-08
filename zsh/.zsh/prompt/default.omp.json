@@ -61,7 +61,7 @@
           "template": " \uf0e7 "
         },
         {
-          "type": "exit",
+          "type": "status",
           "style": "diamond",
           "foreground": "p:white",
           "background": "p:blue",

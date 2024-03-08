@@ -13,6 +13,7 @@ source "$HOME/.zsh/utility.zsh"
 if whence oh-my-posh >/dev/null; then
 	# Uncomment this and comment the other one out to get default prompt
 	# eval "$(oh-my-posh init zsh)"
+	# eval "$(oh-my-posh init zsh --config $HOME/.zsh/prompt/default.omp.json)"
 	eval "$(oh-my-posh init zsh --config $HOME/.zsh/prompt/oh-my-posh.json)"
 fi
 
