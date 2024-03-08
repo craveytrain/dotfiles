@@ -1,0 +1,68 @@
+#! /usr/bin/env node
+
+const { argv, cwd } = require('node:process')
+const { createReadStream, promises } = require('node:fs')
+const { createServer } = require('node:http')
+const { join, extname } = require('node:path')
+const { Readable } = require('node:stream')
+const { access } = promises
+
+const PORT = argv.at(2) || 8080
+
+const MIME_TYPES = {
+	default: 'application/octet-stream',
+	html: 'text/html; charset=UTF-8',
+	js: 'application/javascript',
+	css: 'text/css',
+	png: 'image/png',
+	jpg: 'image/jpg',
+	gif: 'image/gif',
+	ico: 'image/x-icon',
+	svg: 'image/svg+xml',
+}
+
+const STATIC_PATH = cwd()
+
+const toBool = [() => true, () => false]
+
+const error404 = `
+<!doctype html>
+<html>
+	<head>
+		<title>404: Not Found</title>
+	</head>
+	<body>
+		<h1>404: Not Found</h1>
+	</body>
+</html>
+`
+
+function createPage(page) {
+	var stream = new Readable()
+	stream.push(page)
+	stream.push(null)
+	return stream
+}
+
+async function prepareFile(url) {
+	const paths = [STATIC_PATH, url]
+	if (url.endsWith('/')) paths.push('index.html')
+	const filePath = join(...paths)
+	const pathTraversal = !filePath.startsWith(STATIC_PATH)
+	const exists = await access(filePath).then(...toBool)
+	const found = !pathTraversal && exists
+	const ext = found ? extname(filePath).substring(1).toLowerCase() : 'html'
+	const stream = found ? createReadStream(filePath) : createPage(error404)
+	return { found, ext, stream }
+}
+
+createServer(async (req, res) => {
+	const file = await prepareFile(req.url)
+	const statusCode = file.found ? 200 : 404
+	const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default
+	res.writeHead(statusCode, { 'Content-Type': mimeType })
+	file.stream.pipe(res)
+	console.log(`${req.method} ${req.url} ${statusCode}`)
+}).listen(PORT)
+
+console.log(`Server running at http://127.0.0.1:${PORT}/`)
