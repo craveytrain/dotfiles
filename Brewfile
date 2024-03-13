@@ -12,5 +12,5 @@ brew "gh"
 brew "nmap"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
-# Prompt theme engine for any shell
-brew "jandedobbeleer/oh-my-posh/oh-my-posh"
+# Prompt
+brew "powerlevel10k"

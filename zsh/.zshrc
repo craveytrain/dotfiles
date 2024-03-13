@@ -1,5 +1,12 @@
 #!/usr/bin/env zsh
 
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Executes commands at the start of an interactive session.
 fpath=($MODULES_DIR/functions $fpath)
 
@@ -9,15 +16,13 @@ source "$HOME/.zsh/aliases.sh"
 source "$HOME/.zsh/functions.sh"
 source "$HOME/.zsh/utility.zsh"
 
-# Prompt goes last
-if whence oh-my-posh >/dev/null; then
-	# Uncomment this and comment the other one out to get default prompt
-	# eval "$(oh-my-posh init zsh)"
-	# eval "$(oh-my-posh init zsh --config $HOME/.zsh/prompt/default.omp.json)"
-	eval "$(oh-my-posh init zsh --config $HOME/.zsh/prompt/oh-my-posh.json)"
-fi
 
 # load asdf
 if whence asdf >/dev/null; then
   source "$(brew --prefix asdf)/libexec/asdf.sh"
 fi
+
+# Prompt goes last
+source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
