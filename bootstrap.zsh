@@ -19,6 +19,7 @@ if hash stow >/dev/null; then
 		bin
 		dev
 		git
+		vim
 		zsh
 	)
 

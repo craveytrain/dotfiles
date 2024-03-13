@@ -54,7 +54,7 @@
 [core]
   excludesfile = ~/.gitignore_global
   autocrlf = input
-	editor = bbedit --wait
+	editor = vim
 [pager]
   diff = diff-so-fancy | less --tabs=4 -RFX
   show = diff-so-fancy | less --tabs=4 -RFX
