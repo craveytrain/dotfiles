@@ -1,6 +1,5 @@
 tap "homebrew/bundle"
 tap "homebrew/services"
-tap "jandedobbeleer/oh-my-posh"
 # Good-lookin' diffs with diff-highlight and more
 brew "diff-so-fancy"
 # Modern replacement for 'ls'
@@ -21,5 +20,3 @@ brew "powerlevel10k"
 brew "stow"
 # CLI tool that moves files or folder to the trash
 brew "trash"
-# Prompt theme engine for any shell
-brew "jandedobbeleer/oh-my-posh/oh-my-posh"
