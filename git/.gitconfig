@@ -88,14 +88,14 @@
   untracked = cyan
 
 [diff]
-	tool = Kaleidoscope
+	tool = juxta
 [difftool]
 	prompt = false
 	trustExitCode = true
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
 [merge]
-	tool = Kaleidoscope
+	tool = juxta
 [mergetool]
 	keepBackup = false
 	prompt = false
@@ -123,5 +123,13 @@
 
 [user]
   name = Mike Cravey
-  email = mike@craveytrain.com
+	email = mcravey@expediagroup.com
 
+[hub]
+	host = github.expedia.biz
+[mergetool "juxta"]
+	cmd = juxta _mergetool --base \"${BASE:-/dev/null}\" --local \"$LOCAL\" --remote \"$REMOTE\" --merged \"${MERGED:-/dev/null}\"
+	trustExitCode = true
+[difftool "juxta"]
+	cmd = juxta _difftool --local \"$LOCAL\" --remote \"$REMOTE\" --merged \"$MERGED\"
+	trustExitCode = true
