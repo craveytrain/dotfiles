@@ -5,7 +5,7 @@ brew "asdf"
 # Good-lookin' diffs with diff-highlight and more
 brew "diff-so-fancy"
 # Modern replacement for 'ls'
-brew "exa"
+brew "eza"
 # GitHub command-line tool
 brew "gh"
 # Port scanning utility for large networks
