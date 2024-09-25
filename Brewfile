@@ -9,6 +9,8 @@ brew "eza"
 brew "gh"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
 # Port scanning utility for large networks
 brew "nmap"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
