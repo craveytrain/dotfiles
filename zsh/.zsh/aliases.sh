@@ -26,7 +26,7 @@ alias mkdir="${aliases[mkdir]:-mkdir} -p"
 if whence eza >/dev/null; then
 	alias ls="eza -F -x"
 	alias l='eza -1a --icons'		# Lists in one column, hidden files.
-	alias lt='eza -T --icons'		# Lists in one column, hidden files.
+	alias lt='eza -T --icons'		# Lists in tree structure.
 	alias ll='eza -lh --icons --git --git-repos'	# Lists human readable sizes.
 	alias la='ll -a'		# Lists human readable sizes, hidden files.
 	alias lk='ll -s=size -r'	# Lists sorted by size, largest first.
