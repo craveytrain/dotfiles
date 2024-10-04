@@ -1,8 +1,12 @@
 tap "homebrew/bundle"
 tap "homebrew/services"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
 # Good-lookin' diffs with diff-highlight and more
 brew "diff-so-fancy"
-# Modern replacement for 'ls'
+# Diff that understands syntax
+brew "difftastic"
+# Modern, maintained replacement for ls
 brew "eza"
 # GitHub command-line tool
 brew "gh"
@@ -12,10 +16,10 @@ brew "jq"
 brew "mise"
 # Port scanning utility for large networks
 brew "nmap"
-# Organize software neatly under a single directory tree (e.g. /usr/local)
-brew "stow"
 # Theme for zsh
 brew "powerlevel10k"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
 # CLI tool that moves files or folder to the trash
