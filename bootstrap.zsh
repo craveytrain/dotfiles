@@ -17,6 +17,7 @@ if hash stow >/dev/null; then
 # set stow directories
 	stow_dir=(
 		bin
+		config
 		dev
 		git
 		vim
