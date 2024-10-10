@@ -21,7 +21,6 @@ if hash stow >/dev/null; then
 		dev
 		git
 		vim
-		zsh
 	)
 
 	for dir in "${stow_dir[@]}"; do
