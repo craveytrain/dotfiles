@@ -8,6 +8,8 @@ brew "diff-so-fancy"
 brew "difftastic"
 # Modern, maintained replacement for ls
 brew "eza"
+# User-friendly command-line shell for UNIX-like operating systems
+brew "fish"
 # GitHub command-line tool
 brew "gh"
 # Lightweight and flexible command-line JSON processor
