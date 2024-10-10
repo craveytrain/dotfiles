@@ -1,0 +1,10 @@
+---
+# Fonts module
+# System-wide fonts for development and terminal use
+homebrew_casks:
+  - font-fira-code
+  - font-hack-nerd-font
+  - font-inconsolata
+  - font-inconsolata-nerd-font
+  - font-input
+

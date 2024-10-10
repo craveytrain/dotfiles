@@ -1,0 +1,18 @@
+---
+# Zsh shell configuration module
+# Provides Zsh-specific configuration, aliases, functions, and prompt theme
+# Note: Common shell utilities are in the shell module
+
+homebrew_packages:
+  - powerlevel10k # Zsh prompt theme
+
+# Note: Common shell utilities (eza, ripgrep, tldr, trash, wget, stow) are in shell module
+
+stow_dirs:
+  - zsh
+
+# Files that should be merged with other modules
+mergeable_files:
+  - '.zshrc' # Git aliases and functions
+  - '.zsh/aliases.sh'
+  - '.zsh/environment.sh'

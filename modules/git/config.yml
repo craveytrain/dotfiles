@@ -1,0 +1,11 @@
+---
+# Git configuration module
+homebrew_packages:
+  - git
+  - gh
+  - diff-so-fancy
+  - difftastic
+
+stow_dirs:
+  - git
+

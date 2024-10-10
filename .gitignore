@@ -1,0 +1,26 @@
+# Ansible
+*.retry
+.ansible/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.swp
+*.swo
+*~
+.*.sw?
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Runtime/generated folders
+modules/merged/
+
+# Claude Code local settings
+.claude/settings.local.json
+
