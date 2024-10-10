@@ -1,0 +1,25 @@
+---
+# Main deployment playbook for dotfiles
+# Run with: ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
+# (--ask-become-pass required for shell registration in /etc/shells)
+- name: Deploy dotfiles using ansible-role-dotmodules
+  hosts: localhost
+  tags:
+    - dotfiles
+  vars:
+    dotmodules:
+      repo: 'file://{{ playbook_dir }}/../modules'
+      dest: '{{ ansible_env.HOME }}/.dotmodules'
+      install:
+        - git
+        - fonts
+        - 1password
+        - shell
+        - fish
+        - zsh
+        - dev-tools
+        - node
+        - editor
+        - 1password
+  roles:
+    - role: ansible-role-dotmodules

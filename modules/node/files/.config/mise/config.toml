@@ -1,0 +1,17 @@
+# Node.js and pnpm versions
+# Managed by dotfiles node module
+# This file is merged with other modules' mise configurations
+#
+# IMPORTANT: Do NOT include the [tools] header here. The [tools] header should
+# only be in the dev-tools module's config.toml file. Including it here causes
+# merge issues when configurations are concatenated. Only include the tool
+# definitions without the header.
+#
+# Version choices:
+# - node = "latest": Always uses the latest Node.js version
+#   Provides access to newest features and improvements
+# - pnpm = "latest": Always uses the latest pnpm version
+#   PNPM doesn't have an LTS concept, so latest ensures access to newest features and fixes
+
+node = "latest"  # Always use latest Node.js version
+pnpm = "latest"  # Always use latest pnpm

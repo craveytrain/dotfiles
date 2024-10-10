@@ -1,0 +1,16 @@
+# Python version configuration
+# Managed by dotfiles dev-tools module
+# Note: Node.js and pnpm versions are managed by the node module
+#
+# IMPORTANT: The [tools] header should ONLY be in this file (dev-tools module).
+# Language-specific modules (node, ruby, etc.) should NOT repeat the [tools] header
+# because it causes merge issues when configurations are concatenated.
+# Other modules should only include the tool definitions without the header.
+
+[settings]
+asdf_compat = true
+
+
+[tools]
+python = "3.13.2"
+

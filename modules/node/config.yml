@@ -1,0 +1,16 @@
+---
+# Node.js development module
+# This module manages Node.js and pnpm versions via mise, along with npm configuration.
+#
+# Prerequisites:
+# - dev-tools module must be installed first (provides mise via Homebrew)
+# - mise must be available in PATH before this module can function
+
+# Note: mise is NOT installed here - it's managed by the dev-tools module
+# This module only configures node-specific tool versions and npm settings
+
+stow_dirs:
+  - node
+
+mergeable_files:
+  - '.config/mise/config.toml'

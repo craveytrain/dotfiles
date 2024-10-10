@@ -1,0 +1,18 @@
+---
+# Fish shell configuration module
+# Provides Fish shell configuration, plugins, and functions
+#
+# Post-deployment: After running the playbook, log into a fish shell and run
+# `fisher update` to install all fisher plugins defined in your config.fish
+
+homebrew_packages:
+  - fish
+  - fisher
+
+stow_dirs:
+  - fish
+
+mergeable_files:
+  - '.config/fish/config.fish'
+
+register_shell: fish
