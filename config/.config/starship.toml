@@ -1,0 +1,78 @@
+# Warning: This config does not include keys that have an unset value
+
+# $all is shorthand for $username$hostname$localip$shlvl$singularity$kubernetes$nats$directory$vcsh$fossil_branch$fossil_metrics$git_branch$git_commit$git_state$git_metrics$git_status$hg_branch$pijul_channel$docker_context$package$bun$c$cmake$cobol$daml$dart$deno$dotnet$elixir$elm$erlang$fennel$gleam$golang$gradle$haskell$haxe$helm$java$julia$kotlin$lua$nim$nodejs$ocaml$odin$opa$perl$php$pulumi$purescript$python$quarto$raku$rlang$red$ruby$rust$scala$solidity$swift$terraform$typst$vlang$vagrant$zig$buf$guix_shell$nix_shell$conda$meson$spack$memory_usage$aws$gcloud$openstack$azure$direnv$env_var$crystal$custom$sudo$cmd_duration$line_break$jobs$battery$time$status$container$os$shell$character
+"$schema" = "https://starship.rs/config-schema.json"
+format = "$directory$git_branch$git_commit$git_state$git_status$cmd_duration$line_break$status$character"
+right_format = "$kubernetes$docker_context$terraform$deno$golang$gradle$java$kotlin$nodejs$python$ruby$swift"
+continuation_prompt = "[∙](bright-black) "
+scan_timeout = 30
+command_timeout = 500
+add_newline = true
+follow_symlinks = true
+
+[cmd_duration]
+format = "[$duration]($style) "
+
+[deno]
+format = "[$symbol($version )]($style)"
+
+[directory]
+truncate_to_repo = false
+
+[docker_context]
+format = "[$symbol$context]($style) "
+
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+[git_commit]
+only_detached = false
+tag_disabled = false
+
+[golang]
+format = "[$symbol($version )]($style)"
+
+[gradle]
+format = "[$symbol($version )]($style)"
+
+[java]
+format = "[$symbol($version )]($style)"
+symbol = "☕"
+
+[kotlin]
+format = "[$symbol($version )]($style)"
+
+[kubernetes]
+format = '[$symbol$context( \($namespace\))]($style) '
+
+
+[nodejs]
+format = "[$symbol($version )]($style)"
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+
+[ruby]
+format = "[$symbol($version )]($style)"
+
+[status]
+format = "[$symbol$status]($style) "
+symbol = "❌"
+success_symbol = ""
+not_executable_symbol = "🚫"
+not_found_symbol = "🔍"
+sigint_symbol = "🧱"
+signal_symbol = "⚡"
+style = "bold red"
+map_symbol = false
+recognize_signal_code = true
+pipestatus = false
+pipestatus_separator = "|"
+pipestatus_format = '\[$pipestatus\] => [$symbol$common_meaning$signal_name$maybe_int]($style)'
+disabled = false
+
+[swift]
+format = "[$symbol($version )]($style)"
+
+[terraform]
+format = "[$symbol$workspace]($style) "
