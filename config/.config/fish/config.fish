@@ -20,7 +20,6 @@ if status --is-interactive
 	#
 	# abbrs - Set abbrs
 	#
-
 	# cd into dotfiles
 	abbr dot "cd $DOTFILES"
 
@@ -39,4 +38,11 @@ if status --is-interactive
 	# Resource Usage
 	abbr df "df -kh"
 	abbr du "du -kh"
+
+	#
+	# prompt - Customize prompt
+	#
+	set -g tide_right_prompt_suffix " "
+	set -g tide_left_prompt_items pwd git cmd_duration newline status character
+	set -g tide_right_prompt_items node python rustc java php ruby go terraform
 end
