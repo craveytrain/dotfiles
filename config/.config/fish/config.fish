@@ -41,4 +41,12 @@ if status --is-interactive
 
 	# Copy static server code to cwd
 	abbr serveme "cp -r $DOTFILES/bin/.bin/serve ."
+
+	#
+	# prompt - Customize prompt
+	#
+
+	set -g tide_right_prompt_suffix " "
+	set -g tide_left_prompt_items pwd git cmd_duration newline status character
+	set -g tide_right_prompt_items node python rustc java php ruby go terraform
 end
