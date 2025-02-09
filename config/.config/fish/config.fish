@@ -7,7 +7,6 @@ if status --is-interactive
 
 	set -gx XDG_CONFIG_HOME "$HOME/.config"
 
-
 	# add to path
 	eval "$(/opt/homebrew/bin/brew shellenv)"
 	fish_add_path ~/.bin
@@ -45,4 +44,8 @@ if status --is-interactive
 	set -g tide_right_prompt_suffix " "
 	set -g tide_left_prompt_items pwd git cmd_duration newline status character
 	set -g tide_right_prompt_items node python rustc java php ruby go terraform
+end
+
+if status --is-login
+  mise activate fish --shims | source
 end
