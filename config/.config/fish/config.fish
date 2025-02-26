@@ -38,6 +38,9 @@ if status --is-interactive
 	abbr df "df -kh"
 	abbr du "du -kh"
 
+	# Program launchers
+	abbr -a ia 'open -a "iA Writer"'
+
 	#
 	# prompt - Customize prompt
 	#
