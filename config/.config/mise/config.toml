@@ -1,6 +1,7 @@
 [tools]
 node = "latest"
 pnpm = "latest"
+python = "3.13.2"
 
 [settings]
 asdf_compat = true
