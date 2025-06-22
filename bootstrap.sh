@@ -3,11 +3,6 @@
 
 dir="$HOME/.dotfiles"
 
-if [ ! -d $dir ]; then
-	# if directory does not exist, git clone to it
-	git clone https://github.com/craveytrain/dotfiles.git $dir
-fi
-
 # change to dir
 cd $dir
 

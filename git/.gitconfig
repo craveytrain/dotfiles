@@ -122,15 +122,15 @@
 [safe]
 	directory = /opt/homebrew
 
-[user]
-  name = Mike Cravey
-  email = mike@craveytrain.com
 [credential "https://github.com"]
-	helper = 
+	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
+	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
 [credential "https://github.expedia.biz"]
-	helper = 
+	helper =
 	helper = !/opt/homebrew/bin/gh auth git-credential
+
+[include]
+    path = ~/.config/git/user
