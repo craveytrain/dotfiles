@@ -1,0 +1,44 @@
+---
+# Main deployment playbook for dotfiles
+- name: Deploy dotfiles using ansible-role-dotmodules
+  hosts: localhost
+  vars:
+    dotmodules:
+      repo: 'file://{{ playbook_dir }}/../modules'
+      dest: '{{ ansible_env.HOME }}/.dotmodules'
+      install:
+        - git
+        - fonts
+        - 1password
+        - shell
+        - fish
+        - zsh
+        - dev-tools
+        - editor
+  roles:
+    - role: ansible-role-dotmodules
+      # vars:
+      # Additional workarounds for geerlingguy.mac collection
+      # homebrew_install_path: '/opt/homebrew'
+      # homebrew_user: '{{ ansible_user_id }}'
+      # homebrew_group: 'admin'
+      # homebrew_check_for_updates: false
+      # homebrew_upgrade_all_packages: false
+      # homebrew_clear_cache: false
+
+  tasks:
+    - name: Ensure Homebrew zsh is in /etc/shells
+      become: yes
+      lineinfile:
+        path: /etc/shells
+        line: /opt/homebrew/bin/zsh
+        state: present
+      when: "'zsh' in dotmodules.install"
+
+    - name: Ensure Homebrew fish is in /etc/shells
+      become: yes
+      lineinfile:
+        path: /etc/shells
+        line: /opt/homebrew/bin/fish
+        state: present
+      when: "'fish' in dotmodules.install"

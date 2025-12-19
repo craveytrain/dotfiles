@@ -1,0 +1,5 @@
+---
+# 1Password CLI module
+# Provides the 1Password command-line interface for secure credential management
+homebrew_casks:
+  - 1password-cli

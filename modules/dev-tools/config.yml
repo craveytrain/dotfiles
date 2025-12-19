@@ -1,0 +1,17 @@
+---
+# Development tools module
+homebrew_packages:
+  - actionlint
+  - bat
+  - jq
+  - mise
+  - ngrep
+  - nmap
+  - shellcheck
+
+stow_dirs:
+  - dev-tools
+
+mergeable_files:
+  - '.zshrc'
+  - '.config/fish/config.fish'

@@ -1,0 +1,10 @@
+---
+# Ansible role requirements for dotfiles repository
+roles:
+  - name: ansible-role-dotmodules
+    src: https://github.com/craveytrain/ansible-role-dotmodules.git
+
+
+collections:
+  - name: geerlingguy.mac
+    version: ">=1.0.0"

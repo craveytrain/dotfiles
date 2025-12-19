@@ -1,0 +1,13 @@
+---
+# Fish shell configuration module
+# Provides Fish shell configuration, plugins, and functions
+
+homebrew_packages:
+- fish
+- fisher
+
+stow_dirs:
+  - fish
+
+mergeable_files:
+  - '.config/fish/config.fish'

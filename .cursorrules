@@ -1,0 +1,172 @@
+# Cursor Rules for Dotfiles Repository
+
+## Constitution
+
+This repository is governed by the constitution with 8 core principles:
+- **Spec-Kit Source**: `.specify/memory/constitution.md` (used by `/speckit.*` commands)
+- **Canonical Reference**: `docs/policy/CONSTITUTION.md` (v1.0.0)
+
+All development MUST comply with the 8 core principles defined in the constitution:
+1. Modularity
+2. Idempotency
+3. Automation-First
+4. Cross-Platform Awareness
+5. Configuration Merging
+6. Documentation-First
+7. Version Control
+8. Declarative Over Imperative
+
+## Critical Patterns
+
+### Configuration Merging in ansible-role-dotmodules
+When modifying the role's configuration reduction logic:
+```yaml
+# ✅ CORRECT: Accumulate list values
+((final_config | default({}))[item.key] | default([]) + item.value) | flatten | unique
+
+# ❌ WRONG: Replaces instead of accumulating
+item.value | flatten | unique
+```
+
+This ensures all modules' `homebrew_casks`, `homebrew_packages`, etc. are collected, not just the last one.
+
+### Stow Deployment
+Always use `--adopt` flag for stow to handle pre-existing files:
+```yaml
+stow --adopt -d "{{ dotmodules.dest }}/{{ item }}" -t "{{ ansible_env.HOME }}" files
+```
+
+### Homebrew Without Sudo
+Use direct Ansible modules instead of requiring sudo:
+```yaml
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ homebrew_casks }}"
+    state: present
+    accept_external_apps: yes
+```
+
+## Module Development Rules
+
+### config.yml Requirements
+- ✅ DO declare `mergeable_files` if contributing to shared configs
+- ❌ DON'T declare `stow_dirs` without a `files/` directory
+- ✅ DO use comments to explain what module provides
+- ✅ DO list all dependencies explicitly
+
+### Module Documentation Requirements
+Every module should be documented in the main README.md with:
+- Module purpose and features
+- What gets installed
+- Usage examples
+- Integration with other tools
+
+### Mergeable Files Pattern
+Modules contributing to shared configs:
+```bash
+# In files/.config/file
+# ModuleName module contribution
+# This file will be merged with the main config file
+
+# Module-specific content here
+```
+
+## Repository Organization
+
+### Two Repositories
+1. **dotfiles** (this repo): Module definitions and playbooks
+2. **ansible-role-dotmodules**: Core automation engine
+
+When fixing bugs:
+- Fix in ansible-role-dotmodules source repo
+- Commit and push to GitHub
+- Reinstall in dotfiles: `ansible-galaxy install -r requirements.yml --force`
+- Test deployment to verify fix works
+
+## Ansible Role Requirements
+
+The role at `~/.ansible/roles/getfatday.dotmodules/` is installed from:
+```
+https://github.com/getfatday/ansible-role-dotmodules.git
+```
+
+## Spec-Kit Integration
+
+### Installation
+Spec-Kit is installed via UV (Python tool manager):
+```bash
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+specify check  # Verify installation
+```
+
+### Slash Commands Available
+Press `Cmd+K` in Cursor, then type `/speckit.` to see:
+- `/speckit.constitution` - Update principles
+- `/speckit.specify` - Create feature specifications
+- `/speckit.clarify` - Interactive clarification
+- `/speckit.plan` - Technical planning
+- `/speckit.tasks` - Task breakdown
+- `/speckit.implement` - Execute implementation
+- `/speckit.analyze` - Consistency checks
+- `/speckit.checklist` - Quality gates
+
+### When to Use Spec-Kit
+- ✅ Adding new complex modules
+- ✅ Major refactoring or architectural changes
+- ✅ Multi-file module configurations
+- ❌ Simple single-file edits
+- ❌ Documentation-only changes
+
+## Testing & Deployment
+
+### Before Committing
+```bash
+# 1. Test deployment in check mode
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --check
+
+# 2. Test actual deployment
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml
+
+# 3. Verify success (should show failed=0)
+# 4. Check installed applications/packages
+```
+
+### Module Testing Checklist
+- [ ] config.yml syntax valid
+- [ ] Module in deploy.yml install list
+- [ ] Deployment succeeds without errors
+- [ ] Application/package installed correctly
+- [ ] No stow conflicts
+- [ ] Constitution principles satisfied
+
+## Architecture-Specific Notes
+
+### Apple Silicon (ARM64)
+- Homebrew prefix: `/opt/homebrew`
+- Python: `/opt/homebrew/bin/python3.X`
+
+### Intel (x86_64)
+- Homebrew prefix: `/usr/local`
+- May require Rosetta 2 for some apps
+
+## File Merging System
+
+Files declared in `mergeable_files` are:
+1. Collected from all contributing modules
+2. Merged into `~/.dotmodules/merged/` 
+3. Deployed as unified files
+4. Excluded from regular stow process
+
+**Modules with mergeable files are filtered out** from regular stow deployment to prevent conflicts.
+
+## Quick Tips
+
+- Use `git stash -u` to temporarily hide untracked files
+- Run `specify check` to verify AI tools available
+- Check `~/.local/bin` in PATH for UV-installed tools
+- Constitution v1.0.0 established 2025-12-15
+- Always test changes with Ansible before pushing
+
+---
+
+*This file provides context to Cursor AI for better assistance with dotfiles development. See CURSOR.md for comprehensive development guidelines.*

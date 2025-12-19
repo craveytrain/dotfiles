@@ -1,0 +1,12 @@
+---
+# Editor configuration module
+homebrew_packages:
+  - vim
+
+stow_dirs:
+  - editor
+
+mergeable_files:
+  - '.config/fish/config.fish'
+  - '.zsh/aliases.sh'
+  - '.zsh/environment.sh'
