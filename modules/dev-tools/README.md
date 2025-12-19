@@ -126,6 +126,135 @@ mise use -g python@latest         # Latest Python
 
 The module automatically configures mise activation in both Fish and Zsh via mergeable configuration files, ensuring seamless runtime management across shells.
 
+## Local Configuration
+
+Some tools in this module (npm, mise, bat) don't support local config files but respect environment variables that override their base configuration. You can set these environment variables in your shell's local config file.
+
+**How it works**:
+1. Create your shell's local config file manually when needed:
+   - For zsh: `~/.zshrc.local`
+   - For fish: `~/.config/fish/config.local.fish`
+2. Add environment variables to override tool configurations (see examples below)
+3. Environment variables take precedence over config file settings
+4. Restart your shell or source the local config file to apply changes
+
+**Note**: Local config files are not tracked in version control. Create them manually based on the examples below when you need machine-specific overrides.
+
+### npm Configuration Overrides
+
+Override npm settings via environment variables in your shell local config:
+
+**Zsh** (`~/.zshrc.local` - create this file manually):
+```bash
+# Override npm registry
+export NPM_CONFIG_REGISTRY=https://registry.example.com
+
+# Override npm cache directory
+export NPM_CONFIG_CACHE=~/.npm-cache-custom
+
+# Override npm prefix directory
+export NPM_CONFIG_PREFIX=~/.npm-global
+
+# Override npm init defaults
+export NPM_CONFIG_INIT_AUTHOR_NAME="Your Name"
+export NPM_CONFIG_INIT_AUTHOR_EMAIL="your.email@example.com"
+```
+
+**Fish** (`~/.config/fish/config.local.fish` - create this file manually):
+```fish
+# Override npm registry
+set -gx NPM_CONFIG_REGISTRY https://registry.example.com
+
+# Override npm cache directory
+set -gx NPM_CONFIG_CACHE ~/.npm-cache-custom
+
+# Override npm prefix directory
+set -gx NPM_CONFIG_PREFIX ~/.npm-global
+
+# Override npm init defaults
+set -gx NPM_CONFIG_INIT_AUTHOR_NAME "Your Name"
+set -gx NPM_CONFIG_INIT_AUTHOR_EMAIL "your.email@example.com"
+```
+
+**Precedence**: Environment variables > per-project `.npmrc` > per-user `~/.npmrc` > global config
+
+**Available Variables**:
+- `NPM_CONFIG_REGISTRY` - Override npm registry URL
+- `NPM_CONFIG_PREFIX` - Override global install prefix
+- `NPM_CONFIG_CACHE` - Override cache directory
+- `NPM_CONFIG_INIT_AUTHOR_NAME` - Override default author name
+- `NPM_CONFIG_INIT_AUTHOR_EMAIL` - Override default author email
+
+### mise Configuration Overrides
+
+Override mise settings via environment variables:
+
+**Zsh** (`~/.zshrc.local`):
+```bash
+# Override mise config file location
+export MISE_CONFIG_FILE=~/.config/mise/config-custom.toml
+
+# Override mise data directory (where tools are installed)
+export MISE_DATA_DIR=~/.local/share/mise-custom
+
+# Override mise log level
+export MISE_LOG_LEVEL=debug
+```
+
+**Fish** (`~/.config/fish/config.local.fish`):
+```fish
+# Override mise config file location
+set -gx MISE_CONFIG_FILE ~/.config/mise/config-custom.toml
+
+# Override mise data directory (where tools are installed)
+set -gx MISE_DATA_DIR ~/.local/share/mise-custom
+
+# Override mise log level
+set -gx MISE_LOG_LEVEL debug
+```
+
+**Available Variables**:
+- `MISE_CONFIG_FILE` - Override default config file location (`~/.config/mise/config.toml`)
+- `MISE_DATA_DIR` - Override data directory (`~/.local/share/mise` or `$XDG_DATA_HOME/mise`)
+- `MISE_LOG_LEVEL` - Control logging verbosity (e.g., "debug", "info", "warn", "error")
+
+### bat Configuration Overrides
+
+Override bat settings via environment variables:
+
+**Zsh** (`~/.zshrc.local`):
+```bash
+# Override bat theme (run `bat --list-themes` to see available themes)
+export BAT_THEME=Dracula
+
+# Override bat style (e.g., "numbers,changes,grid")
+export BAT_STYLE="numbers,changes"
+
+# Override bat pager
+export BAT_PAGER="less -R"
+```
+
+**Fish** (`~/.config/fish/config.local.fish`):
+```fish
+# Override bat theme (run `bat --list-themes` to see available themes)
+set -gx BAT_THEME Dracula
+
+# Override bat style (e.g., "numbers,changes,grid")
+set -gx BAT_STYLE "numbers,changes"
+
+# Override bat pager
+set -gx BAT_PAGER "less -R"
+```
+
+**Available Variables**:
+- `BAT_THEME` - Override theme (run `bat --list-themes` to see available themes)
+- `BAT_STYLE` - Override style (e.g., "numbers,changes,header")
+- `BAT_PAGER` - Override pager setting
+
+**Precedence**: Command-line options > environment variables > config file
+
+**Note**: Create your shell's local config file manually (`~/.zshrc.local` or `~/.config/fish/config.local.fish`) and add the environment variables you need. See the zsh or fish module READMEs for instructions on creating local config files.
+
 ## Troubleshooting
 
 **Verify installations:**

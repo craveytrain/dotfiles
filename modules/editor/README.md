@@ -92,6 +92,86 @@ set tabstop=2           " 2 spaces per tab
 set shiftwidth=2        " 2 spaces for indentation
 ```
 
+## Local Configuration
+
+The editor module supports local configuration overrides via `.vimrc.local`. This file is **not tracked in version control** and allows machine-specific settings.
+
+### How It Works
+
+**File location**: `~/.vimrc.local` (in your home directory - create this file manually)
+
+**Format**: Vim script (same syntax as `.vimrc`)
+
+**Loading**: The base `.vimrc` automatically sources `~/.vimrc.local` at the end if it exists via conditional source. Settings in the local file override base configuration.
+
+**Creation**: Create this file manually in your home directory when you need machine-specific settings. If the file doesn't exist, Vim loads normally without errors.
+
+### When to Use Local Configuration
+
+Create `~/.vimrc.local` when you need:
+- Machine-specific colorschemes or appearance settings
+- Custom key mappings for specific workflows
+- Plugin settings that differ per machine
+- Font or display settings for different monitors
+
+### Example 1: Machine-Specific Colorscheme
+
+Use a different colorscheme on specific machines:
+
+```vim
+" ~/.vimrc.local (create this file)
+colorscheme dracula
+set background=dark
+```
+
+### Example 2: Machine-Specific Key Mappings
+
+Add machine-specific key mappings:
+
+```vim
+" ~/.vimrc.local (create this file)
+nnoremap <leader>w :w<CR>
+nnoremap <leader>q :q<CR>
+```
+
+### Example 3: Machine-Specific Plugin Settings
+
+Configure plugins differently per machine:
+
+```vim
+" ~/.vimrc.local (create this file)
+let g:some_plugin_setting = 'value'
+let g:another_setting = 'machine-specific-value'
+```
+
+### How to Create
+
+Create the file manually in your home directory:
+
+```bash
+# Create the local config file
+vim ~/.vimrc.local
+
+# Add your machine-specific settings
+colorscheme dracula
+set background=dark
+```
+
+The file will be automatically loaded on your next Vim session.
+
+### Verify It Works
+
+Check that your local config is being loaded:
+
+```bash
+# Check if file exists
+test -f ~/.vimrc.local && echo "Local config exists" || echo "No local config"
+
+# Open vim and check if settings are applied
+vim
+# Then in vim: :echo g:some_plugin_setting
+```
+
 ## Plugin Management
 
 Consider adding a plugin manager like vim-plug to extend functionality:

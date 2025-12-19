@@ -166,6 +166,59 @@ install:
 3. Add `files/` directory with your dotfiles
 4. Add module name to `install` list in `playbooks/deploy.yml`
 
+## Local Configuration Overrides
+
+All modules support machine-specific configuration overrides via local config files. These files are **not tracked in version control** and allow you to customize settings per-machine without modifying the base dotfiles.
+
+### How It Works
+
+Base configuration files (`.gitconfig`, `.zshrc`, `.vimrc`, etc.) automatically load local config files if they exist:
+- **Git**: `~/.gitconfig.local` (loaded via `[include]` directive)
+- **Zsh**: `~/.zshrc.local` (loaded via conditional `source`)
+- **Fish**: `~/.config/fish/config.local.fish` (loaded via conditional `source`)
+- **Vim**: `~/.vimrc.local` (loaded via conditional `source`)
+
+### Creating Local Config Files
+
+**You create these files manually** in your home directory when you need machine-specific settings. Each module's README documents:
+- Where to create the local config file
+- What format/syntax to use
+- Concrete examples for common use cases
+
+**Example - Git local config:**
+```bash
+# Create ~/.gitconfig.local
+vim ~/.gitconfig.local
+
+# Add machine-specific settings
+[user]
+    name = Your Name (Work Laptop)
+    email = work@company.com
+```
+
+**Example - Shell local config (for environment variables):**
+```bash
+# Create ~/.zshrc.local (or ~/.config/fish/config.local.fish for fish)
+vim ~/.zshrc.local
+
+# Add environment variable overrides for tools
+export NPM_CONFIG_REGISTRY=https://registry.company.com
+export BAT_THEME="Monokai Extended Light"
+```
+
+### Tools Without Local Config Support
+
+Some tools (npm, mise, bat) don't support local config files but respect environment variables. See the [dev-tools module README](modules/dev-tools/README.md) for available environment variables and how to set them in your shell's local config file.
+
+### Benefits
+
+- **Machine-specific settings**: Different identities, paths, or preferences per machine
+- **Private credentials**: Store API keys and tokens without committing to git
+- **No conflicts**: Local configs override base configs without modifying tracked files
+- **Zero errors**: Base configs load normally if local files don't exist
+
+For detailed instructions, see each module's README file.
+
 ## Customization
 
 ### Adding New Modules

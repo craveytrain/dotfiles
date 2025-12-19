@@ -76,6 +76,97 @@ git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
 
+## Local Configuration
+
+The git module supports local configuration overrides via `.gitconfig.local`. This file is **not tracked in version control** and allows machine-specific settings.
+
+### How It Works
+
+**File location**: `~/.gitconfig.local` (in your home directory - create this file manually)
+
+**Format**: Standard Git config format (same as `.gitconfig`)
+
+**Loading**: The base `.gitconfig` automatically includes `~/.gitconfig.local` if it exists via the `[include]` directive. Settings in the local file override base configuration.
+
+**Creation**: Create this file manually in your home directory when you need machine-specific settings. If the file doesn't exist, Git loads normally without errors.
+
+### When to Use Local Configuration
+
+Create `~/.gitconfig.local` when you need:
+- Different user identity on work vs. personal machines
+- Machine-specific signing keys or GPG settings
+- Custom aliases for specific workflows
+- Company-specific Git settings (e.g., custom remote URLs)
+
+### Example 1: Machine-Specific User Identity
+
+This is the most common use case - maintaining different identities on different machines.
+
+Create `~/.gitconfig.local`:
+
+```ini
+[user]
+    name = Your Name (Work Laptop)
+    email = work@company.com
+    signingkey = ABC123DEF456
+```
+
+This overrides the base user settings for this machine only, while leaving your dotfiles repository unchanged.
+
+### Example 2: Machine-Specific Signing Key
+
+Add GPG signing configuration for this machine:
+
+```ini
+[user]
+    signingkey = 1234567890ABCDEF
+
+[commit]
+    gpgsign = true
+```
+
+### Example 3: Custom Work Aliases
+
+Add machine-specific aliases for work workflows:
+
+```ini
+[alias]
+    work-push = !git push origin $(git rev-parse --abbrev-ref HEAD)
+    sync-main = !git checkout main && git pull origin main
+
+[url "https://github.company.com/"]
+    insteadOf = company:
+```
+
+### How to Create
+
+Create the file manually in your home directory:
+
+```bash
+# Create the local config file
+vim ~/.gitconfig.local
+
+# Add your machine-specific settings
+[user]
+    name = Your Name (Work Laptop)
+    email = work@company.com
+```
+
+The file will be automatically loaded on your next Git command.
+
+### Verify It Works
+
+Check that your local config is being loaded:
+
+```bash
+# Show all config with sources
+git config --list --show-origin | grep gitconfig.local
+
+# Check effective user identity
+git config user.name
+git config user.email
+```
+
 ## Git Aliases
 
 Check your `.gitconfig` for configured aliases. Common patterns include:

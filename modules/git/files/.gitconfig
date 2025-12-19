@@ -133,4 +133,4 @@
 	helper = !/opt/homebrew/bin/gh auth git-credential
 
 [include]
-    path = ~/.config/git/user
+    path = ~/.gitconfig.local

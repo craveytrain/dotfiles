@@ -45,3 +45,8 @@ if status --is-interactive
 	set -g tide_left_prompt_items pwd git cmd_duration newline status character
 	set -g tide_right_prompt_items node python rustc java php ruby go terraform
 end
+
+# Local configuration (machine-specific overrides)
+if test -f ~/.config/fish/config.local.fish
+	source ~/.config/fish/config.local.fish
+end
