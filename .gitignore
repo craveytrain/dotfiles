@@ -24,3 +24,6 @@
 # Runtime/generated folders
 modules/merged/
 
+# Claude Code local settings
+.claude/settings.local.json
+

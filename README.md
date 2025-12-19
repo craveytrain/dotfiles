@@ -75,7 +75,7 @@ module-name/
 
 3. **Run the playbook:**
    ```bash
-   ansible-playbook -i playbooks/inventory playbooks/deploy.yml
+   ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
 ### Available Modules
@@ -139,7 +139,7 @@ After making changes to your dotfiles:
 
 2. **Re-run the playbook** to apply changes:
    ```bash
-   ansible-playbook -i playbooks/inventory playbooks/deploy.yml
+   ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
 ## Module Management
@@ -208,7 +208,7 @@ install:
 Run with verbose output to see what's happening:
 
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml -v
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass -v
 ```
 
 ## Development with Spec-Kit

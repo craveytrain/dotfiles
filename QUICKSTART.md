@@ -34,7 +34,7 @@ Before you begin, ensure you have:
 
 4. **Deploy your dotfiles**:
    ```bash
-   ansible-playbook -i playbooks/inventory playbooks/deploy.yml
+   ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
 That's it! Your dotfiles are now deployed and all configured tools are installed.
@@ -53,10 +53,10 @@ By default, the deployment installs several modules. See [README.md](README.md#a
 
 ### Check what would be changed (dry-run)
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --check
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass --check
 ```
 
 ### Verbose output
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml -v
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass -v
 ```
