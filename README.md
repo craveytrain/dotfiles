@@ -2,8 +2,9 @@
 
 A comprehensive dotfiles management system using the `ansible-role-dotmodules` role for automated system configuration and dotfile deployment.
 
-**Governance**: See [Constitution v1.0.0](docs/policy/CONSTITUTION.md) for project principles  
+**Governance**: See [Constitution v1.0.0](docs/policy/CONSTITUTION.md) for project principles
 **AI-Assisted Development**: Integrated with GitHub Spec-Kit for spec-driven development
+**Quick Start**: New to this repo? See [QUICKSTART.md](QUICKSTART.md) for fast setup
 
 ## Overview
 
@@ -13,8 +14,6 @@ This repository contains modular dotfile configurations that can be deployed usi
 
 ```
 dotfiles/
-├── .cursor/           # Cursor IDE commands and configuration
-│   └── commands/      # Custom Cursor commands
 ├── .specify/          # Spec-Kit specifications (auto-managed)
 ├── docs/              # Documentation and policy
 │   └── policy/        # Governance and policy documents
@@ -23,17 +22,18 @@ dotfiles/
 │       ├── CODING_STANDARDS.md # Coding standards
 │       └── CHANGELOG.md       # Change history
 ├── modules/           # Dotfile modules (each with config.yml and files/)
-│   ├── shell/         # Common shell utilities (eza, ripgrep, etc.)
-│   ├── fish/          # Fish shell configuration and functions
-│   ├── zsh/           # Zsh shell configuration and prompt theme
-│   ├── git/           # Git configuration and tools
+│   ├── 1password/     # 1Password CLI for password management
+│   ├── dev-tools/     # Development utilities (mise, jq, shellcheck, etc.)
 │   ├── editor/        # Editor configurations (vim)
-│   ├── dev-tools/     # Development utilities (mise, eslint, prettier, etc.)
-│   └── fonts/         # System fonts for development
+│   ├── fish/          # Fish shell configuration and functions
+│   ├── fonts/         # System fonts for development
+│   ├── git/           # Git configuration and tools
+│   ├── shell/         # Common shell utilities (eza, ripgrep, etc.)
+│   └── zsh/           # Zsh shell configuration and prompt theme
 ├── playbooks/         # Ansible playbooks for deployment
 │   ├── deploy.yml     # Main deployment playbook
 │   └── inventory      # Ansible inventory file
-├── CURSOR.md          # Cursor AI and Spec-Kit development guide
+├── QUICKSTART.md      # Quick start guide for new users
 ├── requirements.yml   # Ansible Galaxy requirements
 └── README.md          # This file
 ```
@@ -44,6 +44,7 @@ Each module follows this structure:
 
 ```
 module-name/
+├── README.md          # Module documentation (purpose, features, usage)
 ├── config.yml         # Module configuration (Homebrew packages, stow dirs, etc.)
 └── files/             # Dotfiles to be deployed
     ├── .config/       # Configuration files
@@ -85,10 +86,11 @@ module-name/
 | shell         | Common shell utilities         | eza, ripgrep, tldr, trash, wget, stow      |
 | fish          | Fish shell configuration       | fish, fisher, tide                          |
 | zsh           | Zsh shell configuration        | powerlevel10k                               |
-| git       | Git configuration         | git, gh, diff-so-fancy, difftastic          |
-| editor    | Editor configurations     | vim                                         |
-| dev-tools | Development tools         | mise, jq, shellcheck, actionlint, 1password, bat |
-| fonts     | System fonts              | Fira Code, Hack Nerd Font, Inconsolata, Input |
+| git           | Git configuration              | git, gh, diff-so-fancy, difftastic          |
+| editor        | Editor configurations          | vim                                         |
+| dev-tools     | Development tools              | mise, jq, shellcheck, actionlint, bat       |
+| 1password     | Password management CLI        | 1password-cli (op)                          |
+| fonts         | System fonts                   | Fira Code, Hack Nerd Font, Inconsolata, Input |
 
 ## Configuration
 
