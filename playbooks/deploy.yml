@@ -19,5 +19,6 @@
         - zsh
         - dev-tools
         - editor
+        - 1password
   roles:
     - role: ansible-role-dotmodules
