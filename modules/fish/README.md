@@ -21,7 +21,8 @@ The module provides:
 - `.config/fish/config.fish` - Main Fish configuration (mergeable with other modules)
 
 **Shell registration:**
-- Automatically registers Fish shell in `/etc/shells` for system use
+- Automatically registers Fish shell in `/etc/shells` for system use via `register_shell: fish` config option
+- Can be skipped at runtime with `--skip-tags register_shell` (see main README for details)
 
 ## Post-Deployment Setup
 
