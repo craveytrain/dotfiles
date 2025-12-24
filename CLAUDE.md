@@ -11,6 +11,9 @@ Auto-generated from all feature plans. Last updated: 2025-12-15
 - File system (home directory dotfiles, ~/.dotmodules/merged/ for mergeable files) (003-local-config-overrides)
 - YAML (Ansible 2.9+), Shell scripts (bash/zsh/fish), Config formats (Git, Vim) + Ansible, GNU Stow, ansible-role-dotmodules (003-local-config-overrides)
 - Filesystem-based configuration files in module directory structure (001-mise-node-module)
+- YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules) (001-optional-shell-registration)
+- File-based configuration in YAML (module config.yml files), system files (/etc/shells) (001-optional-shell-registration)
+- File-based configuration in YAML (module config.yml files), system files (/etc/shells), Ansible extra variables (runtime) (002-runtime-skip-shell-registration)
 
 - Shell scripts (sh, bash) and Ruby script - no version constraints + Git (already installed via git module), GNU Stow (for deployment), Ansible (for automation) (001-move-git-scripts)
 
@@ -30,10 +33,9 @@ tests/
 Shell scripts (sh, bash) and Ruby script - no version constraints: Follow standard conventions
 
 ## Recent Changes
+- 002-runtime-skip-shell-registration: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules)
+- 001-optional-shell-registration: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules)
 - 003-local-config-overrides: Added YAML (Ansible 2.9+), Shell scripts (bash/zsh/fish), Config formats (Git, Vim) + Ansible, GNU Stow, ansible-role-dotmodules
-- 001-mise-node-module: Added YAML (Ansible 2.9+), TOML (mise config format), Bash (shell integration) + Homebrew (mise package), ansible-role-dotmodules, GNU Stow
-- 003-local-config-overrides: Added YAML (Ansible 2.9+), Shell (bash/zsh/fish), Git config format, Vim config forma + ansible-role-dotmodules, GNU Stow, Ansible core modules (file, template, lineinfile), community.general collection
-- 001-register-homebrew-shells: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible, ansible-role-dotmodules, GNU Stow, Homebrew
 
 
 <!-- MANUAL ADDITIONS START -->

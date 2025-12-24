@@ -2,6 +2,9 @@
 # Main deployment playbook for dotfiles
 # Run with: ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
 # (--ask-become-pass required for shell registration in /etc/shells)
+#
+# To skip shell registration (useful for CI/CD or restricted environments):
+# ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
 - name: Deploy dotfiles using ansible-role-dotmodules
   hosts: localhost
   tags:

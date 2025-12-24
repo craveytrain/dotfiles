@@ -131,6 +131,46 @@ mergeable_files:
   - '.zshrc'  # Merged with other modules' contributions
 ```
 
+## Shell Registration
+
+Modules can automatically register shells in `/etc/shells`, which is required to use them as your default shell via `chsh`.
+
+### How It Works
+
+Add `register_shell` to your module's `config.yml` to enable automatic registration:
+
+```yaml
+# modules/fish/config.yml
+homebrew_packages:
+  - fish
+
+register_shell: fish  # Automatically registers /opt/homebrew/bin/fish (or /usr/local/bin/fish on Intel)
+```
+
+Shell paths are automatically detected based on your system architecture:
+- **Apple Silicon (M1/M2/M3)**: `/opt/homebrew/bin/fish`
+- **Intel Mac**: `/usr/local/bin/fish`
+
+### Skipping Registration
+
+**To disable shell registration permanently**, simply remove or comment out the `register_shell` line from your module's `config.yml`.
+
+**To skip registration for a single deployment** (useful for CI/CD, testing, or restricted environments), use the `--skip-tags` flag:
+
+```bash
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
+```
+
+Note: When using `--skip-tags register_shell`, you don't need `--ask-become-pass` since no sudo privileges are required.
+
+### When to Skip Registration
+
+Use `--skip-tags register_shell` when:
+- **CI/CD pipelines**: No sudo access available
+- **Testing deployments**: Don't want to modify system files
+- **Restricted environments**: Corporate systems with policies preventing `/etc/shells` modification
+- **Quick deployments**: Shell registration not needed for the current session
+
 ## Updating Dotfiles
 
 After making changes to your dotfiles:
