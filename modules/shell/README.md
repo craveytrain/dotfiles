@@ -18,10 +18,6 @@ The module delivers essential modern command-line tools:
 **Homebrew packages installed:**
 - eza, ripgrep, tldr, trash, wget, stow
 
-**Homebrew taps:**
-- homebrew/bundle
-- homebrew/services
-
 **Configuration files:**
 - None (this module only provides packages, no config files)
 

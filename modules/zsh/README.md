@@ -15,6 +15,7 @@ The module delivers:
 ## Installation Components
 
 **Homebrew packages installed:**
+- zsh
 - powerlevel10k
 
 **Configuration files:**
