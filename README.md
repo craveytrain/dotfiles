@@ -86,7 +86,7 @@ module-name/
 | ------------- | ------------------------------ | ------------------------------------------- |
 | shell         | Common shell utilities         | eza, ripgrep, tldr, trash, wget, stow      |
 | fish          | Fish shell configuration       | fish, fisher, tide                          |
-| zsh           | Zsh shell configuration        | powerlevel10k                               |
+| zsh           | Zsh shell configuration        | zsh, powerlevel10k                          |
 | git           | Git configuration              | git, gh, diff-so-fancy, difftastic          |
 | editor        | Editor configurations          | vim                                         |
 | dev-tools     | Development tools              | mise, jq, shellcheck, actionlint, bat       |
@@ -115,14 +115,6 @@ homebrew_packages:
   - trash
   - wget
   - stow
-
-homebrew_taps:
-  - homebrew/bundle
-  - homebrew/services
-
-homebrew_taps:
-  - homebrew/bundle
-  - homebrew/services
 
 stow_dirs:
   - zsh

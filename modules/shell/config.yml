@@ -4,15 +4,12 @@
 # These are shared packages that work with any shell
 
 homebrew_packages:
-  - eza          # Modern ls replacement (used by zsh aliases, useful for fish)
-  - ripgrep      # Fast grep alternative
-  - stow         # Symlink manager (used by deployment system)
-  - tldr         # Simplified man pages
-  - trash        # Safe rm replacement
-  - wget         # File downloader
+  - eza # Modern ls replacement (used by zsh aliases, useful for fish)
+  - ripgrep # Fast grep alternative
+  - stow # Symlink manager (used by deployment system)
+  - tldr # Simplified man pages
+  - trash # Safe rm replacement
+  - wget # File downloader
 
-homebrew_taps:
-  - homebrew/bundle
-  - homebrew/services
 
 # Note: No stow_dirs - this module only provides packages, no config files

@@ -4,6 +4,7 @@
 # Note: Common shell utilities are in the shell module
 
 homebrew_packages:
+  - zsh # Zsh shell (required dependency)
   - powerlevel10k # Zsh prompt theme
 
 # Note: Common shell utilities (eza, ripgrep, tldr, trash, wget, stow) are in shell module
