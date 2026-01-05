@@ -14,6 +14,8 @@ Auto-generated from all feature plans. Last updated: 2025-12-15
 - YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules) (001-optional-shell-registration)
 - File-based configuration in YAML (module config.yml files), system files (/etc/shells) (001-optional-shell-registration)
 - File-based configuration in YAML (module config.yml files), system files (/etc/shells), Ansible extra variables (runtime) (002-runtime-skip-shell-registration)
+- Vim script (vim 8.0+), YAML (Ansible 2.9+), Bash (for vim-plug installation) + vim (already installed), vim-plug (plugin manager - to be added), vim-commentary (tpope/vim-commentary plugin), ansible-role-dotmodules, GNU Stow, Homebrew (001-vim-plug-commentary)
+- File-based configuration (`.vimrc`, module `config.yml`) (001-vim-plug-commentary)
 
 - Shell scripts (sh, bash) and Ruby script - no version constraints + Git (already installed via git module), GNU Stow (for deployment), Ansible (for automation) (001-move-git-scripts)
 
@@ -33,9 +35,9 @@ tests/
 Shell scripts (sh, bash) and Ruby script - no version constraints: Follow standard conventions
 
 ## Recent Changes
+- 001-vim-plug-commentary: Added Vim script (vim 8.0+), YAML (Ansible 2.9+), Bash (for vim-plug installation) + vim (already installed), vim-plug (plugin manager - to be added), vim-commentary (tpope/vim-commentary plugin), ansible-role-dotmodules, GNU Stow, Homebrew
 - 002-runtime-skip-shell-registration: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules)
 - 001-optional-shell-registration: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules)
-- 003-local-config-overrides: Added YAML (Ansible 2.9+), Shell scripts (bash/zsh/fish), Config formats (Git, Vim) + Ansible, GNU Stow, ansible-role-dotmodules
 
 
 <!-- MANUAL ADDITIONS START -->

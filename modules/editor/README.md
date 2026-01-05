@@ -174,11 +174,113 @@ vim
 
 ## Plugin Management
 
-Consider adding a plugin manager like vim-plug to extend functionality:
-- File explorers (NERDTree)
-- Fuzzy finding (fzf)
-- Git integration (vim-fugitive)
-- Language support
+This module includes **vim-plug**, a lightweight plugin manager that automatically installs and manages vim plugins. The plugin manager is automatically installed on first vim startup - no manual setup required.
+
+### Included Plugins
+
+**vim-commentary** - Comment toggling for code
+
+GitHub: https://github.com/tpope/vim-commentary
+
+**Usage:**
+- `gcc` - Toggle comment on current line (normal mode)
+- `gc` - Toggle comment on selection (visual mode)
+- `gcap` - Toggle comment on paragraph
+- `gc4j` - Comment next 4 lines
+
+**Supported file types:** Python, JavaScript, Ruby, Shell, YAML, HTML, CSS, Vim script, C/C++, Java, Go, Rust, and 40+ more (automatically detects comment syntax)
+
+### Plugin Manager Commands
+
+**Check plugin status:**
+```vim
+:PlugStatus
+```
+
+**Install new plugins:**
+```vim
+:PlugInstall
+```
+
+**Update all plugins:**
+```vim
+:PlugUpdate
+```
+
+**Update vim-plug itself:**
+```vim
+:PlugUpgrade
+```
+
+**Remove unlisted plugins:**
+```vim
+:PlugClean
+```
+
+### Adding More Plugins
+
+To add additional plugins, create or edit `~/.vimrc.local`:
+
+```vim
+" Add plugins via .vimrc.local
+call plug#begin('~/.vim/plugged')
+  " Fuzzy file finder
+  Plug 'junegunn/fzf.vim'
+
+  " File tree explorer
+  Plug 'preservim/nerdtree'
+
+  " Git integration
+  Plug 'tpope/vim-fugitive'
+call plug#end()
+```
+
+Then open vim and run `:PlugInstall` to install the new plugins.
+
+### How It Works
+
+**First vim startup:**
+1. vim-plug automatically downloads itself
+2. Declared plugins automatically install
+3. vim reloads with plugins active
+
+**Subsequent startups:**
+- vim-plug checks for installed plugins
+- Loads plugins instantly (< 2 seconds)
+- No re-downloads unless you run `:PlugUpdate`
+
+### Popular Plugin Recommendations
+
+- **File explorers:** NERDTree, fern.vim
+- **Fuzzy finding:** fzf.vim, telescope.nvim
+- **Git integration:** vim-fugitive, gitsigns.nvim
+- **Language support:** coc.nvim, ale
+- **Status line:** vim-airline, lightline.vim
+- **Color schemes:** gruvbox, dracula, nord
+
+### Troubleshooting Plugins
+
+**Plugin not loading:**
+```vim
+:PlugStatus  " Check if plugin is installed
+:PlugInstall " Retry installation if needed
+```
+
+**Vim slow to start:**
+```vim
+:PlugStatus  " Check for problematic plugins
+:PlugClean   " Remove unused plugins
+```
+
+**Plugin errors:**
+```vim
+:messages    " View error messages
+:scriptnames " See loaded scripts
+```
+
+**Network issues during install:**
+- Ensure internet connectivity
+- Open vim when online and run `:PlugInstall` to retry
 
 ## Troubleshooting
 
