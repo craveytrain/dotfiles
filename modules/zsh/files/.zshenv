@@ -8,3 +8,6 @@ export DOTFILES="$HOME/$DOT"
 if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
+
+# Local configuration (machine-specific overrides)
+[ -f ~/.zshenv.local.zsh ] && source ~/.zshenv.local.zsh
