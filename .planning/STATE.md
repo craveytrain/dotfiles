@@ -1,11 +1,11 @@
 # Project State
 
 **Last Updated:** 2026-01-24
-**Current Phase:** Phase 1 - Foundation & Ghostty Module
-**Plan:** 4 of 4 complete (01-01, 01-02, 01-03, 01-04)
+**Current Phase:** Phase 2 - Claude CLI Module
+**Plan:** 2 of 2 complete (02-01, 02-02)
 **Status:** Phase Complete
 
-**Progress:** ████ (4/4 plans, 100%)
+**Progress:** ██████ (6/6 plans, 100%)
 
 ---
 
@@ -25,18 +25,15 @@
 ---
 
 ### Phase 2: Claude CLI Module
-**Status:** Not Started
+**Status:** Complete (2 of 2 plans complete)
 
-**Tasks:**
-- [ ] Research Claude CLI Homebrew availability
-- [ ] Discover Claude CLI config location
-- [ ] Create Claude module structure
-- [ ] Add Claude configuration files
-- [ ] Write Claude module README
-- [ ] Document authentication setup
-- [ ] Test deployment
+**Completed Plans:**
+- [x] 02-01: Create Claude module structure (2026-01-24) - `bdfcc30`
+- [x] 02-02: Deploy and verify Claude module (2026-01-24) - `74f101d`
 
-**Blocked By:** Phase 1 completion
+**Note:** Scope reduced based on user feedback - only syncing settings.json and statusline.js hook.
+
+**Blocked By:** None
 
 ---
 
@@ -45,35 +42,34 @@
 
 **Approach:** Continuous discovery, started after Phase 2
 
-**Blocked By:** Phase 2 completion
+**Blocked By:** None
 
 ---
 
 ## Recent Activity
 
+- 2026-01-24: Completed 02-02-PLAN.md - Deployed Claude module (settings.json + statusline.js)
+- 2026-01-24: Scope adjustment - removed agents/commands/get-shit-done from sync
+- 2026-01-24: Scope adjustment - removed homebrew installation (corp IT restriction)
+- 2026-01-24: Completed 02-01-PLAN.md - Created Claude module structure
 - 2026-01-24: Completed 01-04-PLAN.md - Deployed and verified Ghostty module (Phase 1 COMPLETE)
 - 2026-01-24: Completed 01-03-PLAN.md - Created Ghostty module structure
 - 2026-01-24: Completed 01-02-PLAN.md - Fixed duplicate 1password entry
 - 2026-01-24: Completed 01-01-PLAN.md - Removed SpecKit artifacts
 - 2026-01-23: Project initialized via /gsd:new-project
-- 2026-01-23: Created PROJECT.md with validated and active requirements
-- 2026-01-23: Completed research phase (4 parallel agents)
-- 2026-01-23: Created ROADMAP.md with 3-phase approach
-- 2026-01-23: Created STATE.md (this file)
 
 ---
 
 ## Next Steps
 
-1. **Phase 1 Complete!** - Move to Phase 2 (Claude CLI Module)
-2. Plan Phase 2 with /gsd:plan-phase command
-3. Execute Phase 2 plans
+1. **Phase 2 Complete!** - Move to Phase 3 (Ongoing Config Discovery)
+2. Phase 3 is continuous - add modules as needed
 
 ---
 
 ## Known Issues
 
-- ~~Duplicate 1password entry in playbooks/deploy.yml~~ - **RESOLVED** (01-02, commit f41d242)
+None
 
 ---
 
@@ -81,25 +77,25 @@
 
 | Phase | Plan | Decision | Rationale |
 |-------|------|----------|-----------|
-| 01 | 01 | Removed SpecKit artifacts after GSD migration | All valuable research captured in GSD docs, no need for parallel planning systems |
-| 01 | 01 | Preserved Constitutional docs in docs/policy/ | Governance documents remain relevant, not planning artifacts |
-| 01 | 02 | Removed duplicate 1password entry | Tech debt cleanup before adding new modules |
-| 01 | 03 | Used config-only module pattern for Ghostty | Simplest pattern for configuration-only module, no scripts needed |
-| 01 | 03 | Copied existing Ghostty config rather than minimal | Captures working configuration with personalized theme and settings |
-| 01 | 04 | Used --skip-tags register_shell during deployment | Avoids sudo requirement, focuses on module deployment verification |
-| 01 | 04 | Manual verification via checkpoint | Visual confirmation more reliable than automated checks for GUI app |
+| 01 | 01 | Removed SpecKit artifacts after GSD migration | All valuable research captured in GSD docs |
+| 01 | 02 | Removed duplicate 1password entry | Tech debt cleanup |
+| 01 | 03 | Used config-only module pattern for Ghostty | Simplest pattern |
+| 01 | 04 | Manual verification via checkpoint | Visual confirmation more reliable |
+| 02 | 02 | Removed homebrew_casks for claude-code | Corp IT blocks homebrew install |
+| 02 | 02 | Removed agents/commands/get-shit-done from sync | User preference - manage locally |
+| 02 | 02 | Sync only settings.json + statusline.js | Minimal cross-machine value |
 
 ---
 
 ## Context Handoff Notes
 
 **Session Continuity:**
-- Last session: 2026-01-24T06:57:30Z
-- Stopped at: Completed 01-04-PLAN.md (Phase 1 Complete)
+- Last session: 2026-01-24
+- Stopped at: Completed 02-02-PLAN.md (Phase 2 Complete)
 - Resume file: None
-- Next action: Plan Phase 2 (Claude CLI Module)
+- Next action: Phase 3 (Ongoing Config Discovery) - continuous
 
 ---
 
 *State tracking initialized: 2026-01-23*
-*Last updated: 2026-01-24 after completing 01-04-PLAN.md (Phase 1 Complete)*
+*Last updated: 2026-01-24 after completing Phase 2*

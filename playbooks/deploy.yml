@@ -24,5 +24,6 @@
         - node
         - editor
         - ghostty
+        - claude
   roles:
     - role: ansible-role-dotmodules

@@ -1,0 +1,7 @@
+---
+# Claude Code CLI configuration module
+# Syncs statusline hook across machines
+# Note: Claude Code must be installed manually (not via Homebrew due to corp IT)
+
+stow_dirs:
+  - claude

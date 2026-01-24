@@ -13,10 +13,10 @@
 **Plans:** 4 plans (3 waves)
 
 Plans:
-- [ ] 01-01-PLAN.md - SpecKit cleanup (Wave 1)
-- [ ] 01-02-PLAN.md - Remove duplicate 1password entry from deploy.yml (Wave 1)
-- [ ] 01-03-PLAN.md - Create Ghostty module structure (Wave 2)
-- [ ] 01-04-PLAN.md - Deploy and verify Ghostty module (Wave 3, checkpoint)
+- [x] 01-01-PLAN.md - SpecKit cleanup (Wave 1)
+- [x] 01-02-PLAN.md - Remove duplicate 1password entry from deploy.yml (Wave 1)
+- [x] 01-03-PLAN.md - Create Ghostty module structure (Wave 2)
+- [x] 01-04-PLAN.md - Deploy and verify Ghostty module (Wave 3, checkpoint)
 
 **Success Criteria:**
 - Duplicate 1password entry removed from deploy.yml
@@ -31,25 +31,37 @@ Plans:
 
 **Complexity:** Low (config-only module, no dependencies)
 
+**Status:** COMPLETE
+
 ---
 
 ## Phase 2: Claude CLI Module
 
-**Goal:** Add Claude CLI configuration module with Homebrew integration.
+**Goal:** Synchronize Claude Code CLI configuration across machines.
+
+**Plans:** 2 plans (2 waves)
+
+Plans:
+- [x] 02-01-PLAN.md - Create Claude module structure and populate files (Wave 1)
+- [x] 02-02-PLAN.md - Deploy and verify Claude module (Wave 2, checkpoint)
 
 **Success Criteria:**
-- Claude CLI installed via Homebrew (if available)
 - Claude CLI configuration synchronized across machines
+- Custom statusline hook available on all machines
 - Authentication documented in module README
 
 **Deliverables:**
 - modules/claude/ with config.yml, files/, README.md
-- Claude config in appropriate location (.config/claude/ or tool-specific)
+- Claude config in ~/.claude/ (settings.json, statusline.js)
 - Post-deployment authentication instructions
 
-**Complexity:** Medium (requires Homebrew package discovery, authentication setup)
+**Complexity:** Low (settings + single hook)
 
-**Research Needed:** Verify Claude CLI Homebrew availability, config format, and location
+**Research:** Complete (02-RESEARCH.md)
+
+**Status:** COMPLETE
+
+**Note:** Scope reduced from original plan - only syncing settings.json and statusline.js hook. Agents, commands, and GSD framework managed locally per machine.
 
 ---
 
