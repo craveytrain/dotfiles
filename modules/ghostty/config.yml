@@ -1,0 +1,9 @@
+---
+# Ghostty terminal configuration module
+# Provides Ghostty terminal emulator configuration
+
+homebrew_casks:
+  - ghostty
+
+stow_dirs:
+  - ghostty

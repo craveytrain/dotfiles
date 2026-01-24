@@ -23,5 +23,6 @@
         - dev-tools
         - node
         - editor
+        - ghostty
   roles:
     - role: ansible-role-dotmodules
