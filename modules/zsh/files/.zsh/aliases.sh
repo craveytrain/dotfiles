@@ -41,7 +41,3 @@ alias du='du -kh'
 
 # shellcheck disable=SC2139
 alias grep="${aliases[grep]:-grep} --color=auto"
-
-# cd up directories
-alias -g ...='../..'
-alias -g ....='../../..'

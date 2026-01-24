@@ -19,3 +19,20 @@ alias zln='zmv -L'
 
 # auto change directory
 setopt auto_cd
+
+# History search with up/down arrows (fish-like behavior)
+# Type partial command, then up/down to search matching history
+bindkey '^[[A' history-search-backward
+bindkey '^[[B' history-search-forward
+
+# Rationalise dot - expands ... to ../.. as you type (fish-like)
+# Works with both "cd ...." and just "...." (with auto_cd)
+rationalise-dot() {
+  if [[ $LBUFFER = *.. ]]; then
+    LBUFFER+=/..
+  else
+    LBUFFER+=.
+  fi
+}
+zle -N rationalise-dot
+bindkey . rationalise-dot
