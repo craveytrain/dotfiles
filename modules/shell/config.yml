@@ -12,4 +12,9 @@ homebrew_packages:
   - wget # File downloader
 
 
-# Note: No stow_dirs - this module only provides packages, no config files
+stow_dirs:
+  - shell
+
+mergeable_files:
+  - '.zsh/environment.sh'
+  - '.config/fish/config.fish'
