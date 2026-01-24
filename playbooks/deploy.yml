@@ -23,6 +23,5 @@
         - dev-tools
         - node
         - editor
-        - 1password
   roles:
     - role: ansible-role-dotmodules
