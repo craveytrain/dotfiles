@@ -269,22 +269,28 @@ process.stdin.on('end', () => {
 		const session = data.session_id || ''
 		const remaining = data.context_window?.remaining_percentage
 
-		// Context window display (shows USED percentage)
+		// Context window display (shows USED percentage scaled to 80% limit)
+		// Claude Code enforces an 80% context limit, so we scale to show 100% at that point
 		let ctx = ''
 		if (remaining != null) {
 			const rem = Math.round(remaining)
-			const used = Math.max(0, Math.min(100, 100 - rem))
+			const rawUsed = Math.max(0, Math.min(100, 100 - rem))
+			// Scale: 80% real usage = 100% displayed
+			const used = Math.min(100, Math.round((rawUsed / 80) * 100))
 
 			// Build progress bar (10 segments)
 			const filled = Math.floor(used / 10)
 			const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(10 - filled)
 
-			// Color based on usage
-			if (used < 50) {
+			// Color based on scaled usage (thresholds adjusted for new scale)
+			if (used < 63) {
+				// ~50% real
 				ctx = ` ${colors.green}${bar} ${used}%${colors.reset}`
-			} else if (used < 65) {
+			} else if (used < 81) {
+				// ~65% real
 				ctx = ` ${colors.yellow}${bar} ${used}%${colors.reset}`
-			} else if (used < 80) {
+			} else if (used < 95) {
+				// ~76% real
 				ctx = ` \x1b[38;5;208m${bar} ${used}%${colors.reset}`
 			} else {
 				ctx = ` \x1b[5;31m\u{1F480} ${bar} ${used}%${colors.reset}`
@@ -342,7 +348,7 @@ process.stdin.on('end', () => {
 		const gitStatus = getGitStatus(dir)
 		const gitPart = formatGitStatus(gitStatus)
 
-		// Output - Order: model │ dir git info │ context usage
+		// Output - Order: model │ dir + git │ task │ context usage
 		const dirname = path.basename(dir)
 		const parts = []
 
@@ -354,12 +360,14 @@ process.stdin.on('end', () => {
 		if (gitPart) {
 			dirGitParts.push(gitPart)
 		}
-		if (task) {
-			dirGitParts.push(`${colors.bold}${task}${colors.reset}`)
-		}
 		parts.push(dirGitParts.join(' '))
 
-		// Context usage at the end (without the leading space since it's after separator)
+		// Task (only if present)
+		if (task) {
+			parts.push(`${colors.bold}${task}${colors.reset}`)
+		}
+
+		// Context usage (only if present)
 		if (ctx) {
 			parts.push(ctx.trim())
 		}
