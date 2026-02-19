@@ -13,3 +13,4 @@ window-padding-y = 8
 macos-titlebar-style = tabs
 
 window-inherit-font-size = true
+keybind = shift+enter=text:\x1b\r
