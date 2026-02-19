@@ -29,3 +29,26 @@ lanscan () {
   IP="$(ipconfig getifaddr en0)"
   nmap -sn $IP/24
 }
+
+## Start a local LLM server via llama-server
+## Usage: llama-serve [model-name]
+## Defaults to qwen3-8b if no model name is provided
+llama-serve () {
+  local model="${1:-qwen3-8b}"
+  local file flags
+
+  case "$model" in
+    qwen3-8b)
+      file="$HOME/models/Qwen_Qwen3-8B-Q4_K_M.gguf"
+      flags="--port 8080 -ngl 99 --reasoning-budget 0 --reasoning-format none -c 8192"
+      ;;
+    *)
+      echo "Unknown model: $model"
+      echo "Available models:"
+      echo "  qwen3-8b"
+      return 1
+      ;;
+  esac
+
+  llama-server -m "$file" $flags
+}
