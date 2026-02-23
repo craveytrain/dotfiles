@@ -1,8 +1,4 @@
 {
-	"statusLine": {
-		"type": "command",
-		"command": "node ~/.claude/statusline.js"
-	},
 	"hooks": {
 		"SessionStart": [
 			{
@@ -13,6 +9,23 @@
 					}
 				]
 			}
+		],
+		"PostToolUse": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "node ~/.claude/hooks/gsd-context-monitor.js"
+					}
+				]
+			}
 		]
+	},
+	"statusLine": {
+		"type": "command",
+		"command": "node ~/.claude/statusline.js"
+	},
+	"enabledPlugins": {
+		"warp@claude-code-warp": true
 	}
 }
