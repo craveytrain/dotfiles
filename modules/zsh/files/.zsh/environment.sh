@@ -15,6 +15,23 @@ case "$OSTYPE" in
 esac
 export PLATFORM
 
+# Nerd Font support detection
+# Override: export NERD_FONT=0 to disable, NERD_FONT=1 to force enable
+if [ -z "$NERD_FONT" ]; then
+  case "${TERM_PROGRAM:-}" in
+    ghostty|iTerm.app|WezTerm|WarpTerminal)
+      NERD_FONT=1
+      ;;
+    Apple_Terminal)
+      NERD_FONT=0
+      ;;
+    *)
+      NERD_FONT=0
+      ;;
+  esac
+  export NERD_FONT
+fi
+
 # use vim if possible, otherwise vi
 if hash vim 2>/dev/null; then
   export EDITOR=vim
