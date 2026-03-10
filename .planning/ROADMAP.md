@@ -100,10 +100,11 @@ Plans:
   1. Opening a new fish session picks up all module contributions from `~/.config/fish/conf.d/` without errors
   2. Fish conf.d fragments use the same numeric prefix convention and attribution headers established in Phase 4
   3. Editing a fish conf.d fragment in the repo and running `git pull` makes the change live in the next fish session
-**Plans**: TBD
+**Plans**: 2 plans (2 waves)
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Create conf.d fragments, extract mux function, rewrite config.fish skeleton (Wave 1)
+- [ ] 05-02-PLAN.md — Deploy via stow and verify live fish session (Wave 2, checkpoint)
 
 ### Phase 6: Mise conf.d Migration
 **Goal**: Mise loads tool versions and settings from individual conf.d TOML files instead of a single merged config
@@ -144,11 +145,11 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 2. Claude CLI Module | v1.0 | 2/2 | Complete | 2026-01-24 |
 | 3. Ongoing Discovery | v1.0 | - | Continuous | - |
 | 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
-| 5. Fish conf.d Migration | v1.1 | 0/? | Not started | - |
+| 5. Fish conf.d Migration | v1.1 | 0/2 | Planned | - |
 | 6. Mise conf.d Migration | v1.1 | 0/? | Not started | - |
 | 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-03-10 - Phase 4 complete (2/2 plans, SHRC-04 deferred)*
+*Last updated: 2026-03-10 - Phase 5 planned (2 plans, 2 waves)*
