@@ -23,7 +23,9 @@ These capabilities already exist and work:
 - ✓ Node.js version management via mise — existing
 - ✓ Shell utilities module (eza, ripgrep, tldr, trash, wget, stow) — existing
 - ✓ Zsh configuration module (powerlevel10k, plugins, functions) — existing
-- ✓ Configuration merging across modules (multiple modules contribute to shared files) — existing
+- ✓ Configuration merging across modules (multiple modules contribute to shared files) — existing (being replaced by runtime sourcing in v1.1)
+- ✓ Ghostty terminal configuration module — Phase 1
+- ✓ Claude CLI configuration module — Phase 2
 - ✓ Local override support (.zshrc.local, .vimrc.local, etc.) — existing
 - ✓ Shell registration with optional skip for restricted machines — existing
 - ✓ Ansible + ansible-role-dotmodules + GNU Stow deployment — existing
@@ -31,12 +33,14 @@ These capabilities already exist and work:
 
 ### Active
 
-Current work and planned additions:
+Current milestone (v1.1): Runtime Includes Migration
 
-- [ ] Fix duplicate 1password module entry in deploy.yml
-- [ ] Ghostty terminal configuration module
-- [ ] Claude CLI configuration module
-- [ ] Discover and add additional config files from home directory audit (ongoing)
+- [ ] Replace Ansible-merged shell config files with runtime conf.d sourcing (zsh)
+- [ ] Replace Ansible-merged shell config files with runtime conf.d sourcing (fish)
+- [ ] Replace Ansible-merged mise config with runtime includes
+- [ ] Remove mergeable_files declarations from all module config.yml files
+- [ ] Clean up merge logic from ansible-role-dotmodules
+- [ ] Document conf.d ordering convention and module contribution patterns
 
 ### Out of Scope
 
@@ -46,13 +50,27 @@ Current work and planned additions:
 - Windows/Linux support — macOS only (Apple Silicon assumed)
 - Version numbers or formal releases — continuous improvement, no artificial milestones
 
+## Current Milestone: v1.1 Runtime Includes
+
+**Goal:** Eliminate Ansible-merged files so config edits are live immediately without redeploying. Each module stows its own conf.d file instead of contributing to a merged output.
+
+**Target features:**
+- Zsh conf.d sourcing (glob loop in .zshrc sources ~/.zsh/conf.d/*.sh)
+- Fish conf.d sourcing (native ~/.config/fish/conf.d/ mechanism)
+- Mise config includes (includes directive for ~/.config/mise/conf.d/*.toml)
+- Remove all mergeable_files declarations from modules
+- Remove merge logic from ansible-role-dotmodules role
+- Documentation for numeric ordering convention (00-99 prefix scheme)
+
+**Motivation:** Currently, editing an alias or environment variable requires running the Ansible playbook to regenerate merged files. After this milestone, stowed symlinks point directly to the repo files, so `git pull` is enough to pick up changes. Ansible deploy is only needed when adding new modules or changing structure.
+
 ## Context
 
 **System architecture:**
 - Modular design: each tool/domain is a self-contained module in `modules/`
 - Deployment: Ansible playbook uses ansible-role-dotmodules role to process modules
 - File management: GNU Stow creates symlinks from module files to home directory
-- Configuration merging: Multiple modules can contribute to shared files (`.zshrc`, `.config/fish/config.fish`, etc.) with ansible-role-dotmodules handling the merge
+- Configuration merging: Currently uses Ansible-time merge of shared files; v1.1 migrates to runtime conf.d sourcing
 
 **Constitutional principles (from docs/policy/CONSTITUTION.md v1.0.0):**
 1. Modularity - modules are self-contained and independent
@@ -91,6 +109,8 @@ Current work and planned additions:
 | Selective software installation | CLI tools fine, GUI apps case-by-case; avoids Mac App Store nerfed versions | — Pending |
 | ansible-role-dotmodules external dependency | Provides module processing, merging, and Stow integration; mature and working | ✓ Good |
 | Constitutional principles documented | Clear decision framework for future additions and changes | ✓ Good |
+| Replace merged files with runtime conf.d sourcing | Edits go live on git pull instead of requiring Ansible redeploy; negligible startup cost (~2ms) | — Pending |
+| Clean up merge logic from role | No modules will use merging after v1.1; dead code removal | — Pending |
 
 ---
-*Last updated: 2026-01-23 after initialization*
+*Last updated: 2026-03-10 after milestone v1.1 start*

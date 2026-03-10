@@ -1,80 +1,46 @@
 # Project State
 
-**Last Updated:** 2026-02-19
-**Current Phase:** Phase 2 - Claude CLI Module
-**Plan:** 2 of 2 complete (02-01, 02-02)
-**Status:** Phase Complete
-
-**Progress:** ██████ (6/6 plans, 100%)
+**Last Updated:** 2026-03-10
+**Current Milestone:** v1.1 Runtime Includes
+**Current Phase:** Not started (defining requirements)
+**Status:** Defining requirements
 
 ---
 
-## Phase Progress
+## Project Reference
 
-### Phase 1: Foundation & Ghostty Module
-**Status:** Complete (4 of 4 plans complete)
+See: .planning/PROJECT.md (updated 2026-03-10)
 
-**Completed Plans:**
-- [x] 01-01: SpecKit cleanup (2026-01-24) - `bb8c557`
-- [x] 01-02: Fix duplicate 1password entry (2026-01-24) - `f41d242`
-- [x] 01-03: Create Ghostty module structure (2026-01-24) - `080e386`
-- [x] 01-04: Deploy and verify Ghostty module (2026-01-24) - deployment only
-
-**Blocked By:** None
+**Core value:** Muscle memory consistency
+**Current focus:** Migrate from Ansible-merged files to runtime conf.d sourcing
 
 ---
 
-### Phase 2: Claude CLI Module
-**Status:** Complete (2 of 2 plans complete)
+## v1.0 Summary (Phases 1-3)
 
-**Completed Plans:**
-- [x] 02-01: Create Claude module structure (2026-01-24) - `bdfcc30`
-- [x] 02-02: Deploy and verify Claude module (2026-01-24) - `74f101d`
+### Phase 1: Foundation & Ghostty Module — Complete
+- [x] 01-01: SpecKit cleanup - `bb8c557`
+- [x] 01-02: Fix duplicate 1password entry - `f41d242`
+- [x] 01-03: Create Ghostty module structure - `080e386`
+- [x] 01-04: Deploy and verify Ghostty module
 
-**Note:** Scope reduced based on user feedback - only syncing settings.json and statusline.js hook.
+### Phase 2: Claude CLI Module — Complete
+- [x] 02-01: Create Claude module structure - `bdfcc30`
+- [x] 02-02: Deploy and verify Claude module - `74f101d`
 
-**Blocked By:** None
-
----
-
-### Phase 3: Ongoing Config Discovery
-**Status:** Not Started
-
-**Approach:** Continuous discovery, started after Phase 2
-
-**Blocked By:** None
+### Phase 3: Ongoing Config Discovery — Continuous
 
 ---
 
 ## Recent Activity
 
+- 2026-03-10: Started milestone v1.1 - Runtime Includes Migration
 - 2026-02-19: Completed quick task 1 - Add llama-serve shell function for running local LLMs
-- 2026-01-24: Completed 02-02-PLAN.md - Deployed Claude module (settings.json + statusline.js)
-- 2026-01-24: Scope adjustment - removed agents/commands/get-shit-done from sync
-- 2026-01-24: Scope adjustment - removed homebrew installation (corp IT restriction)
-- 2026-01-24: Completed 02-01-PLAN.md - Created Claude module structure
-- 2026-01-24: Completed 01-04-PLAN.md - Deployed and verified Ghostty module (Phase 1 COMPLETE)
-- 2026-01-24: Completed 01-03-PLAN.md - Created Ghostty module structure
-- 2026-01-24: Completed 01-02-PLAN.md - Fixed duplicate 1password entry
-- 2026-01-24: Completed 01-01-PLAN.md - Removed SpecKit artifacts
-- 2026-01-23: Project initialized via /gsd:new-project
+- 2026-01-24: Completed Phase 2 - Claude CLI Module
 
 ---
 
-## Next Steps
-
-1. **Phase 2 Complete!** - Move to Phase 3 (Ongoing Config Discovery)
-2. Phase 3 is continuous - add modules as needed
-
----
-
-## Known Issues
-
-None
-
----
-
-### Quick Tasks Completed
+## Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
@@ -96,15 +62,13 @@ None
 
 ---
 
-## Context Handoff Notes
+## Accumulated Context
 
-**Session Continuity:**
-- Last session: 2026-01-24
-- Stopped at: Completed 02-02-PLAN.md (Phase 2 Complete)
-- Resume file: None
-- Next action: Phase 3 (Ongoing Config Discovery) - continuous
+- BeyondTrust-managed machine requires `--skip-tags register_shell`
+- Scope reduced for Claude module: only settings.json and statusline.js synced
+- Corp IT blocks homebrew cask installs on managed machine
 
 ---
 
 *State tracking initialized: 2026-01-23*
-*Last updated: 2026-02-19 - Completed quick task 1: Add llama-serve shell function for running local LLMs*
+*Last updated: 2026-03-10 - Milestone v1.1 started*
