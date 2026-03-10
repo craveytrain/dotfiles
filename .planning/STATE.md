@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Runtime Includes
 status: executing
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-10T20:27:43.651Z"
-last_activity: 2026-03-10 -- Completed 04-01 zsh conf.d fragment creation
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-10T22:22:16.387Z"
+last_activity: 2026-03-10 -- Completed 04-02 zsh conf.d deployment and verification
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Muscle memory consistency. Config edits go live on git pull without redeploying.
-**Current focus:** Phase 4 - Zsh conf.d Migration
+**Current focus:** Phase 4 complete, ready for Phase 5
 
 ## Current Position
 
-Phase: 4 of 7 (Zsh conf.d Migration)
-Plan: 1 of 2 in current phase
-Status: Executing phase 4
-Last activity: 2026-03-10 -- Completed 04-01 zsh conf.d fragment creation
+Phase: 4 of 7 (Zsh conf.d Migration) - COMPLETE
+Plan: 2 of 2 in current phase (all complete)
+Status: Phase 4 complete
+Last activity: 2026-03-10 -- Completed 04-02 zsh conf.d deployment and verification
 
-Progress: [█████████░] 88% (7/8 plans complete)
+Progress: [██████████] 100% (8/8 plans complete)
 
 ## Performance Metrics
 
@@ -47,9 +47,11 @@ Progress: [█████████░] 88% (7/8 plans complete)
 | 2. Claude CLI | 2 | - | - |
 | 4. Zsh conf.d P01 | 1 | 2min | 2min |
 
+| 4. Zsh conf.d P02 | 1 | 112min | 112min |
+
 **Recent Trend:**
-- Last 5 plans: 2min (04-01)
-- Trend: Starting v1.1 execution
+- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint)
+- Trend: Phase 4 complete
 
 ## Accumulated Context
 
@@ -62,6 +64,8 @@ Recent decisions affecting current work:
 - [v1.1]: Clean up merge logic from role after all modules migrate
 - [Phase 04]: Each module owns exactly one conf.d fragment with shellcheck directive and attribution header
 - [Phase 04]: EDITOR/VISUAL exports exclusively in editor module fragment (MIGR-04)
+- [Phase 04]: DOTFILES_DEBUG removed: p10k instant prompt intercepts all output during shell init
+- [Phase 04]: SHRC-04 deferred: debug tracing incompatible with p10k, may revisit as standalone script
 
 ### Pending Todos
 
@@ -76,9 +80,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-10T20:26:23Z
-Stopped at: Completed 04-01-PLAN.md
-Resume file: .planning/phases/04-zsh-conf-d-migration/04-01-SUMMARY.md
+Last session: 2026-03-10T22:22:16.384Z
+Stopped at: Completed 04-02-PLAN.md
+Resume file: .planning/phases/04-zsh-conf-d-migration/04-02-SUMMARY.md
 
 ---
 

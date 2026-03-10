@@ -10,7 +10,7 @@
 - [x] **SHRC-01**: Zsh sources all files in `~/.zsh/conf.d/*.sh` via glob loop with `(N)` qualifier
 - [ ] **SHRC-02**: Fish sources module contributions via native `~/.config/fish/conf.d/*.fish` mechanism
 - [x] **SHRC-03**: All conf.d directories use numeric prefix ordering convention (00-99, 2-digit)
-- [x] **SHRC-04**: Zsh sourcing loop supports debug mode via `DOTFILES_DEBUG=1` environment variable
+- [ ] **SHRC-04**: ~~Zsh sourcing loop supports debug mode via `DOTFILES_DEBUG=1` environment variable~~ DEFERRED: p10k instant prompt intercepts all console output during shell init
 
 ### Module Migration
 
@@ -55,7 +55,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHRC-01 | Phase 4 | Complete |
 | SHRC-02 | Phase 5 | Pending |
 | SHRC-03 | Phase 4 | Complete |
-| SHRC-04 | Phase 4 | Complete |
+| SHRC-04 | Phase 4 | Deferred (p10k conflict) |
 | MIGR-01 | Phase 7 | Pending |
 | MIGR-02 | Phase 4 | Complete |
 | MIGR-03 | Phase 4 | Complete |
