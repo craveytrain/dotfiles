@@ -1,543 +1,318 @@
-# Architecture: ansible-role-dotmodules Integration
+# Architecture: conf.d Runtime Sourcing Migration
 
-**Research Date**: 2026-01-23
-**Context**: Adding new configuration modules (Ghostty, Claude) to existing dotfiles system
-**Focus**: Integration patterns, not system re-architecture
+**Domain:** Dotfiles configuration management (Stow + Ansible)
+**Researched:** 2026-03-10
+**Focus:** Migrating from Ansible-time merged files to runtime conf.d sourcing
 
-## Executive Summary
+## Current Architecture (Merge-Based)
 
-New modules integrate into ansible-role-dotmodules through a simple, declarative pattern: create a directory in `modules/` with `config.yml` defining dependencies and `files/` containing dotfiles. The role handles package installation, file merging, and symlink deployment automatically. No custom Ansible tasks required for standard modules.
-
-## Component Architecture
-
-### Module Directory Structure
-
-Each module is a self-contained package with this structure:
+### How It Works Today
 
 ```
-modules/module-name/
-├── config.yml              # Module metadata (REQUIRED)
-├── files/                  # Dotfiles to deploy (REQUIRED)
-│   ├── .config/           # XDG config files
-│   ├── .dotfile           # Home directory dotfiles
-│   └── .local/bin/        # Scripts and binaries
-└── README.md              # Documentation (RECOMMENDED)
+Module files/            Ansible merge_files.yml        ~/.dotmodules/merged/         Stow          ~/
+                         (concatenates at deploy)                                      (symlinks)
+
+zsh/files/.zshrc    ──┐
+                      ├──> merged .zshrc ──────────> ~/.dotmodules/merged/.zshrc ──> ~/.zshrc (symlink)
+dev-tools/files/.zshrc┘
+
+zsh/files/.zsh/aliases.sh ──┐
+                            ├──> merged aliases.sh ──> ~/.dotmodules/merged/.zsh/aliases.sh ──> ~/.zsh/aliases.sh
+editor/files/.zsh/aliases.sh┘
 ```
 
-**Integration Point**: ansible-role-dotmodules discovers modules via the `dotmodules.install` list in `playbooks/deploy.yml`.
+### Current Merge Participants
 
-### config.yml Schema
+| Target File | Contributing Modules | Content |
+|---|---|---|
+| `.zshrc` | zsh, dev-tools | zsh: full shell init (p10k, plugins, sourcing); dev-tools: `eval "$(mise activate zsh)"` |
+| `.zsh/aliases.sh` | zsh, editor | zsh: general aliases (ls, grep, ip, mkdir); editor: `alias e='${(z)VISUAL:-${(z)EDITOR}}'` |
+| `.zsh/environment.sh` | zsh, editor, shell | zsh: PLATFORM, EDITOR, PAGER, colors, CDPATH; editor: EDITOR/VISUAL (duplicate); shell: EZA_COLORS |
+| `.config/fish/config.fish` | fish, dev-tools, editor, shell | fish: full config (env, abbrs, functions, prompt); dev-tools: mise activate; editor: app launcher abbrs; shell: EZA_COLORS |
+| `.config/mise/config.toml` | dev-tools, node | dev-tools: [settings] + [tools] python; node: node + pnpm versions (no [tools] header) |
 
-The `config.yml` file declares module dependencies and behavior.
+### Problems With Current Approach
 
-#### Required Fields
+1. **Edit-deploy-test cycle**: Changing an alias requires running Ansible to regenerate the merged file
+2. **Fragile TOML merging**: node/config.toml must omit `[tools]` header because concatenation would create duplicate headers
+3. **Hidden composition**: You can't tell from looking at `~/.zshrc` which module contributed what (it's a merged blob with comments)
+4. **Duplicate content**: editor and zsh both define EDITOR/VISUAL in environment.sh
 
-**None** - An empty `config.yml` is valid, though not useful.
+## Target Architecture (conf.d-Based)
 
-#### Optional Fields
+### Design Principle
 
-| Field | Type | Purpose | Example |
-|-------|------|---------|---------|
-| `homebrew_packages` | List | CLI tools to install via Homebrew | `- git`, `- vim` |
-| `homebrew_casks` | List | GUI apps to install via Homebrew | `- 1password-cli` |
-| `stow_dirs` | List | Subdirectories in `files/` to symlink | `- git`, `- shell` |
-| `mergeable_files` | List | Files contributed by multiple modules | `- '.zshrc'`, `- '.config/fish/config.fish'` |
-| `register_shell` | String | Shell binary to register in `/etc/shells` | `fish`, `zsh` |
+Each module stows its own conf.d fragment file. The shell (or tool) sources all fragments at runtime. No Ansible merging step.
 
-**Example - Simple module (Ghostty)**:
-```yaml
----
-# Minimal module: just deploy files
-stow_dirs:
-  - ghostty
+### Zsh conf.d
+
+```
+~/.zshrc                          (owned by zsh module, stowed directly)
+  sources ~/.zsh/conf.d/*.sh      (glob loop added to .zshrc)
+  sources ~/.zsh/aliases.sh       (owned by zsh module, single file)
+  sources ~/.zsh/functions.sh     (owned by zsh module, single file)
+  sources ~/.zsh/utility.zsh      (owned by zsh module, single file)
+
+~/.zsh/conf.d/                    (directory populated by Stow from multiple modules)
+  10-environment.sh               (from zsh module)
+  20-shell-utils.sh               (from shell module)
+  30-editor.sh                    (from editor module)
+  40-dev-tools.sh                 (from dev-tools module)
+  90-local.sh                     (machine-specific, gitignored)
 ```
 
-**Example - Complex module (Zsh)**:
-```yaml
----
-# Full-featured module
-homebrew_packages:
-  - zsh
-  - powerlevel10k
-  - zsh-autosuggestions
-  - zsh-syntax-highlighting
+**Key detail**: The zsh module's `.zshrc` becomes the sole owner of that file. It no longer appears in mergeable_files. Instead of merging two `.zshrc` files, the `mise activate` line moves into a conf.d fragment owned by dev-tools.
 
-stow_dirs:
-  - zsh
+### Fish conf.d
 
-mergeable_files:
-  - '.zshrc'
-  - '.zsh/aliases.sh'
-  - '.zsh/environment.sh'
+Fish natively supports `~/.config/fish/conf.d/*.fish`. Files are sourced alphabetically before `config.fish`.
+
+```
+~/.config/fish/config.fish        (owned by fish module, stowed directly)
+~/.config/fish/conf.d/            (directory populated by Stow from multiple modules)
+  10-shell-utils.fish             (from shell module)
+  20-editor.fish                  (from editor module)
+  30-dev-tools.fish               (from dev-tools module)
+  90-local.fish                   (machine-specific, gitignored)
 ```
 
-### File Organization Patterns
+**Key detail**: Fish's native conf.d runs snippets *before* config.fish. This means the fish module's config.fish can depend on variables set by conf.d snippets. Ordering between conf.d and config.fish is the opposite of the zsh pattern where conf.d is sourced during .zshrc execution at a specific point.
 
-#### Pattern 1: Home Directory Dotfiles
+### Mise conf.d
 
-**Use case**: Traditional dotfiles (`.gitconfig`, `.vimrc`, etc.)
+Mise natively loads `~/.config/mise/conf.d/*.toml` files. These are treated as additional configuration that merges with the main config.toml using mise's own TOML merge semantics (not concatenation).
 
-**Structure**:
 ```
-modules/git/files/
-└── .gitconfig              # Deploys to ~/.gitconfig
-```
-
-**Deployment**: Symlink created at `~/.gitconfig` → `~/.dotmodules/git/files/.gitconfig`
-
-#### Pattern 2: XDG Config Directories
-
-**Use case**: Modern config locations (`~/.config/app/`)
-
-**Structure**:
-```
-modules/ghostty/files/
-└── .config/
-    └── ghostty/
-        └── config          # Deploys to ~/.config/ghostty/config
+~/.config/mise/config.toml        (owned by dev-tools module, stowed directly)
+~/.config/mise/conf.d/            (directory populated by Stow from multiple modules)
+  10-node.toml                    (from node module)
 ```
 
-**Deployment**: Symlink created at `~/.config/ghostty/config` → `~/.dotmodules/ghostty/files/.config/ghostty/config`
+**Key detail**: With mise's native TOML merging, the node module's conf.d file can include its own `[tools]` header. The fragile "omit the header because concatenation breaks it" problem disappears entirely.
 
-#### Pattern 3: Local Binaries
+## Component Boundaries
 
-**Use case**: Custom scripts and tools
+### Components After Migration
 
-**Structure**:
+| Component | Responsibility | Owns | Communicates With |
+|---|---|---|---|
+| **zsh module** | Zsh shell init, prompt, plugins, core aliases/functions | `.zshrc`, `.zsh/aliases.sh`, `.zsh/functions.sh`, `.zsh/utility.zsh`, `.zsh/conf.d/10-environment.sh` | Reads conf.d fragments from other modules |
+| **fish module** | Fish shell init, prompt, functions, core abbrs | `.config/fish/config.fish`, fish functions | Reads conf.d fragments from other modules |
+| **dev-tools module** | mise, bat, shellcheck, dev tool configs | `.config/mise/config.toml`, `.zsh/conf.d/40-dev-tools.sh`, `.config/fish/conf.d/30-dev-tools.fish` | Provides tool activation to shells |
+| **shell module** | Shared shell utilities (eza, ripgrep) | `.zsh/conf.d/20-shell-utils.sh`, `.config/fish/conf.d/10-shell-utils.fish` | Provides env vars to shells |
+| **editor module** | Vim config, EDITOR/VISUAL vars | `.vimrc`, `.zsh/conf.d/30-editor.sh`, `.config/fish/conf.d/20-editor.fish` | Provides editor env vars to shells |
+| **node module** | Node.js + pnpm via mise | `.config/mise/conf.d/10-node.toml`, `.npmrc` | Configures tools via mise |
+| **ansible-role-dotmodules** | Module processing, Homebrew, Stow deployment | merge_files.yml (to be removed), stow_module.yml | Processes all modules |
+
+### What Changes Per Module
+
+**zsh module:**
+- `.zshrc`: Remove from mergeable_files. Add conf.d glob sourcing loop. Keep existing sourcing of aliases.sh, functions.sh, utility.zsh.
+- New file: `files/.zsh/conf.d/10-environment.sh` (current content from `files/.zsh/environment.sh`, minus EDITOR/VISUAL which belong to editor)
+- Remove: `files/.zsh/environment.sh` (content moves to conf.d)
+- Remove: `files/.zsh/aliases.sh` from mergeable_files (becomes sole owner, stowed directly)
+- Remove: mergeable_files from config.yml entirely
+
+**dev-tools module:**
+- Remove: `files/.zshrc` (2 lines: mise activate)
+- New file: `files/.zsh/conf.d/40-dev-tools.sh` containing `eval "$(mise activate zsh)"`
+- Remove: `files/.config/fish/config.fish` (3 lines: mise activate)
+- New file: `files/.config/fish/conf.d/30-dev-tools.fish` containing mise activation
+- Keep: `files/.config/mise/config.toml` stowed directly (no longer merged)
+- Remove: mergeable_files from config.yml entirely
+
+**editor module:**
+- Remove: `files/.zsh/aliases.sh` (1 line: alias e)
+- New file: `files/.zsh/conf.d/30-editor.sh` combining EDITOR/VISUAL exports and alias e
+- Remove: `files/.zsh/environment.sh` (EDITOR/VISUAL, now in conf.d fragment)
+- Remove: `files/.config/fish/config.fish` (2 lines: app launcher abbrs)
+- New file: `files/.config/fish/conf.d/20-editor.fish` with editor abbrs
+- Remove: mergeable_files from config.yml entirely
+
+**shell module:**
+- Remove: `files/.zsh/environment.sh` (1 line: EZA_COLORS)
+- New file: `files/.zsh/conf.d/20-shell-utils.sh` with EZA_COLORS
+- Remove: `files/.config/fish/config.fish` (1 line: EZA_COLORS)
+- New file: `files/.config/fish/conf.d/10-shell-utils.fish` with EZA_COLORS
+- Remove: mergeable_files from config.yml entirely
+
+**node module:**
+- Remove: `files/.config/mise/config.toml`
+- New file: `files/.config/mise/conf.d/10-node.toml` (can now include its own `[tools]` header)
+- Remove: mergeable_files from config.yml entirely
+
+**fish module:**
+- `.config/fish/config.fish`: Remove from mergeable_files. Stow directly. Content stays as-is since other modules' contributions move to conf.d.
+- Remove: mergeable_files from config.yml entirely
+
+## How Stow Handles conf.d Directories
+
+### --no-folding Is Already In Use
+
+The ansible-role-dotmodules already uses `stow --no-folding` for all deployments. This is essential for conf.d because:
+
+**Without --no-folding**: If only the zsh module contributes to `~/.zsh/conf.d/`, Stow creates a directory symlink: `~/.zsh/conf.d -> modules/zsh/files/.zsh/conf.d/`. When shell module then tries to stow its conf.d fragment, Stow sees a directory symlink already exists and cannot add files from a different package.
+
+**With --no-folding**: Stow creates `~/.zsh/conf.d/` as a real directory and creates individual file symlinks:
 ```
-modules/shell/files/
-└── .local/
-    └── bin/
-        └── my-script       # Deploys to ~/.local/bin/my-script
-```
-
-**Deployment**: Symlink created at `~/.local/bin/my-script` → `~/.dotmodules/shell/files/.local/bin/my-script`
-
-#### Pattern 4: Mergeable Configuration
-
-**Use case**: Multiple modules contribute to single file (`.zshrc`, `.config/fish/config.fish`)
-
-**Structure**:
-```
-modules/zsh/files/
-└── .zsh/
-    └── aliases.sh          # Partial contribution
-
-modules/editor/files/
-└── .zsh/
-    └── aliases.sh          # Another contribution
-```
-
-**config.yml**:
-```yaml
-mergeable_files:
-  - '.zsh/aliases.sh'
-```
-
-**Deployment**:
-1. ansible-role-dotmodules concatenates all contributions
-2. Adds module headers showing source
-3. Writes merged file to `modules/merged/.zsh/aliases.sh`
-4. Symlinks `~/.zsh/aliases.sh` → `~/.dotmodules/merged/.zsh/aliases.sh`
-
-**Merged output**:
-```bash
-# Generated by ansible-role-dotmodules
-# Merged from multiple modules on 2025-12-27T00:27:59Z
-
-# =============================================================================
-# ZSH MODULE CONTRIBUTION
-# =============================================================================
-
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
-
-# =============================================================================
-# EDITOR MODULE CONTRIBUTION
-# =============================================================================
-
-alias e='${(z)VISUAL:-${(z)EDITOR}}'
-
-# =============================================================================
-# END OF MERGED CONTENT
-# =============================================================================
-```
-
-## Integration with Existing Modules
-
-### Module Dependencies
-
-Modules can depend on other modules but dependencies are **not enforced** by ansible-role-dotmodules. Dependencies are documented and must be ordered correctly in `playbooks/deploy.yml`.
-
-**Example - Node depends on dev-tools**:
-
-```yaml
-# modules/node/config.yml
-# Prerequisites:
-# - dev-tools module must be installed first (provides mise via Homebrew)
-
-stow_dirs:
-  - node
-
-mergeable_files:
-  - '.config/mise/config.toml'
+~/.zsh/conf.d/10-environment.sh -> ~/.dotmodules/zsh/files/.zsh/conf.d/10-environment.sh
+~/.zsh/conf.d/20-shell-utils.sh -> ~/.dotmodules/shell/files/.zsh/conf.d/20-shell-utils.sh
+~/.zsh/conf.d/30-editor.sh      -> ~/.dotmodules/editor/files/.zsh/conf.d/30-editor.sh
+~/.zsh/conf.d/40-dev-tools.sh   -> ~/.dotmodules/dev-tools/files/.zsh/conf.d/40-dev-tools.sh
 ```
 
-```yaml
-# playbooks/deploy.yml
-dotmodules:
-  install:
-    - dev-tools   # MUST come before node
-    - node        # Depends on mise from dev-tools
+This works correctly with the existing `--no-folding` flag. **No Stow configuration changes needed.**
+
+### Stow Processing Order Does Not Matter
+
+The playbook install list order determines Stow processing order. Since `--no-folding` creates real directories and individual file symlinks, the first module that references `~/.zsh/conf.d/` causes Stow to create the directory; subsequent modules add their file symlinks into it. Order is irrelevant for the directory creation.
+
+The *numeric prefix* on filenames controls runtime sourcing order, not Stow processing order.
+
+## Numeric Prefix Convention
+
+```
+00-09  Reserved (future use, bootstrapping)
+10-19  Core environment (platform detection, PATH, XDG vars)
+20-29  Shared utilities (eza colors, tool env vars)
+30-39  Tool-specific (editor, git helpers)
+40-49  Runtime activation (mise activate, nvm, etc.)
+50-89  Available for future modules
+90-99  Local overrides (gitignored, machine-specific)
 ```
 
-### Module Ordering
+**Rationale**: Environment variables (10-19) must be set before tools that reference them (20-39). Runtime activation (40-49) should happen after environment is fully configured. Local overrides (90-99) run last so they can override anything.
 
-Order matters for:
-1. **Dependencies**: Prerequisite modules must install first
-2. **Merging**: Later modules can override earlier ones in merged files
-3. **No other constraints**: Symlinks are independent
+## Data Flow
 
-**Current order** (from `playbooks/deploy.yml`):
-```yaml
-install:
-  - git           # No dependencies
-  - fonts         # No dependencies
-  - 1password     # No dependencies
-  - shell         # No dependencies
-  - fish          # No dependencies (fish shell)
-  - zsh           # No dependencies (zsh shell)
-  - dev-tools     # No dependencies (provides mise)
-  - node          # Depends on dev-tools (uses mise)
-  - editor        # No dependencies (vim)
+### Zsh Startup (After Migration)
+
+```
+1. ~/.zshenv           (zsh module, environment bootstrap)
+2. ~/.zprofile         (zsh module, login shell setup)
+3. ~/.zshrc            (zsh module, interactive shell)
+   a. p10k instant prompt
+   b. for f in ~/.zsh/conf.d/*.sh; source "$f"
+      - 10-environment.sh   (PLATFORM, PAGER, colors, CDPATH)
+      - 20-shell-utils.sh   (EZA_COLORS)
+      - 30-editor.sh        (EDITOR, VISUAL, alias e)
+      - 40-dev-tools.sh     (eval "$(mise activate zsh)")
+   c. source aliases.sh     (zsh-specific aliases, single owner)
+   d. source functions.sh   (zsh-specific functions)
+   e. source utility.zsh    (zsh-specific utilities)
+   f. source .zshrc.local   (machine-specific overrides)
+   g. compinit
+   h. zsh-autosuggestions, powerlevel10k, zsh-syntax-highlighting
+4. ~/.zlogin           (zsh module, post-login)
 ```
 
-### Shared Configuration Files
+### Fish Startup (After Migration)
 
-Multiple modules can contribute to the same configuration file via `mergeable_files`.
-
-**Current shared files**:
-
-| File | Contributors | Purpose |
-|------|--------------|---------|
-| `.zshrc` | zsh, dev-tools | Shell initialization |
-| `.zsh/aliases.sh` | zsh, editor | Command aliases |
-| `.zsh/environment.sh` | shell, zsh, editor | Environment variables |
-| `.config/fish/config.fish` | fish, shell, dev-tools, editor | Fish shell config |
-| `.config/mise/config.toml` | dev-tools, node | Tool version management |
-
-**Pattern**:
-1. Each module provides its section in `files/`
-2. Declares file in `mergeable_files` list
-3. ansible-role-dotmodules merges contributions
-4. Merged file deployed to home directory
-
-## Implementation Guidance
-
-### Adding a Simple Module (Ghostty Example)
-
-**Step 1: Create module structure**
-```bash
-mkdir -p modules/ghostty/files/.config/ghostty
+```
+1. ~/.config/fish/conf.d/*.fish  (native, alphabetical, BEFORE config.fish)
+   - 10-shell-utils.fish   (EZA_COLORS)
+   - 20-editor.fish         (app launcher abbrs)
+   - 30-dev-tools.fish      (mise activate fish)
+2. ~/.config/fish/config.fish    (fish module, main config)
+   - env vars, abbrs, functions, prompt config
+   - source config.local.fish
 ```
 
-**Step 2: Add config file**
-```bash
-# modules/ghostty/files/.config/ghostty/config
-theme = dark
-font-family = "Fira Code"
+### Mise Config Loading (After Migration)
+
+```
+1. ~/.config/mise/config.toml    (dev-tools module, settings + python)
+2. ~/.config/mise/conf.d/*.toml  (native, alphabetical)
+   - 10-node.toml               (node + pnpm versions, own [tools] header)
 ```
 
-**Step 3: Create config.yml**
-```yaml
----
-# modules/ghostty/config.yml
-stow_dirs:
-  - ghostty
-```
-
-**Step 4: Add to playbook**
-```yaml
-# playbooks/deploy.yml
-dotmodules:
-  install:
-    - ghostty  # Add to list
-```
-
-**Step 5: Deploy**
-```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml
-```
-
-**Result**: `~/.config/ghostty/config` → `~/.dotmodules/ghostty/files/.config/ghostty/config`
-
-### Adding a Module with Dependencies (Claude Example)
-
-**Scenario**: Claude CLI needs configuration but also shell aliases
-
-**Step 1: Create module structure**
-```bash
-mkdir -p modules/claude/files/.config/claude
-mkdir -p modules/claude/files/.zsh
-```
-
-**Step 2: Add Claude config**
-```bash
-# modules/claude/files/.config/claude/config.json
-{
-  "api_key": "set via ~/.config/claude/config.local.json",
-  "model": "claude-sonnet-4-5"
-}
-```
-
-**Step 3: Add shell aliases**
-```bash
-# modules/claude/files/.zsh/aliases.sh
-alias c="claude"
-alias ccode="claude --mode code"
-```
-
-**Step 4: Create config.yml**
-```yaml
----
-# modules/claude/config.yml
-stow_dirs:
-  - claude
-
-mergeable_files:
-  - '.zsh/aliases.sh'  # Merge with zsh and editor modules
-```
-
-**Step 5: Add to playbook (order matters for merging)**
-```yaml
-# playbooks/deploy.yml
-dotmodules:
-  install:
-    - zsh       # Base aliases
-    - editor    # Editor aliases
-    - claude    # Claude aliases (merged last, can override)
-```
-
-**Result**:
-- `~/.config/claude/config.json` → `~/.dotmodules/claude/files/.config/claude/config.json`
-- `~/.zsh/aliases.sh` → `~/.dotmodules/merged/.zsh/aliases.sh` (includes Claude section)
-
-### Adding a Module with Homebrew Packages
-
-**Scenario**: Module needs to install software first
-
-**config.yml**:
-```yaml
----
-homebrew_packages:
-  - bat       # CLI tool
-  - jq        # CLI tool
-
-homebrew_casks:
-  - visual-studio-code  # GUI app
-
-stow_dirs:
-  - dev-tools
-```
-
-**Deployment flow**:
-1. ansible-role-dotmodules installs Homebrew packages
-2. ansible-role-dotmodules installs Homebrew casks
-3. Stow symlinks configuration files
-
-### Shell Registration Pattern
-
-**Use case**: Register custom shell in `/etc/shells` to allow `chsh`
-
-**config.yml**:
-```yaml
----
-# modules/fish/config.yml
-homebrew_packages:
-  - fish
+## Migration Path
 
-register_shell: fish  # Registers /opt/homebrew/bin/fish
-```
+### Phase 1: Zsh conf.d (Highest value, most complex)
 
-**Deployment**:
-```bash
-# Requires sudo for /etc/shells modification
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
-```
+1. Create conf.d fragment files in each module's `files/` directory
+2. Modify zsh module's `.zshrc` to add glob sourcing loop
+3. Remove old mergeable files from module `files/` directories
+4. Remove `mergeable_files` from affected module `config.yml` files
+5. Test: shell startup, all aliases work, mise activates, EDITOR set
 
-**Skip registration** (CI/CD, restricted environments):
-```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
-```
+**Why first**: Zsh is the primary shell with the most merge participants (5 modules, 3 merged files). Getting this right establishes the pattern for everything else.
 
-**Auto-detection**: Shell path detected based on architecture:
-- Apple Silicon: `/opt/homebrew/bin/fish`
-- Intel: `/usr/local/bin/fish`
+### Phase 2: Fish conf.d (Native support, straightforward)
 
-## Integration Points
+1. Create conf.d fragment files in each module's `files/` directory
+2. Slim down fish module's `config.fish` (remove content that moves to conf.d)
+3. Remove old mergeable files from module `files/` directories
+4. Remove `mergeable_files` from affected module `config.yml` files
+5. Test: fish startup, abbrs work, mise activates
 
-### Entry Point: Playbook
+**Why second**: Fish's native conf.d means zero custom sourcing code. The naming pattern from Phase 1 carries over.
 
-**File**: `playbooks/deploy.yml`
+### Phase 3: Mise conf.d (Simplest, fewest participants)
 
-**Role**: Orchestrates module processing
+1. Create conf.d fragment in node module's `files/` directory
+2. Update dev-tools module's config.toml (remove mergeable_files, stow directly)
+3. Remove `mergeable_files` from affected module `config.yml` files
+4. Test: `mise ls` shows python, node, pnpm with correct versions
 
-**Configuration**:
-```yaml
----
-- name: Deploy dotfiles using ansible-role-dotmodules
-  hosts: localhost
-  vars:
-    dotmodules:
-      repo: 'file://{{ playbook_dir }}/../modules'
-      dest: '{{ ansible_env.HOME }}/.dotmodules'
-      install:
-        - git
-        - ghostty  # Add new modules here
-        - claude
-  roles:
-    - role: ansible-role-dotmodules
-```
+**Why third**: Only two modules participate. Lowest risk.
 
-**Integration**: Add module name to `dotmodules.install` list.
+### Phase 4: Cleanup
 
-### Processing: ansible-role-dotmodules
+1. Verify no modules still declare mergeable_files
+2. Remove merge logic from ansible-role-dotmodules (merge_files.yml, merged_file.j2)
+3. Simplify stow_module.yml (remove mergeable file ignore patterns)
+4. Clean up `~/.dotmodules/merged/` directory on deployed machines
+5. Update documentation (convention doc for numeric ordering)
 
-**Source**: External role from `https://github.com/craveytrain/ansible-role-dotmodules.git`
+**Why last**: The role should continue to work during incremental migration. Cleanup happens only after all modules are migrated.
 
-**Responsibilities**:
-1. Read each module's `config.yml`
-2. Install Homebrew packages/casks
-3. Merge `mergeable_files` into `modules/merged/`
-4. Run GNU Stow on `stow_dirs`
-5. Register shells (if `register_shell` defined)
+## Resolving the EDITOR/VISUAL Duplication
 
-**Integration**: Transparent - no custom tasks required.
+Both `zsh/files/.zsh/environment.sh` and `editor/files/.zsh/environment.sh` currently define EDITOR and VISUAL. In the merged file, editor's definition wins (it's concatenated last based on module order).
 
-### Deployment: GNU Stow
+**Resolution**: Move EDITOR/VISUAL to the editor module's conf.d fragment (`30-editor.sh`). Remove from zsh module's environment conf.d fragment (`10-environment.sh`). The editor module is the correct owner of editor-related environment variables. This is a clean separation of concerns that was not possible with the merge approach.
 
-**Role**: Create symlinks from `~/.dotmodules/` to home directory
+## Anti-Patterns to Avoid
 
-**Behavior**:
-- Mirrors directory structure from `files/` to `~/`
-- Handles nested directories automatically
-- Detects conflicts (existing non-symlink files)
+### Anti-Pattern 1: Large conf.d Fragments
+**What**: Moving entire config files into conf.d instead of splitting logically.
+**Why bad**: Defeats the purpose. A 50-line conf.d file is just a renamed merged file.
+**Instead**: Each conf.d fragment should be a focused, single-concern snippet (3-15 lines typical).
 
-**Integration**: Specify directories in `stow_dirs` list.
+### Anti-Pattern 2: Cross-Fragment Dependencies
+**What**: One conf.d fragment depending on variables set by another conf.d fragment.
+**Why bad**: Fragile. Renaming a file changes load order and breaks things silently.
+**Instead**: conf.d fragments should be independent. If order matters, document it and use numeric prefixes with wide gaps (10, 20, 30 not 01, 02, 03).
 
-### Merging: Configuration Assembly
+### Anti-Pattern 3: Splitting Existing Single-Owner Files
+**What**: Breaking aliases.sh into conf.d just because conf.d exists.
+**Why bad**: aliases.sh is owned by one module (zsh after migration). No merge conflict to solve.
+**Instead**: Only use conf.d for files that previously needed cross-module merging. Single-owner files stay as direct stowed files.
 
-**Role**: Combine contributions from multiple modules
+### Anti-Pattern 4: Fish conf.d for Things That Belong in config.fish
+**What**: Moving fish environment setup into conf.d when it belongs in config.fish.
+**Why bad**: Fish conf.d runs before config.fish. Prompt configuration, function definitions, and core env vars that define the fish module's identity belong in config.fish.
+**Instead**: Only cross-module concerns go in conf.d (mise activation, shared env vars from other modules).
 
-**Process**:
-1. Collect all files matching `mergeable_files` from all modules
-2. Concatenate in module order
-3. Add headers showing source module
-4. Write to `modules/merged/`
-5. Symlink merged file to home directory
+## Scalability Considerations
 
-**Integration**: Declare files in `mergeable_files` list.
+| Concern | At 11 modules (current) | At 20 modules | At 50 modules |
+|---|---|---|---|
+| Startup time | Negligible (~2ms for glob) | Still negligible (~5ms) | Measure; consider lazy loading |
+| conf.d naming | Wide gaps in numbering (10, 20, 30...) | Still room | May need sub-categories |
+| Debugging | `ls ~/.zsh/conf.d/` shows all fragments | Same | May need `zsh -x` tracing |
+| Adding a module | Create conf.d fragment, pick number | Same | Same |
 
-## Build Order Implications
+## Sources
 
-### Suggested Implementation Order for New Modules
-
-**Tier 1: Standalone modules** (no dependencies)
-- Ghostty terminal config
-- Fonts
-- 1Password CLI
-- Simple config-only modules
-
-**Tier 2: Shell-integrated modules** (depend on shell modules existing)
-- Modules contributing to `.zshrc` or `.config/fish/config.fish`
-- Modules with shell aliases/functions
-
-**Tier 3: Tool-dependent modules** (depend on other tools)
-- Modules using mise (depend on dev-tools)
-- Modules using custom binaries (depend on providing module)
-
-**Tier 4: Complex modules** (multiple dependencies)
-- Modules with both Homebrew packages AND mergeable files
-- Modules requiring shell registration
-
-### Deployment Considerations
-
-**Idempotency**: Safe to run playbook multiple times
-- Homebrew: Skips already-installed packages
-- Stow: Re-creates symlinks (idempotent)
-- Merging: Regenerates merged files (idempotent)
-
-**Partial deployments**: Not supported - all modules in `install` list are processed
-
-**Rollback**: Manual - remove module from list and re-run playbook (symlinks removed, packages remain)
-
-## Quality Gates
-
-### Components Clearly Defined
-
-- **Module**: Self-contained directory in `modules/` with `config.yml` and `files/`
-- **config.yml**: Declarative YAML defining dependencies and behavior
-- **files/**: Directory tree mirroring home directory structure
-- **Merged module**: Special module containing merged configuration output
-- **ansible-role-dotmodules**: External Ansible role processing modules
-- **GNU Stow**: Symlink deployment tool
-
-**Boundaries**:
-- Modules are independent (no shared state except merged files)
-- ansible-role-dotmodules owns processing logic (modules are pure data)
-- Merging is one-way (modules contribute, don't modify merged output)
-
-### Integration Points Explicit
-
-1. **Playbook → ansible-role-dotmodules**: `dotmodules.install` list
-2. **ansible-role-dotmodules → Modules**: Reads `config.yml` from each module
-3. **ansible-role-dotmodules → Homebrew**: Installs packages/casks
-4. **ansible-role-dotmodules → Merging**: Concatenates `mergeable_files`
-5. **ansible-role-dotmodules → Stow**: Symlinks `stow_dirs`
-6. **Merged files → Home directory**: Stow symlinks merged output
-7. **Local overrides → Applications**: `.*.local` files loaded at runtime
-
-### Build Order Noted
-
-**Critical dependencies**:
-- `dev-tools` MUST come before `node` (provides mise)
-- Modules with `mergeable_files` ordered by override priority (later = higher)
-- Shell modules (`fish`, `zsh`) before modules contributing to shell config
-
-**Non-critical ordering**:
-- Standalone modules (Ghostty, 1Password) can be anywhere
-- Font modules independent
-
-**Current order** (verified working):
-```
-git → fonts → 1password → shell → fish → zsh → dev-tools → node → editor
-```
-
-**Suggested order for new modules**:
-```
-[standalone modules] → [shell modules] → [tool providers] → [tool consumers] → [integrations]
-```
-
-## References
-
-**Existing modules analyzed**:
-- `modules/git/` - Simple stow-only module
-- `modules/zsh/` - Complex module with packages, merging, shell registration
-- `modules/node/` - Dependent module (requires dev-tools)
-- `modules/editor/` - Module with mergeable contributions
-
-**Key files reviewed**:
-- `playbooks/deploy.yml` - Deployment orchestration
-- `modules/*/config.yml` - Module metadata (9 modules)
-- `modules/merged/` - Merged output examples
-- `README.md` - User documentation
-- `.planning/codebase/ARCHITECTURE.md` - System architecture
-
-**External dependencies**:
-- ansible-role-dotmodules: https://github.com/craveytrain/ansible-role-dotmodules.git
-- GNU Stow documentation
-- Ansible 2.9+ documentation
+- [GNU Stow Manual](https://www.gnu.org/software/stow/manual/stow.html) - `--no-folding` behavior (HIGH confidence)
+- [Fish Shell Configuration](https://deepwiki.com/fish-shell/fish-shell/6.1-configuration-files) - Native conf.d support (HIGH confidence)
+- [Mise Configuration](https://mise.jdx.dev/configuration.html) - Config file hierarchy (MEDIUM confidence)
+- [Mise Configuration System](https://deepwiki.com/jdx/mise/3.2-configuration-system) - conf.d/*.toml loading (MEDIUM confidence - verified in multiple sources but not tested hands-on)
+- ansible-role-dotmodules source: `~/.ansible/roles/ansible-role-dotmodules/` - Current merge and stow logic (HIGH confidence - read directly)
 
 ---
 
-**Analysis completed**: 2026-01-23
-**Next step**: Use this architecture to inform phase structure in roadmap development
+*Researched: 2026-03-10*
+*Overall confidence: HIGH for zsh/fish patterns, MEDIUM for mise conf.d native loading*

@@ -1,893 +1,271 @@
-# Common Pitfalls When Adding Configuration Modules to Dotfiles Systems
+# Domain Pitfalls: Runtime conf.d Sourcing Migration
 
-Research focus: Module-specific mistakes in Ansible + ansible-role-dotmodules + GNU Stow systems
+**Domain:** Dotfiles conf.d migration (replacing Ansible-merged files with runtime sourcing)
+**Researched:** 2026-03-10
 
 ---
 
-## 1. Duplicate Module Entries in Playbook
+## Critical Pitfalls
 
-### Problem
-Adding the same module multiple times to the `dotmodules.install` list in the playbook.
+Mistakes that break existing shell functionality or require significant rework.
 
-### Warning Signs
-- Playbook runs succeed but take unexpectedly long
-- Homebrew packages reinstall/check twice
-- Duplicate log entries during deployment
-- Stow warnings about already-linked files
+### Pitfall 1: Duplicate Definitions Across Merged and conf.d Files During Migration
 
-### Real Example
-```yaml
-# playbooks/deploy.yml - INCORRECT
-dotmodules:
-  install:
-    - git
-    - 1password
-    - shell
-    - 1password  # Duplicate! Already listed above
-```
+**What goes wrong:** During the transition period, both the old merged file and the new conf.d fragment exist. The same aliases, environment variables, or functions are defined twice. Some definitions are idempotent (re-exporting the same value), but others cause subtle bugs: duplicate PATH entries, duplicate `abbr` registrations in fish that produce warnings, or conflicting function definitions where last-write-wins produces unexpected behavior.
 
-### Prevention Strategy
-1. Before adding a module to `dotmodules.install`, grep the playbook:
-   ```bash
-   grep -n "module-name" playbooks/deploy.yml
+**Why it happens:** The migration can't be atomic across all modules at once. If you move one module's contributions to conf.d but leave others in the merged file, you need the merged file to still exist for the remaining modules. But the conf.d file also gets sourced, doubling up the moved module's contributions.
+
+**Consequences:** Shell startup warnings, unexpected alias behavior, doubled PATH segments, and hard-to-debug "works on one machine but not another" issues if machines are at different migration stages.
+
+**Prevention:**
+1. Migrate per-file, not per-module. Move ALL contributions to `.zsh/aliases.sh` at once (from zsh module + editor module), not "move everything from editor module first."
+2. Remove the merged file for a given target path only when ALL modules contributing to it have been migrated.
+3. Use a checklist tracking which merged file targets still have contributors:
+   - `.zshrc`: zsh, dev-tools (2 modules)
+   - `.zsh/aliases.sh`: zsh, editor (2 modules)
+   - `.zsh/environment.sh`: zsh, shell, editor (3 modules)
+   - `.config/fish/config.fish`: fish, dev-tools, shell, editor (4 modules)
+   - `.config/mise/config.toml`: dev-tools, node (2 modules)
+
+**Detection:** Run `grep -c 'function_name_or_alias' ~/.zsh/conf.d/*` and check for duplicate definitions. Fish will warn about duplicate abbreviations on startup.
+
+**Phase relevance:** This is the core migration risk. Address in every phase that touches a merged file.
+
+### Pitfall 2: Zsh Sourcing Order Creates Dependency Failures
+
+**What goes wrong:** The current `.zshrc` sources files in a deliberate order: environment.sh first, then aliases.sh, then functions.sh. The conf.d glob (`~/.zsh/conf.d/*.sh`) sources in alphabetical order. If a conf.d file from module B depends on an environment variable set by a conf.d file from module A, the alphabetical prefix must encode that dependency correctly. Get the numbering wrong and aliases that reference `$EDITOR` break because the editor module's environment.sh hasn't been sourced yet.
+
+**Why it happens:** The current merged-file system implicitly handles ordering because the merge concatenates in module order from deploy.yml. A glob-based system doesn't have that implicit ordering, and the dependency isn't obvious from reading any single file.
+
+**Consequences:** Shell startup errors, undefined variable references, commands that silently do the wrong thing (e.g., `$EDITOR` is empty so `alias e` opens nothing).
+
+**Prevention:**
+1. Map existing dependencies before creating any conf.d files. The current codebase has:
+   - `aliases.sh` depends on `environment.sh` (the `e` alias uses `$EDITOR`/`$VISUAL`)
+   - `aliases.sh` depends on eza being in PATH (conditional aliases)
+   - `dev-tools .zshrc` depends on mise being installed (eval mise activate)
+2. Use a numbering convention that groups by purpose:
+   - `00-09`: PATH and core environment (Homebrew, PATH additions)
+   - `10-19`: Tool activation (mise activate, etc.)
+   - `20-29`: Environment variables (EDITOR, VISUAL, PAGER, etc.)
+   - `30-39`: Aliases
+   - `40-49`: Functions
+   - `50-59`: Module-specific configuration
+   - `90-99`: Local overrides
+3. Document the numbering convention in a README within the conf.d directory.
+
+**Detection:** New shell session produces errors or warnings. Test with `zsh -i -c exit` and check stderr.
+
+**Phase relevance:** Must be designed upfront before any conf.d files are created. The numbering scheme is a prerequisite for all subsequent migration work.
+
+### Pitfall 3: Fish conf.d Sources BEFORE config.fish
+
+**What goes wrong:** Fish's native `~/.config/fish/conf.d/` directory is sourced BEFORE `~/.config/fish/config.fish`. If you move module contributions into conf.d files but they depend on variables or PATH set in config.fish, they'll fail silently or behave differently.
+
+**Why it happens:** Fish's documented sourcing order is: conf.d files first (alphabetically), then config.fish. This is the opposite of what most people assume. The current system merges everything into config.fish, so ordering is implicit within that single file.
+
+**Consequences:** Environment variables not set, PATH not configured, abbreviations that reference undefined variables, mise not activated when conf.d files expect it.
+
+**Prevention:**
+1. Understand the current config.fish structure. Right now, the fish module's config.fish sets PATH (`brew shellenv`, `fish_add_path`), environment variables, abbreviations, functions, and prompt config all in one file. The shell module and dev-tools module contribute additional lines.
+2. Keep PATH setup and core environment in config.fish (it runs after conf.d). Move only independent fragments to conf.d.
+3. Alternatively, make ALL conf.d files self-contained: each file should not depend on config.fish having run first. This means each conf.d file that needs Homebrew PATH should include its own `eval (/opt/homebrew/bin/brew shellenv)` guard or similar.
+4. Test ordering explicitly: `fish -c 'echo $PATH'` after migration to verify.
+
+**Detection:** Fish abbreviations that reference undefined variables, commands not found because PATH isn't set yet in conf.d files.
+
+**Phase relevance:** Fish migration phase. Must be researched and designed before moving any fish contributions to conf.d.
+
+### Pitfall 4: TOML Section Headers Break Mise conf.d
+
+**What goes wrong:** The current mise merge hack puts `[tools]` header only in the dev-tools module and omits it from the node module because concatenation would produce duplicate headers. When migrating to mise's native `~/.config/mise/conf.d/`, each file is parsed independently as valid TOML, so every file MUST have its own section headers. If you copy the node module's current content (`node = "latest"` without `[tools]`) into a conf.d file, mise will fail to parse it or put the values under the wrong section.
+
+**Why it happens:** The current system was designed around string concatenation. TOML conf.d expects each file to be a standalone valid TOML document.
+
+**Consequences:** Mise silently ignores tool versions, or reports TOML parse errors. Tools stop being managed, and you don't notice until `node --version` returns the system version instead of the managed one.
+
+**Prevention:**
+1. Every mise conf.d file must be a valid standalone TOML document with proper section headers.
+2. The node module's conf.d file should be:
+   ```toml
+   [tools]
+   node = "latest"
+   pnpm = "latest"
    ```
-2. Keep modules in alphabetical order for easy visual scanning
-3. Review the entire install list before running the playbook
-4. Use YAML linting tools to catch duplicates
+3. The dev-tools module's conf.d file should be:
+   ```toml
+   [settings]
+   asdf_compat = true
 
-### Detection Method
-```bash
-# Detect duplicate modules in playbook
-grep "^        - " playbooks/deploy.yml | sort | uniq -d
-```
-
-### Phase to Address
-**Planning Phase** - Before creating module config.yml, check playbook structure
-
----
-
-## 2. Missing Module Dependencies
-
-### Problem
-Installing a module that depends on packages/tools from another module without ensuring the dependency is installed first or listed in the playbook.
-
-### Warning Signs
-- Commands not found during module deployment
-- Stow succeeds but configs reference missing binaries
-- Tools fail at runtime with "command not found"
-- Environment variables reference non-existent paths
-
-### Real Example
-```yaml
-# modules/node/config.yml
-# This module requires mise from dev-tools module
-# If dev-tools isn't listed BEFORE node in playbook, mise won't be available
-```
-
-Current dependency graph:
-- `node` → depends on → `dev-tools` (provides mise)
-- `zsh` → depends on → `shell` (provides eza for aliases)
-- `editor` → references → shell utilities (eza, ripgrep)
-
-### Prevention Strategy
-1. Document dependencies in module README.md "Prerequisites" section
-2. Add comment in config.yml noting required modules
-3. Order modules in playbook with dependencies first:
-   ```yaml
-   install:
-     - shell        # Provides utilities for other modules
-     - dev-tools    # Provides mise
-     - node         # Needs mise from dev-tools
-     - zsh          # Uses eza from shell
+   [tools]
+   python = "3.13.2"
    ```
-4. Test deployment on clean system to catch missing dependencies
+4. Test with `mise doctor` and `mise ls` after migration to verify all tools are still recognized.
 
-### Detection Method
-```bash
-# Check for tool references without package declaration
-rg "command.*mise" modules/*/files/ --type-not yml
-# Then verify mise is in that module's homebrew_packages or a dependency
-```
+**Detection:** `mise ls` shows fewer tools than expected. `mise doctor` reports config issues.
 
-### Phase to Address
-**Planning Phase** - Map dependencies before creating config
-**Implementation Phase** - Document in config.yml and README.md
-**Testing Phase** - Deploy on clean VM/container
+**Phase relevance:** Mise migration phase. Simple to prevent if you know about it, catastrophic if you don't.
 
----
+### Pitfall 5: Stow Conflicts When Changing File Structure
 
-## 3. Conflicting Mergeable File Declarations
+**What goes wrong:** The migration changes where files live. Currently, module X has `files/.zsh/aliases.sh` which gets merged. After migration, module X has `files/.zsh/conf.d/30-editor-aliases.sh`. But the old symlink for `.zsh/aliases.sh` still exists from the merged system. Stow doesn't clean up old symlinks when the source file structure changes. You end up with stale symlinks pointing to removed files, and the merged file continues to be sourced alongside the conf.d directory.
 
-### Problem
-Multiple modules declaring the same file as mergeable with incompatible merge strategies, or forgetting to declare a file as mergeable when it should be shared.
+**Why it happens:** Stow tracks what it has stowed, but when you restructure a module's files directory, you need to unstow the old structure before stowing the new one. If you just run the playbook, the old symlinks from the merged module remain.
 
-### Warning Signs
-- Stow complains about conflicting symlinks
-- Merged files missing content from some modules
-- Files in `modules/merged/` don't contain expected sections
-- Config changes from one module overwrite another's
+**Consequences:** Broken symlinks in the home directory, sourcing errors when zsh tries to load a file that no longer exists, or double-sourcing if the old merged file and new conf.d both exist.
 
-### Real Example
-```yaml
-# modules/zsh/config.yml
-mergeable_files:
-  - '.zshrc'
-  - '.zsh/aliases.sh'
-  - '.zsh/environment.sh'
+**Prevention:**
+1. Add a migration step that unstows the old module structure before stowing the new one.
+2. Alternatively, manually clean up `~/.dotmodules/merged/` and its symlinks before the first post-migration deploy.
+3. Create a migration script or documented checklist that removes:
+   - The `modules/merged/` directory contents
+   - Any symlinks in `~/` that point to `~/.dotmodules/merged/`
+4. Test by checking for broken symlinks: `find ~ -maxdepth 3 -type l ! -exec test -e {} \; -print 2>/dev/null`
 
-# modules/dev-tools/config.yml
-mergeable_files:
-  - '.zshrc'  # CONFLICT: Same file, both modules contribute
-  - '.config/fish/config.fish'
+**Detection:** `ls -la ~/.zsh/` shows broken symlinks (red in most terminals). Shell startup errors about missing files.
 
-# modules/editor/config.yml
-mergeable_files:
-  - '.zsh/aliases.sh'  # OK: Multiple modules can contribute to same file
-  - '.zsh/environment.sh'
-```
-
-Current mergeable files (from existing modules):
-- `.zshrc` - zsh, dev-tools
-- `.zsh/aliases.sh` - zsh, editor
-- `.zsh/environment.sh` - zsh, shell, editor
-- `.config/fish/config.fish` - shell, dev-tools, editor
-- `.config/mise/config.toml` - dev-tools, node
-
-### Prevention Strategy
-1. Before declaring mergeable file, check if other modules already use it:
-   ```bash
-   rg "mergeable_files" modules/*/config.yml -A 5
-   ```
-2. Ensure file content uses clear section markers (comments) for each module
-3. Understand merge mechanism - ansible-role-dotmodules concatenates content
-4. For shell configs, use sourcing pattern instead of merging when appropriate
-5. Document which modules contribute to each mergeable file
-
-### Detection Method
-```bash
-# List all mergeable files and their modules
-for config in modules/*/config.yml; do
-  echo "=== $(dirname $config) ==="
-  grep -A 10 "mergeable_files:" "$config" | grep "  - " || echo "None"
-done
-```
-
-### Phase to Address
-**Planning Phase** - Research existing mergeable files before design
-**Implementation Phase** - Add clear section comments in file content
-**Testing Phase** - Verify merged output contains all expected sections
+**Phase relevance:** Must be addressed in the first migration phase. The cleanup step is a prerequisite for the entire migration.
 
 ---
 
-## 4. Stow Directory Structure Mismatches
+## Moderate Pitfalls
 
-### Problem
-Files in `modules/<name>/files/` not mirroring the expected home directory structure, causing Stow to create incorrect symlinks or fail.
+### Pitfall 6: The .zshrc Itself Has Module Contributions
 
-### Warning Signs
-- Stow errors about "cannot stow file over directory"
-- Symlinks created in wrong locations
-- Config files not appearing in home directory
-- Extra nested directories in home directory
+**What goes wrong:** Both the zsh module and dev-tools module contribute to `.zshrc` via mergeable_files. The zsh module owns the main `.zshrc` file (with p10k, compinit, plugin loading). The dev-tools module adds `eval "$(mise activate zsh)"`. After migration, where does the mise activation go? It can't go in a conf.d file because it needs to run at a specific point in the .zshrc lifecycle (after PATH is set, before completions that depend on mise-managed tools).
 
-### Real Example
-```
-# INCORRECT structure
-modules/ghostty/files/ghostty/config
-# Stow would create: ~/ghostty/config (wrong!)
+**Prevention:**
+1. Don't put .zshrc contributions into conf.d. The .zshrc file is special because it has ordering constraints that conf.d can't easily express (p10k instant prompt must be first, syntax highlighting must be last).
+2. Instead, inline the dev-tools module's `.zshrc` contribution directly into the zsh module's `.zshrc`. The line `eval "$(mise activate zsh)"` should be placed in `.zshrc` after Homebrew PATH is set.
+3. The .zshrc then sources conf.d for aliases, environment, and functions, but its own structure remains a single authored file.
 
-# CORRECT structure
-modules/ghostty/files/.config/ghostty/config
-# Stow creates: ~/.config/ghostty/config (correct!)
-```
+**Detection:** mise commands not found, or compinit doesn't see mise-provided completions.
 
-Current working patterns:
-```
-modules/zsh/files/.zshrc           → ~/.zshrc
-modules/zsh/files/.zsh/aliases.sh  → ~/.zsh/aliases.sh
-modules/git/files/.gitconfig       → ~/.gitconfig
-modules/git/files/.config/gh/config.yml → ~/.config/gh/config.yml
-```
+**Phase relevance:** Zsh migration phase. Design decision that must be made before implementation.
 
-### Prevention Strategy
-1. Always start files/ structure with `.` for home directory files
-2. Match XDG Base Directory structure: `.config/app-name/` for modern apps
-3. Test with single file before adding entire module
-4. Check existing modules for similar app types (GUI vs CLI, etc.)
-5. Review Stow manual for directory folding/unfolding behavior
+### Pitfall 7: Fish conf.d Files from Stow Collide with Fisher Plugin Files
 
-### Detection Method
-```bash
-# Check if files/ contains proper structure
-ls -la modules/new-module/files/
-# Should see dotfiles (.zshrc, .config) not plain dirs (zshrc, config)
-```
+**What goes wrong:** Fisher (fish plugin manager) installs plugin configuration into `~/.config/fish/conf.d/` and `~/.local/share/fish/vendor_conf.d/`. If your Stow-managed conf.d files use names that collide with Fisher-generated files, or if Fisher and Stow both try to manage the conf.d directory itself, you get conflicts.
 
-### Phase to Address
-**Implementation Phase** - Create files/ structure correctly from start
-**Testing Phase** - Deploy and verify symlink locations with `ls -la ~/`
+**Prevention:**
+1. Use a clear naming prefix for Stow-managed files: `dotfiles-*.fish` or a numeric prefix scheme that won't collide with Fisher's naming.
+2. Verify that Stow with `--no-folding` creates individual symlinks inside conf.d rather than symlinking the conf.d directory itself. With --no-folding, Stow should create the directory and symlink individual files, which is what you want.
+3. Check what Fisher currently puts in conf.d: `ls ~/.config/fish/conf.d/` on a deployed machine.
 
----
+**Detection:** `stow` errors about existing files in conf.d, or Fisher plugins stop working after deploy.
 
-## 5. Platform-Specific Paths in Configs
+**Phase relevance:** Fish migration phase.
 
-### Problem
-Hardcoding paths that differ between architectures (Intel vs ARM Mac, Linux vs macOS) or assuming specific Homebrew installation locations.
+### Pitfall 8: Local Override Pattern Changes Semantics
 
-### Warning Signs
-- Configs work on development machine but fail on others
-- PATH references to `/usr/local/bin` instead of `/opt/homebrew/bin`
-- Architecture-specific binary paths in scripts
-- Hardcoded user home directories
+**What goes wrong:** Currently, `.zshrc.local` is sourced at a specific point in .zshrc (after all configuration, before plugins). With conf.d, if you move local overrides to `~/.zsh/conf.d/99-local.sh`, the override runs at a different point in the startup sequence. Variables set in .zshrc.local that were meant to override things set earlier in .zshrc may now run too early or in the wrong context.
 
-### Real Example
-```bash
-# INCORRECT - Intel Mac specific
-export PATH="/usr/local/bin:$PATH"
+**Prevention:**
+1. Keep the `.zshrc.local` and `config.local.fish` patterns as-is. They work, they're documented, and they solve a different problem than conf.d.
+2. conf.d is for module contributions. Local overrides are for machine-specific customization. Don't conflate them.
+3. Make .zshrc source conf.d, THEN source .zshrc.local, preserving the override semantics.
 
-# CORRECT - Works on both Intel and ARM
-export PATH="$(brew --prefix)/bin:$PATH"
+**Detection:** Machine-specific overrides stop working after migration.
 
-# INCORRECT - Hardcoded user
-source /Users/mcravey/.p10k.zsh
+**Phase relevance:** All migration phases. Document this clearly so future contributors don't move local overrides into conf.d.
 
-# CORRECT - Uses variable
-source ~/.p10k.zsh
-```
+### Pitfall 9: Performance Regression from Glob Sourcing
 
-### Prevention Strategy
-1. Use `$(brew --prefix)` for Homebrew paths
-2. Use `~` or `$HOME` for home directory references
-3. Use shell variables: `$XDG_CONFIG_HOME` instead of `~/.config`
-4. Avoid absolute paths where possible - use PATH lookup
-5. Document platform constraints clearly (project accepts Apple Silicon only)
+**What goes wrong:** Replacing a single merged file with glob-based sourcing of N individual files adds N-1 additional file opens and shell source operations. For zsh, each `source` call has overhead (file open, parse, execute). With 5-10 conf.d files per category (aliases, environment, functions), that's 15-30 additional source calls per shell startup.
 
-### Detection Method
-```bash
-# Find hardcoded Homebrew paths
-rg "(/usr/local|/opt/homebrew)" modules/*/files/
+**Prevention:**
+1. The project already estimated ~2ms overhead, which is negligible. But verify after implementation.
+2. Use `zsh/zprof` to benchmark before and after: add `zmodload zsh/zprof` at top of .zshrc and `zprof` at bottom, compare results.
+3. Keep the number of conf.d files reasonable. With 11 modules and only 5 files being merged, you're looking at maybe 10-15 conf.d files total. This is fine.
+4. Avoid sourcing conf.d directories that have zero files (use the `(N)` glob qualifier in zsh to suppress errors on empty globs).
 
-# Find hardcoded home directories
-rg "/Users/[a-z]+" modules/*/files/
-```
+**Detection:** Noticeable delay when opening new terminal. Profile with `time zsh -i -c exit`.
 
-### Phase to Address
-**Implementation Phase** - Use dynamic paths from start
-**Code Review Phase** - Grep for hardcoded paths before committing
+**Phase relevance:** Validate during the first migration phase (zsh). If performance is acceptable for zsh, fish and mise will be fine.
+
+### Pitfall 10: Empty Glob Errors in Zsh
+
+**What goes wrong:** If `~/.zsh/conf.d/` exists but contains no `*.sh` files (or the directory doesn't exist yet), a bare glob `source ~/.zsh/conf.d/*.sh` in zsh will produce a "no matches found" error and potentially abort .zshrc execution.
+
+**Prevention:**
+1. Use the null glob qualifier: `for f in ~/.zsh/conf.d/*.sh(N); do source "$f"; done`
+2. The `(N)` qualifier makes zsh return an empty list instead of erroring when no files match.
+3. Alternatively, check directory existence first: `[[ -d ~/.zsh/conf.d ]] && for f in ...`
+
+**Detection:** New shell session shows "no matches found: /Users/.../.zsh/conf.d/*.sh" error.
+
+**Phase relevance:** Zsh migration phase. Must be in the sourcing loop implementation from day one.
 
 ---
 
-## 6. Missing Shell Registration Configuration
+## Minor Pitfalls
 
-### Problem
-Adding a new shell module (fish, zsh, bash variants) without configuring the `register_shell` directive, preventing shell from being added to `/etc/shells`.
+### Pitfall 11: Forgetting to Remove mergeable_files from config.yml
 
-### Warning Signs
-- New shell installed but can't be set as default
-- `chsh` command fails with "invalid shell"
-- Shell works when invoked manually but not as login shell
-- `/etc/shells` missing the shell's Homebrew path
+**What goes wrong:** After migrating a file to conf.d, the `mergeable_files` declaration remains in the module's config.yml. Next time ansible-role-dotmodules runs, it still tries to merge the old file, potentially recreating the merged output alongside the new conf.d structure.
 
-### Real Example
-```yaml
-# modules/fish/config.yml - CORRECT
-homebrew_packages:
-  - fish
-stow_dirs:
-  - fish
-register_shell: fish  # This is required!
+**Prevention:** Include config.yml cleanup in each migration step's checklist. Verify with `grep -r mergeable_files modules/*/config.yml` after migration.
 
-# modules/new-shell/config.yml - INCORRECT (missing register_shell)
-homebrew_packages:
-  - new-shell
-stow_dirs:
-  - new-shell
-# Missing: register_shell: new-shell
-```
+**Detection:** Unexpected files appearing in `~/.dotmodules/merged/` after deployment.
 
-### Prevention Strategy
-1. For any shell module, always add `register_shell: <shell-name>` to config.yml
-2. Understand this requires sudo - incompatible with BeyondTrust restrictions
-3. Use `--skip-tags register_shell` flag for restricted environments
-4. Document in module README that shell registration requires admin privileges
-5. Test on restricted environment to ensure graceful degradation
+**Phase relevance:** Every migration phase.
 
-### Detection Method
-```bash
-# Check which modules register shells
-rg "register_shell:" modules/*/config.yml
-```
+### Pitfall 12: Conf.d Files Need Consistent Shebang/Guard Patterns
 
-### Phase to Address
-**Planning Phase** - Identify if module is a shell
-**Implementation Phase** - Add register_shell directive to config.yml
-**Documentation Phase** - Note admin requirement in README
+**What goes wrong:** Some current files start with `#!/usr/bin/env sh`, some with `#!/usr/bin/env zsh`, some with no shebang. Conf.d files sourced by zsh don't need shebangs (they're sourced, not executed), but inconsistency makes it unclear whether a file is meant to be sourced or executed.
+
+**Prevention:**
+1. Drop shebangs from conf.d files entirely. They're sourced, not executed.
+2. Add a comment header indicating the sourcing context: `# Sourced by ~/.zshrc via conf.d`
+3. Keep `.sh` extension for zsh conf.d files (existing convention), `.fish` for fish conf.d files.
+
+**Detection:** ShellCheck warnings about unused shebangs.
+
+**Phase relevance:** All migration phases. Establish convention before first file is created.
+
+### Pitfall 13: Editor Module's environment.sh Duplicates zsh Module's environment.sh
+
+**What goes wrong:** Both the zsh module and editor module currently have `files/.zsh/environment.sh`. The zsh module's version sets EDITOR, VISUAL, PAGER, PLATFORM, and more. The editor module's version also sets EDITOR and VISUAL. In the merged system, these are concatenated. In conf.d, you'd have two files both setting `$EDITOR`, with last-write-wins behavior determined by alphabetical ordering.
+
+**Prevention:**
+1. During migration, deduplicate. The EDITOR/VISUAL settings belong in the editor module's conf.d file, not the zsh module's.
+2. Split the current zsh environment.sh into logical conf.d files: platform detection, editor settings, PATH/CDPATH, colors, etc.
+3. Assign each concern to the module that owns it: editor module owns EDITOR/VISUAL, zsh module owns PLATFORM/CDPATH/PAGER, shell module owns EZA_COLORS.
+
+**Detection:** Review conf.d files for duplicate variable assignments before committing.
+
+**Phase relevance:** Zsh migration phase. The deduplication is the real work of the migration.
 
 ---
 
-## 7. Homebrew Package Name Mismatches
+## Phase-Specific Warnings
 
-### Problem
-Using incorrect package names in `homebrew_packages` list - either typos, wrong formula name, or using cask name instead of formula.
-
-### Warning Signs
-- Ansible playbook fails with "No available formula with the name"
-- Package installs under different name than expected
-- Cask required but formula specified (or vice versa)
-- Command not found after successful Homebrew installation
-
-### Real Example
-```yaml
-# INCORRECT
-homebrew_packages:
-  - github-cli  # Wrong! Actual formula is 'gh'
-  - vim-plug    # Wrong! This is installed via curl, not Homebrew
-  - nodejs      # Wrong! Actual formula is 'node'
-
-# CORRECT
-homebrew_packages:
-  - gh          # GitHub CLI
-  - vim         # vim-plug installed separately via autoload
-  - node        # Node.js
-```
-
-### Prevention Strategy
-1. Verify package name before adding to config.yml:
-   ```bash
-   brew search package-name
-   brew info package-name
-   ```
-2. Check if package is formula or cask:
-   ```bash
-   brew info --formula package-name
-   brew info --cask package-name
-   ```
-3. For casks, use separate `homebrew_cask_packages` if supported by role
-4. Test install manually before adding to module
-5. Check package's actual binary name vs formula name
-
-### Detection Method
-```bash
-# Test package names in config
-for pkg in $(grep "^  - " modules/new-module/config.yml | cut -d'-' -f2); do
-  brew info "$pkg" 2>&1 | grep -q "Error:" && echo "Invalid: $pkg"
-done
-```
-
-### Phase to Address
-**Implementation Phase** - Verify each package name before adding
-**Testing Phase** - Deploy on test system to catch errors
+| Phase Topic | Likely Pitfall | Mitigation |
+|-------------|---------------|------------|
+| Numbering convention design | Pitfall 2: wrong ordering breaks dependencies | Map all current dependencies first, design convention around them |
+| Zsh conf.d implementation | Pitfall 10: empty glob errors | Use `(N)` glob qualifier from the start |
+| Zsh conf.d implementation | Pitfall 6: .zshrc is special | Keep .zshrc as authored file, don't conf.d-ify it |
+| Zsh conf.d implementation | Pitfall 13: duplicate EDITOR definitions | Deduplicate during migration, assign ownership |
+| Fish conf.d implementation | Pitfall 3: conf.d runs before config.fish | Keep PATH/env setup in config.fish, only move independent fragments |
+| Fish conf.d implementation | Pitfall 7: Fisher file collisions | Use dotfiles- prefix for Stow-managed conf.d files |
+| Mise conf.d implementation | Pitfall 4: TOML headers required | Each file must be valid standalone TOML |
+| Stow restructuring | Pitfall 5: stale symlinks from old structure | Unstow/clean old structure before deploying new |
+| All phases | Pitfall 1: duplicates during transition | Migrate per-target-file, not per-module |
+| All phases | Pitfall 11: stale mergeable_files declarations | Grep config.yml files after each phase |
+| Cleanup phase | Pitfall 8: local override semantics change | Keep .local pattern separate from conf.d |
 
 ---
 
-## 8. Ignoring Local Override Patterns
+## Sources
 
-### Problem
-Not providing or documenting local override mechanisms (`.local` files), causing users to modify tracked files for machine-specific settings.
-
-### Warning Signs
-- Git shows modifications to committed config files
-- Machine-specific settings scattered across tracked configs
-- Merge conflicts when pulling updates
-- Secrets/credentials committed to repository
-- Users complain about overwritten local changes
-
-### Real Example
-```bash
-# modules/zsh/files/.zshrc - INCORRECT
-export GITHUB_TOKEN="ghp_xxxx"  # Secret in tracked file!
-export PATH="$HOME/work/bin:$PATH"  # Machine-specific in tracked file!
-
-# modules/zsh/files/.zshrc - CORRECT
-# Load local config if it exists
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
-
-# Then in ~/.zshrc.local (untracked)
-export GITHUB_TOKEN="ghp_xxxx"
-export PATH="$HOME/work/bin:$PATH"
-```
-
-Current override patterns:
-- `.zshrc.local` - sourced at end of .zshrc
-- `.zshenv.local.zsh` - sourced in .zshenv
-- `.config/fish/config.local.fish` - sourced in config.fish
-
-### Prevention Strategy
-1. Always add local override sourcing to main config files
-2. Use conditional sourcing: `[[ -f ~/.config.local ]] && source ~/.config.local`
-3. Document local override pattern in module README
-4. Add `.local` files to `.gitignore` (should already be there)
-5. Provide examples of local overrides in README
-6. Never commit machine-specific or secret values to tracked files
-
-### Detection Method
-```bash
-# Check if main config has local sourcing
-rg "\.local" modules/*/files/
-rg "source.*local" modules/*/files/
-
-# Check for potential secrets in tracked files
-rg "(token|password|key|secret)" modules/*/files/ -i
-```
-
-### Phase to Address
-**Planning Phase** - Design local override strategy
-**Implementation Phase** - Add local sourcing to config files
-**Documentation Phase** - Document override pattern with examples
+- [Fish conf.d sourcing order issue #8553](https://github.com/fish-shell/fish-shell/issues/8553)
+- [Fish conf.d sourcing order documentation issue #3099](https://github.com/fish-shell/fish-shell/issues/3099)
+- [Fish conf.d load order changed in 3.1.0 #6593](https://github.com/fish-shell/fish-shell/issues/6593)
+- [Mise configuration documentation](https://mise.jdx.dev/configuration.html)
+- [GNU Stow manual](https://www.gnu.org/software/stow/manual/stow.html)
+- [Optimizing zsh startup times](https://coderlegion.com/11431/from-1-4s-to-53ms-optimizing-zsh-startup-on-macos)
+- [Zsh zprof optimization](https://www.mikekasberg.com/blog/2025/05/29/optimizing-zsh-init-with-zprof.html)
 
 ---
 
-## 9. Mergeable Files Without Section Markers
-
-### Problem
-Creating mergeable files without clear section comments, making it impossible to identify which module contributed which content.
-
-### Warning Signs
-- Merged files become hard to debug
-- Can't tell which module owns specific config lines
-- Difficult to remove module contributions later
-- Merge conflicts when updating modules
-- Duplicate configurations from multiple modules
-
-### Real Example
-```bash
-# modules/git/files/.zsh/aliases.sh - INCORRECT
-alias gs="git status"
-alias gc="git commit"
-
-# modules/dev-tools/files/.zsh/aliases.sh - INCORRECT
-alias bat="bat --theme=nord"
-
-# When merged: Can't tell which module added what!
-```
-
-```bash
-# modules/git/files/.zsh/aliases.sh - CORRECT
-# =============================================================================
-# Git Module - Git Aliases
-# =============================================================================
-alias gs="git status"
-alias gc="git commit"
-
-# modules/dev-tools/files/.zsh/aliases.sh - CORRECT
-# =============================================================================
-# Dev-Tools Module - Tool Aliases
-# =============================================================================
-alias bat="bat --theme=nord"
-
-# When merged: Clear ownership of each section
-```
-
-### Prevention Strategy
-1. Use distinctive section header format for each module's contribution:
-   ```bash
-   # =============================================================================
-   # <Module Name> - <Section Purpose>
-   # =============================================================================
-   ```
-2. Add section footer if content is substantial
-3. Include date/version in header if helpful
-4. Group related configs within section
-5. Leave blank line between module sections
-
-### Detection Method
-```bash
-# Check if mergeable files have section headers
-for file in $(rg "mergeable_files:" modules/*/config.yml -A 5 | grep "  - " | cut -d'-' -f2-); do
-  echo "=== $file ==="
-  find modules/*/files/ -path "*$file" -exec grep -l "# =====" {} \;
-done
-```
-
-### Phase to Address
-**Implementation Phase** - Add section markers to all mergeable content
-**Code Review Phase** - Verify markers before merging
-
----
-
-## 10. Missing Post-Deployment Steps
-
-### Problem
-Modules requiring manual post-deployment steps (plugin installations, shell restarts, configuration wizards) without documenting them, leading to incomplete setups.
-
-### Warning Signs
-- Configs deployed but features don't work
-- Users report "nothing happened" after deployment
-- Plugins listed but not installed
-- Shell doesn't reflect new configuration
-- Interactive setup never triggered
-
-### Real Example
-```yaml
-# modules/fish/config.yml
-# Post-deployment comment exists - GOOD
-# Post-deployment: After running the playbook, log into a fish shell and run
-# `fisher update` to install all fisher plugins defined in your config.fish
-
-# modules/vim/config.yml - MISSING post-deployment docs
-# vim-plug installed but plugins not fetched automatically
-# User doesn't know to run :PlugInstall
-```
-
-Common post-deployment steps:
-- Fisher plugin installation for Fish
-- vim-plug `:PlugInstall` for Vim
-- Powerlevel10k configuration wizard for Zsh
-- Shell restart: `exec zsh` or `exec fish`
-- mise tool installation: `mise install`
-
-### Prevention Strategy
-1. Document post-deployment steps in config.yml header comment
-2. Add detailed "Post-Deployment" section to module README
-3. Consider adding post-install Ansible tasks for automatable steps
-4. Provide exact commands users need to run
-5. Explain why each step is necessary
-6. Note if steps require interactive input (can't be automated)
-
-### Detection Method
-```bash
-# Check if modules document post-deployment
-rg "post.?deploy" modules/*/config.yml -i
-rg "post.?install" modules/*/README.md -i
-```
-
-### Phase to Address
-**Planning Phase** - Identify manual steps during design
-**Implementation Phase** - Add automation where possible
-**Documentation Phase** - Document remaining manual steps clearly
-
----
-
-## 11. BeyondTrust Privilege Escalation Issues
-
-### Problem
-Module requires `sudo` or `/etc/` modifications in BeyondTrust-restricted environment, causing deployment failures without graceful fallback.
-
-### Warning Signs
-- Playbook fails with "permission denied" on `/etc/shells`
-- Homebrew installation blocked for privileged locations
-- Service configurations fail to apply
-- System-wide settings can't be modified
-- No skip mechanism for privileged operations
-
-### Real Example
-```yaml
-# Shell registration requires sudo to modify /etc/shells
-# Without --skip-tags register_shell, deployment fails in BeyondTrust environment
-
-# INCORRECT - No fallback mechanism
-- name: Register shell in /etc/shells
-  lineinfile:
-    path: /etc/shells
-    line: "{{ shell_path }}"
-  become: yes  # Fails in restricted environment!
-
-# CORRECT - Tagged for optional skip
-- name: Register shell in /etc/shells
-  lineinfile:
-    path: /etc/shells
-    line: "{{ shell_path }}"
-  become: yes
-  tags:
-    - register_shell  # Can skip with --skip-tags register_shell
-```
-
-### Prevention Strategy
-1. Tag all privileged operations with descriptive tags
-2. Document required privileges in module README
-3. Provide skip instructions for restricted environments:
-   ```bash
-   ansible-playbook playbooks/deploy.yml --skip-tags register_shell
-   ```
-4. Test deployment with `--check` flag first
-5. Avoid system-wide modifications when user-level alternatives exist
-6. Document what functionality is lost when skipping privileged steps
-
-### Detection Method
-```bash
-# Find privileged operations
-rg "become: yes" modules/*/
-rg "sudo" modules/*/files/
-rg "/etc/" modules/*/
-```
-
-### Phase to Address
-**Planning Phase** - Identify privilege requirements early
-**Implementation Phase** - Tag privileged tasks appropriately
-**Documentation Phase** - Document skip flags and consequences
-
----
-
-## 12. Module Ordering Dependencies in Playbook
-
-### Problem
-Modules listed in wrong order in playbook, causing runtime failures when later modules depend on earlier ones being fully configured.
-
-### Warning Signs
-- Intermittent deployment failures
-- "Command not found" during deployment
-- Environment variables not set when needed
-- Symlinks reference non-existent targets
-- Merge operations fail due to missing base files
-
-### Real Example
-```yaml
-# INCORRECT order
-dotmodules:
-  install:
-    - node         # Fails! Needs mise from dev-tools
-    - dev-tools    # Too late - node already tried to use mise
-    - editor       # Fails! References eza from shell
-    - shell        # Too late - editor already deployed
-
-# CORRECT order
-dotmodules:
-  install:
-    - git          # No dependencies
-    - fonts        # No dependencies
-    - shell        # Provides utilities for others
-    - dev-tools    # Provides mise for node
-    - node         # Uses mise from dev-tools
-    - fish         # Uses shell utilities
-    - zsh          # Uses shell utilities
-    - editor       # Uses shell utilities
-```
-
-Dependency graph:
-```
-shell (base utilities)
-  ├── zsh (uses eza)
-  ├── fish (uses utilities)
-  └── editor (references utilities)
-
-dev-tools (provides mise)
-  └── node (uses mise)
-
-git (independent)
-fonts (independent)
-1password (independent)
-```
-
-### Prevention Strategy
-1. Create dependency graph before adding new module
-2. List modules in playbook with dependencies first
-3. Document dependencies in module README "Prerequisites"
-4. Use topological ordering: if A depends on B, B comes first
-5. Group modules by layer:
-   - Layer 1: No dependencies (git, fonts, 1password)
-   - Layer 2: Base utilities (shell, dev-tools)
-   - Layer 3: Depends on Layer 2 (node, zsh, fish, editor)
-
-### Detection Method
-```bash
-# Check playbook order vs dependency graph
-cat playbooks/deploy.yml | grep "^        - " | nl
-
-# Manually verify each module's prerequisites
-for module in $(grep "^        - " playbooks/deploy.yml | cut -d'-' -f2); do
-  echo "=== $module ==="
-  rg "prerequisite|depend|require" modules/$module/README.md -i || echo "None documented"
-done
-```
-
-### Phase to Address
-**Planning Phase** - Map dependencies before implementation
-**Integration Phase** - Add module to playbook in correct position
-**Testing Phase** - Deploy on clean system to verify order
-
----
-
-## 13. Conflicting Stow Directories
-
-### Problem
-Multiple modules trying to stow the same directory name, or stow directory name conflicting with existing dotfiles structure.
-
-### Warning Signs
-- Stow errors: "cannot stow over existing directory"
-- Symlinks from one module overwrite another's
-- Directory exists but not a symlink when it should be
-- Module deployment succeeds but files missing
-
-### Real Example
-```yaml
-# modules/shell/config.yml
-stow_dirs:
-  - shell
-
-# modules/new-module/config.yml - CONFLICT!
-stow_dirs:
-  - shell  # Same directory name as shell module!
-```
-
-Current stow directories in use:
-- git
-- fonts
-- shell
-- fish
-- zsh
-- dev-tools
-- node
-- editor
-- 1password
-
-### Prevention Strategy
-1. Name stow directory same as module name (convention)
-2. Check existing stow_dirs before naming:
-   ```bash
-   rg "stow_dirs:" modules/*/config.yml -A 2
-   ```
-3. Use unique, descriptive directory names
-4. Understand Stow's directory folding behavior
-5. Keep one stow directory per module unless absolutely necessary
-
-### Detection Method
-```bash
-# Find duplicate stow directory names
-rg "stow_dirs:" modules/*/config.yml -A 5 | grep "  - " | sort | uniq -d
-```
-
-### Phase to Address
-**Planning Phase** - Choose unique stow directory name
-**Implementation Phase** - Verify uniqueness before creating
-
----
-
-## 14. Forgetting to Create README.md
-
-### Problem
-Creating module with config.yml and files/ but no README.md documenting purpose, features, usage, or troubleshooting.
-
-### Warning Signs
-- No documentation of what module does
-- Users don't know how to use installed tools
-- Post-deployment steps unclear
-- Troubleshooting information missing
-- Module purpose forgotten over time
-
-### Real Example
-```
-# INCOMPLETE module structure
-modules/new-module/
-├── config.yml        # Exists
-└── files/            # Exists
-    └── .config/...
-# Missing: README.md
-
-# COMPLETE module structure
-modules/new-module/
-├── README.md         # Comprehensive documentation
-├── config.yml        # Configuration
-└── files/            # Files to deploy
-    └── .config/...
-```
-
-### Prevention Strategy
-1. Create README.md before writing any code
-2. Use existing modules as templates (zsh, shell, node have good examples)
-3. Include standard sections:
-   - Module purpose and description
-   - Core features
-   - Installation components (packages, configs)
-   - Usage examples
-   - Post-deployment steps
-   - Troubleshooting
-   - Dependencies/prerequisites
-4. Document local override patterns
-5. Explain any non-obvious configurations
-
-### Detection Method
-```bash
-# Find modules missing README
-for module in modules/*/; do
-  [[ ! -f "$module/README.md" ]] && echo "Missing README: $module"
-done
-```
-
-### Phase to Address
-**Planning Phase** - Draft README outline during design
-**Implementation Phase** - Write README alongside code
-**Documentation Phase** - Review and expand README
-
----
-
-## 15. Not Testing on Clean System
-
-### Problem
-Only testing module deployment on development machine with existing configurations, missing issues that appear on fresh installations.
-
-### Warning Signs
-- "Works on my machine" syndrome
-- Users report failures on fresh installs
-- Dependencies not captured in config
-- Assumed existing tools or paths
-- Hardcoded references to local setup
-
-### Prevention Strategy
-1. Test on fresh macOS VM or container
-2. Use GitHub Actions / CI pipeline for testing
-3. Document test procedure in module README
-4. Create test playbook with only new module
-5. Test both fresh install and update scenarios
-6. Verify with clean home directory (no existing dotfiles)
-
-### Detection Method
-```bash
-# Create isolated test
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml \
-  --limit localhost \
-  --tags dotfiles \
-  --extra-vars "dotmodules={install: [new-module]}" \
-  --check
-```
-
-### Phase to Address
-**Testing Phase** - Required before considering module complete
-**Code Review Phase** - Require test evidence in PR
-
----
-
-## Summary: Critical Checkpoints by Phase
-
-### Planning Phase
-- [ ] Research existing mergeable files
-- [ ] Map module dependencies
-- [ ] Identify privilege requirements
-- [ ] Choose unique stow directory name
-- [ ] Plan local override strategy
-- [ ] Draft README outline
-
-### Implementation Phase
-- [ ] Verify Homebrew package names
-- [ ] Use dynamic paths (no hardcoding)
-- [ ] Add section markers to mergeable content
-- [ ] Add local override sourcing
-- [ ] Tag privileged operations
-- [ ] Document post-deployment steps
-
-### Integration Phase
-- [ ] Check for duplicate playbook entries
-- [ ] Verify module ordering in playbook
-- [ ] Confirm unique stow directory
-- [ ] Review mergeable file conflicts
-
-### Testing Phase
-- [ ] Deploy on clean system
-- [ ] Test with --skip-tags for restricted environment
-- [ ] Verify symlink locations
-- [ ] Check merged file contents
-- [ ] Confirm dependencies resolved
-
-### Documentation Phase
-- [ ] Complete README with all sections
-- [ ] Document prerequisites
-- [ ] Explain post-deployment steps
-- [ ] Provide local override examples
-- [ ] Note BeyondTrust skip flags
-
----
-
-## Quick Reference: Pre-Implementation Checklist
-
-Before creating a new module, run these checks:
-
-```bash
-# 1. Check for duplicate modules in playbook
-grep -n "module-name" playbooks/deploy.yml
-
-# 2. Find existing mergeable files
-rg "mergeable_files:" modules/*/config.yml -A 5
-
-# 3. Check existing stow directories
-rg "stow_dirs:" modules/*/config.yml -A 2
-
-# 4. Verify Homebrew package names
-brew info package-name
-
-# 5. Review existing module structure
-ls -la modules/similar-module/
-
-# 6. Check for hardcoded paths in similar modules
-rg "(/usr/local|/opt/homebrew|/Users/)" modules/similar-module/files/
-```
-
-This checklist prevents the most common pitfalls before they occur.
+*Pitfall research: 2026-03-10*

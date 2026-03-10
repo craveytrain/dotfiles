@@ -1,636 +1,259 @@
-# Technology Stack for New Configuration Modules
+# Technology Stack: Runtime conf.d Sourcing Migration
 
-**Research Date**: 2026-01-23
-**Scope**: Adding new tool configurations (Ghostty, Claude CLI) to existing dotfiles system
-**Researcher**: Claude Sonnet 4.5
+**Project:** Dotfiles v1.1 Runtime Includes
+**Researched:** 2026-03-10
+**Scope:** Stack additions for replacing Ansible-merged files with runtime conf.d sourcing
 
-## Executive Summary
+## Recommended Stack
 
-The standard 2025 approach for managing additional tool configurations in modular dotfiles systems follows the **XDG Base Directory specification** with **declarative YAML-based module definitions** deployed via **symlink managers** (GNU Stow). This research focuses specifically on adding NEW modules to the EXISTING ansible-role-dotmodules system, not re-implementing the foundation.
+### Zsh conf.d Sourcing
 
-**Key Finding**: Configuration modules in 2025 fall into three distinct patterns:
-1. **Config-only modules** (Ghostty, bat) - XDG configs without package management
-2. **CLI tool modules** (Claude CLI, 1Password CLI) - Homebrew cask + optional config
-3. **Development environment modules** (mise, node) - Package manager + version config files
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Zsh glob with `(N)` qualifier | Zsh 5.9 (installed) | Source `~/.zsh/conf.d/*.sh` safely | `(N)` (NULL_GLOB) prevents errors when directory is empty; no external dependencies |
+| Numeric prefix convention | N/A | `00-base.sh`, `10-editor.sh`, etc. | Deterministic ordering via `*(N)` which sorts lexicographically by default |
 
-## Module Structure Patterns
+**Exact sourcing pattern for `.zshrc`:**
 
-### Pattern 1: Config-Only Module (Ghostty Terminal)
-
-**When to use**: Terminal emulators, GUI applications with portable configs, tools installed outside Homebrew
-
-**Structure**:
-```
-modules/ghostty/
-├── config.yml          # Module metadata
-├── README.md           # Documentation
-└── files/              # Stow root (mirrors home directory)
-    └── .config/
-        └── ghostty/
-            └── config  # Plain text key=value format
+```zsh
+# Source all conf.d files (sorted lexicographically, safe if empty)
+for conf in "$HOME/.zsh/conf.d/"*.sh(N); do
+  source "$conf"
+done
 ```
 
-**config.yml**:
-```yaml
----
-# Ghostty terminal configuration module
-stow_dirs:
-  - ghostty
+**Why this pattern:**
+- `(N)` glob qualifier is zsh-specific and prevents "no matches found" errors when the directory is empty or missing. Without it, zsh throws an error on empty globs (unlike bash with `nullglob`).
+- `*.sh` extension gives clear intent. Using `.zsh` extension is also fine but `.sh` matches existing file conventions in this repo (e.g., `aliases.sh`, `environment.sh`).
+- The `for` loop is readable and debuggable. Alternatives like `source ~/.zsh/conf.d/*(N)` don't work because `source` takes one argument.
+- No need for `(on)` (numeric sort qualifier) because `*(N)` already sorts lexicographically by name, which is what you want with zero-padded numeric prefixes.
+
+**What NOT to use:**
+- `setopt NULL_GLOB` globally: Side effects on other globs throughout the session. Use `(N)` qualifier instead, which is per-glob.
+- `for f in ~/.zsh/conf.d/*`: Missing `(N)` means it breaks on empty directories.
+- `source ~/.zsh/conf.d/*.sh 2>/dev/null`: Silences real errors, not just missing files.
+- Bash-style `shopt -s nullglob`: Not available in zsh. Use `(N)` qualifier.
+
+**Confidence:** HIGH - Zsh glob qualifiers are documented in zshexpn(1) and stable since zsh 4.x. Tested on zsh 5.9.
+
+### Fish conf.d (Native)
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Fish native `conf.d/` | Fish 4.2.1 (installed) | Source `~/.config/fish/conf.d/*.fish` automatically | Built-in to fish; no sourcing loop needed |
+
+**How it works:**
+
+Fish automatically sources all `*.fish` files from `~/.config/fish/conf.d/` at startup, *before* `config.fish`. Files load in alphabetical order.
+
+**What modules stow:**
+
+Each module places its conf.d file at:
+```
+modules/<name>/files/.config/fish/conf.d/<NN>-<name>.fish
 ```
 
-**Rationale**:
-- Ghostty installed manually via .dmg (not in Homebrew)
-- Configuration lives in XDG location `~/.config/ghostty/config`
-- Single config file, no merging needed
-- Similar pattern to existing git module (`.config/gh/`)
-
-**Confidence**: HIGH - Ghostty config format is stable, XDG standard is universal
-
-### Pattern 2: CLI Tool with Homebrew Cask (Claude CLI)
-
-**When to use**: Command-line tools distributed via Homebrew cask, optional configuration files
-
-**Structure**:
+Stow creates a symlink:
 ```
-modules/claude-cli/
-├── config.yml
-├── README.md
-└── files/              # Optional - only if config files exist
-    └── .config/
-        └── claude/
-            └── config.yml
+~/.config/fish/conf.d/10-shell.fish -> ~/dotfiles/modules/shell/files/.config/fish/conf.d/10-shell.fish
 ```
 
-**config.yml**:
-```yaml
----
-# Claude CLI configuration module
-homebrew_casks:
-  - claude-cli  # Hypothetical - verify actual package name
+**Key behaviors:**
+- Files source before `config.fish`, so `config.fish` can override conf.d settings
+- All conf.d files run on every shell startup (interactive, login, non-interactive)
+- Use `status --is-interactive` and `status --is-login` guards inside conf.d files when appropriate
+- Basename deduplication: if same filename exists in user and system conf.d, user wins
 
-stow_dirs:
-  - claude-cli  # Only if config files exist
+**What NOT to use:**
+- Manual sourcing loop in `config.fish`: Redundant. Fish already does this natively.
+- Placing files directly in `~/.config/fish/` without the `conf.d/` subdirectory: Won't auto-source.
+- Relying on conf.d load order to override `config.fish`: Conf.d loads first, so put overrides in `config.fish` or use higher-numbered conf.d files.
+
+**Confidence:** HIGH - Native fish feature, documented at [fishshell.com](https://fishshell.com/docs/current/). Verified on fish 4.2.1.
+
+### Mise conf.d (Native)
+
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| Mise native `conf.d/` | mise 2025.12.12 (installed) | Load `~/.config/mise/conf.d/*.toml` automatically | Built-in directory scanning; files load alphabetically and merge |
+
+**How it works:**
+
+Mise natively scans `~/.config/mise/conf.d/*.toml` and loads all files in alphabetical order. This was verified directly on the installed version -- mise recognized and attempted to parse a test file placed in `~/.config/mise/conf.d/`.
+
+**What modules stow:**
+
+Each module places its conf.d file at:
+```
+modules/<name>/files/.config/mise/conf.d/<NN>-<name>.toml
 ```
 
-**Rationale**:
-- Claude CLI may be distributed as Homebrew cask (verify in 2026)
-- Configuration location follows XDG: `~/.config/claude/`
-- Similar to 1password module (cask-only) or git module (cask + config)
+**Trust requirement:**
 
-**Confidence**: MEDIUM - Claude CLI distribution method and config location need verification
+Mise requires config files to be trusted before it will execute them. Two approaches:
 
-**Verification needed**:
-1. Check if Claude CLI is available via Homebrew in 2026
-2. Verify configuration file location (XDG vs application-specific)
-3. Confirm config file format (YAML, TOML, or plain text)
+1. **Per-file trust** (simple, explicit):
+   ```bash
+   mise trust ~/.config/mise/conf.d/10-dev-tools.toml
+   mise trust ~/.config/mise/conf.d/20-node.toml
+   ```
 
-### Pattern 3: Development Tool Module (Existing Reference)
+2. **Trusted config paths** (better for automation):
+   In `~/.config/mise/config.toml`:
+   ```toml
+   [settings]
+   trusted_config_paths = ["~/.config/mise/conf.d"]
+   ```
+   Or via environment variable:
+   ```bash
+   export MISE_TRUSTED_CONFIG_PATHS="$HOME/.config/mise/conf.d"
+   ```
 
-**When to use**: Version managers, language runtimes, dev tools with complex config
+Use option 2. It's one-time setup and covers all future conf.d additions without requiring `mise trust` after each new module.
 
-**Structure** (example: mise/node pattern):
-```
-modules/node/
-├── config.yml
-├── README.md
-└── files/
-    ├── .config/
-    │   └── mise/
-    │       └── config.toml
-    └── .tool-versions
-```
+**TOML section headers:**
 
-**config.yml**:
-```yaml
----
-# Node.js development module
-homebrew_packages:
-  - node  # Or installed via mise
+Each conf.d file is a standalone TOML file, so it needs its own section headers:
 
-stow_dirs:
-  - node
+```toml
+# ~/.config/mise/conf.d/10-dev-tools.toml
+[settings]
+asdf_compat = true
 
-mergeable_files:
-  - '.config/mise/config.toml'
+[tools]
+python = "3.13.2"
 ```
 
-**Rationale**: Already implemented; reference pattern for complex tools
-
-## config.yml Specification
-
-### Required Fields
-
-**`stow_dirs`** (list of strings):
-```yaml
-stow_dirs:
-  - module-name
-```
-- Defines subdirectories in `files/` to symlink
-- Each entry maps to a directory: `files/<stow_dir>/*` → `~/*`
-- Standard convention: use module name as stow_dir name
-
-### Optional Fields
-
-**`homebrew_packages`** (list of strings):
-```yaml
-homebrew_packages:
-  - package-name
-  - another-package
-```
-- CLI tools installed via `brew install`
-- Only include if package exists in Homebrew core taps
-
-**`homebrew_casks`** (list of strings):
-```yaml
-homebrew_casks:
-  - cask-name
-```
-- GUI applications or binary distributions
-- Use for Claude CLI, 1Password CLI, fonts
-
-**`homebrew_taps`** (list of strings):
-```yaml
-homebrew_taps:
-  - tap-name/repo
-```
-- Third-party Homebrew repositories
-- Only needed for packages not in core
-
-**`mergeable_files`** (list of strings):
-```yaml
-mergeable_files:
-  - '.zshrc'
-  - '.config/fish/config.fish'
-  - '.config/mise/config.toml'
-```
-- Files that multiple modules contribute to
-- ansible-role-dotmodules merges with headers showing source module
-- Use sparingly - prefer isolated configs
-
-**`register_shell`** (string):
-```yaml
-register_shell: fish  # or zsh, bash
-```
-- Automatically add shell to `/etc/shells`
-- Requires sudo (can skip with `--skip-tags register_shell`)
-- Only for shell modules (fish, zsh)
-
-### Field Ordering Convention
-
-```yaml
----
-# Module comment/description
-homebrew_taps:      # 1. Taps (if needed)
-  - ...
-homebrew_packages:  # 2. Packages
-  - ...
-homebrew_casks:     # 3. Casks
-  - ...
-stow_dirs:          # 4. Stow deployment
-  - ...
-mergeable_files:    # 5. Cross-module files
-  - ...
-register_shell: ... # 6. Shell registration (shells only)
+```toml
+# ~/.config/mise/conf.d/20-node.toml
+[tools]
+node = "latest"
+pnpm = "latest"
 ```
 
-**Confidence**: HIGH - Pattern extracted from 10 existing modules
+This is a significant improvement over the current merged file approach, where the node module had to omit the `[tools]` header to avoid duplication when concatenated.
 
-## Configuration File Locations (2025 Standard)
+**What NOT to use:**
+- `MISE_CONFIG_FILE` environment variable: Points to a single file, doesn't solve the multi-module problem.
+- Mise `includes` directive: Only exists for tasks, not for config files.
+- Symlinks to a single merged file: Defeats the purpose of runtime sourcing.
 
-### XDG Base Directory Specification
+**Confidence:** HIGH - Verified by testing on installed mise 2025.12.12. Config was recognized (failed on trust, not parsing).
 
-**Primary locations**:
-- `~/.config/<tool>/` - Primary config location (XDG_CONFIG_HOME)
-- `~/.local/bin/` - User scripts and executables
-- `~/.local/share/<tool>/` - Application data (less common for configs)
+### Supporting Infrastructure
 
-**Legacy locations** (avoid for new tools):
-- `~/.<toolname>rc` - Dotfiles in home directory root
-- `~/.<toolname>/` - Tool-specific directory in home
+| Technology | Version | Purpose | Why |
+|------------|---------|---------|-----|
+| GNU Stow | Existing (via shell module) | Create conf.d symlinks from module files to home directory | Already in use; conf.d files are just more stow targets |
+| Ansible | Existing 2.9+ | Deploy modules, create conf.d directories | May need tasks to create conf.d directories before stow runs |
 
-### Config Format by Tool Type
+**No new packages or dependencies required.** This migration uses capabilities already present in the installed versions of zsh, fish, and mise.
 
-| Tool Type | Format | Example | Notes |
-|-----------|--------|---------|-------|
-| Terminal emulator | Plain text key=value | Ghostty `config` | Simple, human-readable |
-| CLI tool | YAML or TOML | Claude CLI (unknown) | Check tool docs |
-| Version manager | TOML | mise `config.toml` | Industry standard for version specs |
-| Shell | Shell script | `.zshrc`, `.bashrc` | Sourced by shell |
-| Git-like tools | INI/Git config | `.gitconfig` | Git config format |
-| Modern CLI tools | YAML | GitHub CLI `config.yml` | Increasingly common |
+## Alternatives Considered
 
-**Confidence**: HIGH - XDG Base Directory is well-established standard
+| Category | Recommended | Alternative | Why Not |
+|----------|-------------|-------------|---------|
+| Zsh sourcing | `for` loop with `(N)` | `source` with redirect | Silences real errors |
+| Zsh sourcing | `(N)` qualifier per-glob | `setopt NULL_GLOB` global | Side effects on all globs |
+| Fish conf.d | Native `conf.d/` dir | Manual sourcing in `config.fish` | Redundant; fish already does it |
+| Mise config split | Native `conf.d/` dir | Multiple `mise.toml` in dir hierarchy | Hierarchy-based; doesn't map to module concept |
+| Mise trust | `trusted_config_paths` setting | Per-file `mise trust` | Doesn't scale; breaks on new module additions |
+| File extension (zsh) | `.sh` | `.zsh` | `.sh` matches existing repo convention |
+| Ordering scheme | 2-digit prefix (00-99) | No prefix | Nondeterministic ordering across modules |
 
-## Deployment Integration
+## Numeric Prefix Convention
 
-### Adding to Playbook
+All conf.d files across zsh, fish, and mise use the same ordering scheme:
 
-**File**: `playbooks/deploy.yml`
+| Range | Purpose | Example |
+|-------|---------|---------|
+| 00-09 | Core/base (shell module, settings) | `00-settings.toml`, `00-environment.sh` |
+| 10-19 | Infrastructure tools (editor, shell utilities) | `10-editor.sh`, `10-shell.fish` |
+| 20-29 | Development tools (mise activation, dev-tools) | `20-dev-tools.toml`, `20-mise.sh` |
+| 30-39 | Language/runtime (node, python) | `30-node.toml` |
+| 40-49 | Application tools (git, 1password) | `40-git.sh` |
+| 50-89 | Reserved for future use | |
+| 90-99 | Late-loading / overrides | `99-local.sh` |
 
-**Current install list**:
-```yaml
-install:
-  - git
-  - fonts
-  - 1password
-  - shell
-  - fish
-  - zsh
-  - dev-tools
-  - node
-  - editor
-  - 1password  # Duplicate - needs fixing
+**Why 2-digit, not 3-digit:** You have 11 modules. Even with growth, 100 slots is plenty. 2-digit prefixes are easier to read and type.
+
+## Integration with Existing Stow/Ansible Workflow
+
+### What Changes
+
+**Before (merged):**
+```
+Module defines:     mergeable_files: ['.zsh/aliases.sh']
+Ansible does:       Concatenates all modules' .zsh/aliases.sh into merged output
+Stow deploys:       Merged file symlinked to ~/.zsh/aliases.sh
+Edit workflow:      Edit source -> run Ansible -> changes visible
 ```
 
-**Add new modules**:
-```yaml
-install:
-  - git
-  - fonts
-  - 1password
-  - shell
-  - fish
-  - zsh
-  - dev-tools
-  - node
-  - editor
-  - ghostty        # NEW: Terminal config
-  - claude-cli     # NEW: CLI tool
+**After (conf.d):**
+```
+Module defines:     stow_dirs: [<module-name>]
+Module contains:    files/.zsh/conf.d/10-<module>.sh
+Stow deploys:       Symlink ~/.zsh/conf.d/10-<module>.sh -> repo file
+Edit workflow:      Edit source -> changes visible immediately (symlink)
 ```
 
-**Ordering considerations**:
-- **Dependencies first**: If module B depends on module A, list A first
-- **No hard dependencies**: Most config modules are independent
-- **Convention**: Group by category (shells together, dev tools together)
+### What Stays the Same
 
-**Confidence**: HIGH - Clear pattern from existing playbook
+- `config.yml` still declares `stow_dirs`
+- Ansible still runs stow via ansible-role-dotmodules
+- Module directory structure under `files/` still mirrors home directory
+- `homebrew_packages`, `homebrew_casks`, `register_shell` all unchanged
 
-### Testing New Modules
+### Directory Creation
 
-**Pre-deployment checklist**:
-1. Create module directory: `modules/<name>/`
-2. Add `config.yml` with required fields
-3. Create `files/` directory mirroring home structure
-4. Add configuration files to `files/`
-5. Write `README.md` documenting module
-
-**Deployment test**:
-```bash
-# Dry run (check for conflicts)
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --check --diff
-
-# Deploy with verbose output
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml -v
-
-# Skip shell registration if on restricted machine
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
-```
-
-**Verification**:
-1. Check symlinks exist: `ls -la ~/.config/ghostty/config`
-2. Verify symlink target: `readlink ~/.config/ghostty/config`
-3. Test tool loads config: Open Ghostty and verify settings applied
-
-**Confidence**: HIGH - Standard Ansible testing workflow
-
-## Dependencies and Prerequisites
-
-### Already Available (No Action Needed)
-
-- **Ansible 2.9+** - Installed
-- **ansible-role-dotmodules** - Installed via `requirements.yml`
-- **GNU Stow** - Installed via shell module
-- **Homebrew** - User's macOS package manager
-- **Git** - For version control
-
-### Tool-Specific Dependencies
-
-**Ghostty**:
-- No dependencies - config-only module
-- Ghostty must be installed manually (not via Homebrew as of 2025)
-- Configuration applies when Ghostty is present
-
-**Claude CLI**:
-- Verify Homebrew cask availability (as of 2026)
-- May require authentication setup (similar to `op signin` for 1Password)
-- Check official docs: https://docs.anthropic.com/claude/reference/cli
-
-**Future tools**:
-- Always check Homebrew availability: `brew search <tool>`
-- Verify config location in tool's documentation
-- Check for version managers or plugin systems
-
-**Confidence**: MEDIUM-HIGH - Ghostty confirmed, Claude CLI needs verification
-
-## Local Override Pattern
-
-### Supporting Machine-Specific Customization
-
-**Pattern**: All base configs source `.*.local` files if they exist
-
-**Example** (Ghostty):
-```
-# In modules/ghostty/files/.config/ghostty/config
-# Base configuration tracked in git
-theme = nord
-font-family = "Input Mono"
-
-# On user's machine: ~/.config/ghostty/config.local (not tracked)
-# Machine-specific overrides
-theme = solarized-light  # Override for bright office
-```
-
-**Implementation**:
-1. Base config includes directive to load local file (if tool supports)
-2. If tool doesn't support includes, document in README.md
-3. Local files added to `.gitignore` via pattern: `**/*.local*`
-
-**Tools with native include support**:
-- Git: `[include] path = ~/.gitconfig.local`
-- Zsh: `[ -f ~/.zshrc.local ] && source ~/.zshrc.local`
-- Fish: `test -f ~/.config/fish/config.local.fish; and source ~/.config/fish/config.local.fish`
-- Vim: `if filereadable(expand("~/.vimrc.local")) | source ~/.vimrc.local | endif`
-
-**Tools without native includes**:
-- Document environment variable overrides in README
-- Example: bat theme via `BAT_THEME` environment variable
-
-**Confidence**: HIGH - Established pattern across all existing modules
-
-## Specific Recommendations
-
-### Ghostty Terminal Configuration Module
-
-**Module name**: `ghostty`
-
-**Structure**:
-```
-modules/ghostty/
-├── config.yml
-├── README.md
-└── files/
-    └── .config/
-        └── ghostty/
-            ├── config       # Main config
-            └── themes/      # Optional: custom themes directory
-```
-
-**config.yml**:
-```yaml
----
-# Ghostty terminal configuration module
-# Provides Ghostty terminal emulator configuration
-
-stow_dirs:
-  - ghostty
-```
-
-**README.md sections**:
-1. Overview - What Ghostty is, why in dotfiles
-2. Installation - Manual .dmg install (not Homebrew)
-3. Configuration - Key settings explanation
-4. Local Overrides - How to customize per-machine
-5. Keybindings - Document custom keybindings
-6. Themes - Theme selection and customization
-
-**Migration steps**:
-1. Copy existing `~/.config/ghostty/config` to `modules/ghostty/files/.config/ghostty/config`
-2. Backup original: `mv ~/.config/ghostty ~/.config/ghostty.backup`
-3. Add `ghostty` to `playbooks/deploy.yml` install list
-4. Run playbook: `ansible-playbook -i playbooks/inventory playbooks/deploy.yml`
-5. Verify: `ls -la ~/.config/ghostty/config` shows symlink
-
-**Confidence**: HIGH - Clear pattern, standard location, stable config format
-
-### Claude CLI Configuration Module
-
-**Module name**: `claude-cli`
-
-**Pending research**:
-1. **Distribution method** - Verify if available via Homebrew cask in 2026
-2. **Configuration location** - Check if `~/.config/claude/` or tool-specific
-3. **Config format** - YAML, TOML, JSON, or plain text
-4. **Authentication** - Similar to 1Password (`op signin`) or token-based
-
-**Provisional structure** (subject to verification):
-```
-modules/claude-cli/
-├── config.yml
-├── README.md
-└── files/               # Only if config files exist
-    └── .config/
-        └── claude/
-            └── config.yml  # Hypothetical
-```
-
-**Provisional config.yml**:
-```yaml
----
-# Claude CLI configuration module
-homebrew_casks:
-  - claude-cli  # VERIFY: Actual package name
-
-stow_dirs:
-  - claude-cli  # Only if config files exist
-```
-
-**Recommended next steps**:
-1. Check Homebrew: `brew search claude`
-2. Install Claude CLI manually to discover config location
-3. Run `claude --help` or `claude config` to find config commands
-4. Check XDG locations: `ls ~/.config/claude/`, `ls ~/.claude/`
-5. Review official docs: https://docs.anthropic.com/
-
-**Confidence**: LOW - Needs verification before implementation
-
-**Alternative if not in Homebrew**:
-- Manual installation docs in README.md
-- Config-only module (like Ghostty)
-- Installation verification step in README
-
-### General Pattern for Future Modules
-
-**Decision tree**:
+Stow won't create parent directories that don't exist. The conf.d directories need to exist before stow runs:
 
 ```
-1. Is tool available in Homebrew?
-   YES → Include homebrew_packages or homebrew_casks
-   NO  → Document manual installation in README.md
-
-2. Does tool have configuration files?
-   YES → Continue to step 3
-   NO  → Simple package-only module (like fonts)
-
-3. Where does config live?
-   ~/.config/<tool>/ → Use XDG pattern (preferred)
-   ~/.<tool>rc       → Use legacy dotfile pattern
-   Other             → Document in README.md
-
-4. Do multiple modules need to contribute to same file?
-   YES → Use mergeable_files (rare)
-   NO  → Standard stow_dirs pattern (preferred)
-
-5. Are there machine-specific settings?
-   YES → Document local override pattern in README.md
-   NO  → Standard deployment
+~/.zsh/conf.d/                    # Zsh conf.d (NEW - needs creation)
+~/.config/fish/conf.d/            # Fish conf.d (may already exist from fish plugins)
+~/.config/mise/conf.d/            # Mise conf.d (NEW - needs creation)
 ```
 
-**Confidence**: HIGH - Distilled from 10 existing modules
+Options for creation:
+1. **Ansible pre-task**: Add a task that creates these directories before stow runs. Cleanest approach, fits the existing automation model.
+2. **Stow folding**: If a module is the only contributor to a conf.d dir, stow will create a symlink to the directory itself rather than individual files. This is fine for single contributors but becomes a problem when multiple modules contribute. Use `--no-folding` or ensure at least the directory exists first.
 
-## Version Verification (2025/2026 Current)
+Use option 1 (Ansible pre-task). It's explicit and avoids stow folding surprises.
 
-### Ansible & Deployment
+## Current Mergeable File Mapping
 
-- **Ansible**: 2.9+ (current stable is 2.17 as of 2025)
-- **ansible-role-dotmodules**: Using git source (latest from craveytrain/ansible-role-dotmodules)
-- **GNU Stow**: 2.3+ via Homebrew (latest stable)
-- **Homebrew**: 4.x (current stable)
+For reference, here's every module that uses `mergeable_files` and what it contributes:
 
-### Configuration Standards
+| Module | Mergeable File | Content |
+|--------|---------------|---------|
+| zsh | `.zshrc` | P10k, sourcing, compinit, plugins |
+| zsh | `.zsh/aliases.sh` | Shell aliases (cd, ls, etc.) |
+| zsh | `.zsh/environment.sh` | DOTFILES, XDG, PATH, CDPATH, LS_COLORS |
+| dev-tools | `.zshrc` | `eval "$(mise activate zsh)"` |
+| dev-tools | `.config/fish/config.fish` | `mise activate fish --shims` |
+| dev-tools | `.config/mise/config.toml` | Python version, settings |
+| shell | `.zsh/environment.sh` | EZA_COLORS |
+| shell | `.config/fish/config.fish` | EZA_COLORS (fish syntax) |
+| editor | `.zsh/aliases.sh` | `alias e=...` (editor alias) |
+| editor | `.zsh/environment.sh` | EDITOR, VISUAL exports |
+| editor | `.config/fish/config.fish` | Editor abbrs (ia, marked) |
+| fish | `.config/fish/config.fish` | Full fish config (env, abbrs, prompt) |
+| node | `.config/mise/config.toml` | node, pnpm versions |
 
-- **XDG Base Directory Specification**: Version 0.8 (2021, stable)
-- **YAML**: 1.2 (widespread support in Ansible 2.9+)
-- **TOML**: 1.0.0 (stable since 2021, used by mise)
+**Total: 6 unique mergeable files across 6 modules.**
 
-### Tool-Specific Versions
+## Sources
 
-- **Ghostty**:
-  - Version: Check https://ghostty.org/ for latest
-  - Config format: Plain text key=value (stable)
-  - Location: `~/.config/ghostty/config` (XDG standard)
-
-- **Claude CLI**:
-  - Version: Unknown - requires verification
-  - Distribution: Check https://docs.anthropic.com/claude/reference/cli
-  - Config: Unknown - needs research
-
-**Confidence**: HIGH for standards, MEDIUM for tool-specific (Ghostty confirmed, Claude needs verification)
-
-## Rationale: Why These Patterns?
-
-### XDG Base Directory Specification
-
-**Why**:
-- Industry standard since 2010, universal adoption in 2025
-- Keeps home directory clean (no dotfile clutter)
-- Predictable locations for backup/sync tools
-- Better separation of config, data, and cache
-
-**Evidence**: All modern CLI tools (GitHub CLI, mise, bat) use `~/.config/`
-
-**Confidence**: HIGH
-
-### GNU Stow for Symlinks
-
-**Why**:
-- Declarative: Files stay in repo, symlinks point to them
-- Reversible: `stow -D` removes all symlinks cleanly
-- Conflict detection: Won't overwrite existing files
-- Battle-tested: 30+ years of development
-
-**Alternatives considered**:
-- Direct file copying: Not reversible, no sync
-- Rsync: One-way sync, loses git connection
-- Custom scripts: Reinventing Stow poorly
-
-**Confidence**: HIGH - Stow is the standard in dotfiles community
-
-### Modular Architecture
-
-**Why**:
-- Independent deployment: Enable/disable modules per machine
-- Clear ownership: Each tool's config in its own module
-- Easier testing: Test one module without affecting others
-- Collaboration-friendly: Multiple people can work on different modules
-
-**Evidence**: Consistent pattern across Ansible Galaxy dotfiles roles
-
-**Confidence**: HIGH
-
-### YAML for Module Metadata
-
-**Why**:
-- Ansible-native: No conversion needed
-- Human-readable: Easy to review and edit
-- Structured: Clear field definitions and validation
-- Comments: Document decisions inline
-
-**Alternatives**:
-- JSON: Less human-friendly, no comments
-- TOML: Not Ansible-native
-- INI: Limited structure
-
-**Confidence**: HIGH - Ansible standard
-
-## Quality Gates
-
-### Pre-Implementation Checklist
-
-- [ ] Verified tool installation method (Homebrew vs manual)
-- [ ] Confirmed configuration file location (XDG vs legacy)
-- [ ] Identified configuration file format (YAML, TOML, plain text)
-- [ ] Checked for dependencies on other modules
-- [ ] Reviewed existing modules for similar patterns
-- [ ] Tested configuration locally before committing
-
-### Post-Implementation Verification
-
-- [ ] Module deploys without errors on clean machine
-- [ ] Symlinks created in correct locations
-- [ ] Tool loads configuration successfully
-- [ ] No conflicts with existing modules
-- [ ] README.md documents all configuration options
-- [ ] Local override pattern documented (if applicable)
-- [ ] Module added to playbook install list
-
-**Confidence**: HIGH - Based on existing module development workflow
-
-## Open Questions
-
-1. **Claude CLI Distribution**:
-   - Is Claude CLI available via Homebrew in 2026?
-   - What is the package name?
-   - **Resolution**: Check `brew search claude` and https://docs.anthropic.com/
-
-2. **Claude CLI Configuration**:
-   - Where does configuration live?
-   - What format is used?
-   - **Resolution**: Install manually and explore `~/.config/` and `~/.claude/`
-
-3. **Authentication Workflow**:
-   - Does Claude CLI require signin like 1Password?
-   - Are credentials stored in config or keychain?
-   - **Resolution**: Review official documentation and test installation
-
-4. **Future Module Discovery**:
-   - What other tools in home directory need modules?
-   - **Resolution**: Audit `~/.config/` for unexpected directories
-
-**Next Steps**:
-1. Implement Ghostty module (high confidence, clear pattern)
-2. Research Claude CLI (pending verification)
-3. Audit home directory for additional configs
-
-## Sources & References
-
-**Existing Codebase**:
-- `/Users/mcravey/dotfiles/modules/*/config.yml` - 10 module examples
-- `/Users/mcravey/dotfiles/README.md` - Module structure documentation
-- `/Users/mcravey/dotfiles/.planning/codebase/STACK.md` - Current tech stack
-- `/Users/mcravey/dotfiles/.planning/codebase/ARCHITECTURE.md` - System architecture
-
-**Standards**:
-- XDG Base Directory Specification: https://specifications.freedesktop.org/basedir-spec/
-- GNU Stow Manual: https://www.gnu.org/software/stow/manual/
-- Ansible Documentation: https://docs.ansible.com/
-
-**Tool Documentation**:
-- Ghostty: https://ghostty.org/docs/config
-- Claude CLI: https://docs.anthropic.com/claude/reference/cli (pending verification)
-- ansible-role-dotmodules: https://github.com/craveytrain/ansible-role-dotmodules
+- Zsh glob qualifiers: `man zshexpn` (installed locally, zsh 5.9)
+- Fish conf.d: [Fish Shell Documentation](https://fishshell.com/docs/current/)
+- Fish conf.d sourcing order: [fish-shell/fish-shell#8553](https://github.com/fish-shell/fish-shell/issues/8553)
+- Mise configuration: [mise.jdx.dev/configuration](https://mise.jdx.dev/configuration.html)
+- Mise settings (trusted_config_paths): [mise.jdx.dev/configuration/settings](https://mise.jdx.dev/configuration/settings.html)
+- Mise trust: [mise.jdx.dev/cli/trust](https://mise.jdx.dev/cli/trust.html)
+- Dotfiles conf.d patterns: [z0rc/dotfiles](https://github.com/z0rc/dotfiles), [mattmc3/zdotdir](https://github.com/mattmc3/zdotdir)
 
 ---
 
-**Analysis completed**: 2026-01-23
-**Confidence level**: HIGH for Ghostty, MEDIUM for Claude CLI (needs verification)
-**Recommended action**: Implement Ghostty module immediately, research Claude CLI before implementation
+**Analysis completed:** 2026-03-10
+**Confidence level:** HIGH across all three technologies (zsh, fish, mise)
+**Key finding:** No new dependencies needed. All three tools support conf.d natively or via simple glob patterns already available in installed versions.
