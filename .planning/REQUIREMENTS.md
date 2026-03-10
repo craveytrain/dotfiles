@@ -52,25 +52,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SHRC-01 | — | Pending |
-| SHRC-02 | — | Pending |
-| SHRC-03 | — | Pending |
-| SHRC-04 | — | Pending |
-| MIGR-01 | — | Pending |
-| MIGR-02 | — | Pending |
-| MIGR-03 | — | Pending |
-| MIGR-04 | — | Pending |
-| TOOL-01 | — | Pending |
-| TOOL-02 | — | Pending |
-| CLNP-01 | — | Pending |
-| CLNP-02 | — | Pending |
-| CLNP-03 | — | Pending |
+| SHRC-01 | Phase 4 | Pending |
+| SHRC-02 | Phase 5 | Pending |
+| SHRC-03 | Phase 4 | Pending |
+| SHRC-04 | Phase 4 | Pending |
+| MIGR-01 | Phase 7 | Pending |
+| MIGR-02 | Phase 4 | Pending |
+| MIGR-03 | Phase 4 | Pending |
+| MIGR-04 | Phase 4 | Pending |
+| TOOL-01 | Phase 6 | Pending |
+| TOOL-02 | Phase 6 | Pending |
+| CLNP-01 | Phase 7 | Pending |
+| CLNP-02 | Phase 7 | Pending |
+| CLNP-03 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 13 total
-- Mapped to phases: 0
-- Unmapped: 13
+- Mapped to phases: 13
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-10*
-*Last updated: 2026-03-10 after initial definition*
+*Last updated: 2026-03-10 after roadmap creation*
