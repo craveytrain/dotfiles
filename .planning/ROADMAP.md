@@ -86,11 +86,11 @@ Plans:
   3. Setting `DOTFILES_DEBUG=1` before opening a shell prints which conf.d files are being sourced
   4. EDITOR and VISUAL environment variables are set by the editor module only, with no duplicate definitions across modules
   5. All conf.d files use 2-digit numeric prefixes and contain attribution comment headers identifying their owning module
-**Plans**: TBD
+**Plans**: 2 plans (2 waves)
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md - Create conf.d fragments and rewrite .zshrc skeleton (Wave 1)
+- [ ] 04-02-PLAN.md - Deploy via Ansible and verify live zsh session (Wave 2, checkpoint)
 
 ### Phase 5: Fish conf.d Migration
 **Goal**: Fish module contributions load via the native conf.d mechanism instead of Ansible-merged config.fish
@@ -143,7 +143,7 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 1. Foundation & Ghostty | v1.0 | 4/4 | Complete | 2026-01-23 |
 | 2. Claude CLI Module | v1.0 | 2/2 | Complete | 2026-01-24 |
 | 3. Ongoing Discovery | v1.0 | - | Continuous | - |
-| 4. Zsh conf.d Migration | v1.1 | 0/? | Not started | - |
+| 4. Zsh conf.d Migration | v1.1 | 0/2 | Planning | - |
 | 5. Fish conf.d Migration | v1.1 | 0/? | Not started | - |
 | 6. Mise conf.d Migration | v1.1 | 0/? | Not started | - |
 | 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
@@ -151,4 +151,4 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 ---
 
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-03-10 - Added v1.1 Runtime Includes milestone (Phases 4-7)*
+*Last updated: 2026-03-10 - Phase 4 plans created (2 plans, 2 waves)*
