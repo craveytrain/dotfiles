@@ -7,17 +7,17 @@
 
 ### Shell Sourcing
 
-- [ ] **SHRC-01**: Zsh sources all files in `~/.zsh/conf.d/*.sh` via glob loop with `(N)` qualifier
+- [x] **SHRC-01**: Zsh sources all files in `~/.zsh/conf.d/*.sh` via glob loop with `(N)` qualifier
 - [ ] **SHRC-02**: Fish sources module contributions via native `~/.config/fish/conf.d/*.fish` mechanism
-- [ ] **SHRC-03**: All conf.d directories use numeric prefix ordering convention (00-99, 2-digit)
-- [ ] **SHRC-04**: Zsh sourcing loop supports debug mode via `DOTFILES_DEBUG=1` environment variable
+- [x] **SHRC-03**: All conf.d directories use numeric prefix ordering convention (00-99, 2-digit)
+- [x] **SHRC-04**: Zsh sourcing loop supports debug mode via `DOTFILES_DEBUG=1` environment variable
 
 ### Module Migration
 
 - [ ] **MIGR-01**: All mergeable_files declarations removed from every module's config.yml
-- [ ] **MIGR-02**: Each module stows its own numbered conf.d fragment files (no shared merge targets)
-- [ ] **MIGR-03**: Each conf.d fragment file has attribution comment header identifying owning module
-- [ ] **MIGR-04**: EDITOR/VISUAL environment variables owned exclusively by editor module (no duplication)
+- [x] **MIGR-02**: Each module stows its own numbered conf.d fragment files (no shared merge targets)
+- [x] **MIGR-03**: Each conf.d fragment file has attribution comment header identifying owning module
+- [x] **MIGR-04**: EDITOR/VISUAL environment variables owned exclusively by editor module (no duplication)
 
 ### Tool Configuration
 
@@ -52,14 +52,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SHRC-01 | Phase 4 | Pending |
+| SHRC-01 | Phase 4 | Complete |
 | SHRC-02 | Phase 5 | Pending |
-| SHRC-03 | Phase 4 | Pending |
-| SHRC-04 | Phase 4 | Pending |
+| SHRC-03 | Phase 4 | Complete |
+| SHRC-04 | Phase 4 | Complete |
 | MIGR-01 | Phase 7 | Pending |
-| MIGR-02 | Phase 4 | Pending |
-| MIGR-03 | Phase 4 | Pending |
-| MIGR-04 | Phase 4 | Pending |
+| MIGR-02 | Phase 4 | Complete |
+| MIGR-03 | Phase 4 | Complete |
+| MIGR-04 | Phase 4 | Complete |
 | TOOL-01 | Phase 6 | Pending |
 | TOOL-02 | Phase 6 | Pending |
 | CLNP-01 | Phase 7 | Pending |

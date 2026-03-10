@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Runtime Includes
-status: planning
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-10T20:06:26.037Z"
-last_activity: 2026-03-10 -- Roadmap created for v1.1 Runtime Includes
+status: executing
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-10T20:27:43.651Z"
+last_activity: 2026-03-10 -- Completed 04-01 zsh conf.d fragment creation
 progress:
   total_phases: 7
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 60
+  total_plans: 8
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-10)
 ## Current Position
 
 Phase: 4 of 7 (Zsh conf.d Migration)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-03-10 -- Roadmap created for v1.1 Runtime Includes
+Plan: 1 of 2 in current phase
+Status: Executing phase 4
+Last activity: 2026-03-10 -- Completed 04-01 zsh conf.d fragment creation
 
-Progress: [######....] 60% (v1.0 complete, v1.1 starting)
+Progress: [█████████░] 88% (7/8 plans complete)
 
 ## Performance Metrics
 
@@ -45,10 +45,11 @@ Progress: [######....] 60% (v1.0 complete, v1.1 starting)
 |-------|-------|-------|----------|
 | 1. Foundation | 4 | - | - |
 | 2. Claude CLI | 2 | - | - |
+| 4. Zsh conf.d P01 | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: N/A (new milestone)
-- Trend: N/A
+- Last 5 plans: 2min (04-01)
+- Trend: Starting v1.1 execution
 
 ## Accumulated Context
 
@@ -59,6 +60,8 @@ Recent decisions affecting current work:
 
 - [v1.1]: Replace merged files with runtime conf.d sourcing (edits live on git pull)
 - [v1.1]: Clean up merge logic from role after all modules migrate
+- [Phase 04]: Each module owns exactly one conf.d fragment with shellcheck directive and attribution header
+- [Phase 04]: EDITOR/VISUAL exports exclusively in editor module fragment (MIGR-04)
 
 ### Pending Todos
 
@@ -73,9 +76,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-10T20:06:26.029Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-zsh-conf-d-migration/04-CONTEXT.md
+Last session: 2026-03-10T20:26:23Z
+Stopped at: Completed 04-01-PLAN.md
+Resume file: .planning/phases/04-zsh-conf-d-migration/04-01-SUMMARY.md
 
 ---
 
