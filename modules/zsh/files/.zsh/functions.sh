@@ -30,6 +30,14 @@ lanscan () {
   nmap -sn $IP/24
 }
 
+## Create or attach to a named tmux session
+## Usage: mux [session-name]
+## Defaults to "main" if no session name is provided
+mux () {
+  local session="${1:-main}"
+  tmux new-session -A -s "$session"
+}
+
 ## Start a local LLM server via llama-server
 ## Usage: llama-serve [model-name]
 ## Defaults to qwen3-8b if no model name is provided

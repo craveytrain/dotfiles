@@ -40,6 +40,17 @@ if status --is-interactive
 	abbr du "du -kh"
 
 	#
+	# functions
+	#
+	# Create or attach to a named tmux session
+	# Usage: mux [session-name]
+	# Defaults to "main" if no session name is provided
+	function mux
+		set -l session (test (count $argv) -gt 0; and echo $argv[1]; or echo "main")
+		tmux new-session -A -s $session
+	end
+
+	#
 	# prompt - Customize prompt
 	#
 	set -g tide_left_prompt_items pwd git cmd_duration newline status character
