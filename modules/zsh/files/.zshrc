@@ -5,7 +5,6 @@ fi
 
 # Source conf.d fragments (numeric order)
 for conf in "$HOME/.zsh/conf.d/"*.sh(N); do
-  [[ ${DOTFILES_DEBUG:-0} == 1 ]] && echo "sourcing: $conf"
   source "$conf"
 done
 
