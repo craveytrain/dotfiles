@@ -23,6 +23,14 @@ if status --is-interactive
     abbr du "du -kh"
 
     # --- Prompt (Tide) ---
-    set -g tide_left_prompt_items pwd git cmd_duration newline status character
-    set -g tide_right_prompt_items node python rustc java php ruby go terraform
+    set -g tide_left_prompt_items pwd git newline status character
+    set -g tide_right_prompt_items cmd_duration jobs direnv node python rustc go terraform
+    set -g tide_git_truncation_length 32
+
+    # --- Icons (match p10k nerdfont-complete) ---
+    set -g tide_pwd_icon \uf115
+    set -g tide_node_icon \ue617
+    set -g tide_go_icon \ue626
+    set -g tide_cmd_duration_icon \uf252
+    set -g tide_jobs_icon \uf013
 end
