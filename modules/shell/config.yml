@@ -14,7 +14,3 @@ homebrew_packages:
 
 stow_dirs:
   - shell
-
-mergeable_files:
-  - '.zsh/environment.sh'
-  - '.config/fish/config.fish'

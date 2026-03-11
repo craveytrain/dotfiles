@@ -1,3 +1,4 @@
+# fish module - display comprehensive DNS records for a domain
 # All the dig info, 'cause I can never remember it
 function digg
   dig +nocmd $argv any +multiline +noall +answer

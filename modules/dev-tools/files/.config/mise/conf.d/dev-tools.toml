@@ -1,0 +1,9 @@
+# dev-tools module - mise settings and Python version
+# Managed by dotfiles dev-tools module
+
+[settings]
+trusted_config_paths = ["~/.config/mise/conf.d"]
+asdf_compat = true
+
+[tools]
+python = "3.13.2"

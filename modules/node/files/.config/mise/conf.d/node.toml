@@ -1,0 +1,6 @@
+# node module - Node.js and pnpm versions
+# Managed by dotfiles node module
+
+[tools]
+node = "latest"
+pnpm = "latest"

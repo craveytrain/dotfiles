@@ -11,6 +11,3 @@
 
 stow_dirs:
   - node
-
-mergeable_files:
-  - '.config/mise/config.toml'

@@ -1,200 +1,168 @@
 # Project Research Summary
 
-**Project:** New Configuration Modules for Dotfiles System
-**Domain:** DevOps / Configuration Management / Dotfiles
-**Researched:** 2026-01-23
+**Project:** Dotfiles v1.1 Runtime Includes
+**Domain:** Dotfiles configuration management (Stow + Ansible migration)
+**Researched:** 2026-03-10
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This project extends an existing modular dotfiles system (built with ansible-role-dotmodules + GNU Stow) to add new tool configurations (Ghostty terminal, Claude CLI, and future modules). The research confirms that the system follows industry-standard patterns: XDG Base Directory specification, declarative YAML metadata, and symlink-based deployment. The expert approach is to continue using the established pattern rather than re-architecting.
+This project replaces the Ansible-time merged file system with runtime conf.d sourcing across three tools: zsh, fish, and mise. The current system concatenates contributions from multiple modules into single files at deploy time (via Ansible), then symlinks the merged output. This works but creates an edit-deploy-test cycle, fragile TOML concatenation hacks, and hidden composition where module ownership is unclear. The conf.d approach is the standard Unix solution to this problem, used by systemd, nginx, cron, and natively supported by both fish and mise.
 
-The recommended approach is straightforward: create self-contained modules with `config.yml` metadata and `files/` directories that mirror home directory structure. The system's architecture is mature and well-documented, with 10 existing modules providing clear templates. Implementation follows a simple pattern: define dependencies in YAML, organize files in XDG locations, add module to playbook, and deploy. The key success factor is following established conventions rather than inventing new patterns.
+The recommended approach is straightforward: add a glob-sourcing loop to `.zshrc`, leverage fish's native conf.d support, and leverage mise's native conf.d support. Each module stows its own numbered fragment file into the appropriate conf.d directory. No new dependencies are needed. All three tools already support this pattern in their installed versions (zsh 5.9, fish 4.2.1, mise 2025.12.12). The migration is mostly mechanical, restructuring files and updating config.yml declarations.
 
-The primary risks center on module integration rather than technical complexity: duplicate entries in the deployment playbook, incorrect module ordering causing dependency failures, and conflicting mergeable file declarations. These are all preventable through systematic checks during planning and implementation. The modular architecture provides natural isolation—most pitfalls affect only the specific module being added, not the entire system.
+The primary risk is the transition period. During migration, both the old merged files and new conf.d fragments can coexist, causing duplicate definitions and subtle bugs. The mitigation is to migrate per-target-file (move ALL contributors to a merged file at once) rather than per-module. Secondary risks include zsh sourcing order dependencies (solved by numeric prefixes) and fish's conf.d-before-config.fish ordering (solved by keeping PATH/env in config.fish). Stale symlinks from the old merge system need explicit cleanup.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The technology stack is already established and requires no new additions. The system uses Ansible 2.9+ for orchestration, ansible-role-dotmodules for module processing, GNU Stow for symlink deployment, Homebrew for package management, and YAML for configuration metadata. All components are mature, widely adopted, and well-documented.
+No new dependencies. The migration uses capabilities already present in installed versions of zsh, fish, and mise. Stow and Ansible continue in their existing roles.
 
 **Core technologies:**
-- **ansible-role-dotmodules**: Module processing and orchestration — handles package installation, file merging, and stow deployment automatically
-- **GNU Stow**: Symlink deployment — creates reversible symlinks from modules to home directory with conflict detection
-- **Homebrew**: Package management — provides standardized installation for CLI tools and GUI applications
-- **XDG Base Directory Specification**: Configuration organization — modern standard for `~/.config/` locations, keeps home directory clean
-- **YAML**: Module metadata — declarative configuration for dependencies and deployment targets
+- **Zsh `(N)` glob qualifier**: Sources `~/.zsh/conf.d/*.sh` safely with no errors on empty directories
+- **Fish native conf.d**: `~/.config/fish/conf.d/*.fish` auto-sourced alphabetically before config.fish
+- **Mise native conf.d**: `~/.config/mise/conf.d/*.toml` loaded alphabetically with proper TOML merge semantics
+- **Numeric prefix convention (00-99)**: Deterministic load ordering across all three conf.d directories
+- **Mise `trusted_config_paths` setting**: One-time trust for the entire conf.d directory, avoiding per-file trust
 
 ### Expected Features
 
-Configuration modules follow a well-defined feature hierarchy. Research analyzed 10 existing modules to identify table stakes (required for any module), enhancers (add value but optional), and anti-features (add complexity without benefit).
-
 **Must have (table stakes):**
-- Declarative config.yml with stow_dirs — required for module processing
-- Standard directory structure (config.yml, files/, README.md) — enables consistent maintenance
-- Stow-compatible file layout (files/ mirrors home directory) — deployment depends on this
-- Module documentation (README.md) — onboarding and troubleshooting depend on it
-- Idempotent deployment — safe to re-run playbook multiple times
+- Glob-based sourcing loop in .zshrc with `(N)` qualifier
+- Fish and mise conf.d directory structures with stowed fragment files
+- Numeric prefix ordering convention (2-digit, grouped by purpose)
+- Module-owned conf.d fragments replacing all mergeable_files declarations
+- Removal of merge logic from ansible-role-dotmodules
+- Preserved local override mechanism (.zshrc.local, config.local.fish unchanged)
+- Idempotent migration path (playbook works during and after migration)
 
-**Should have (competitive):**
-- Configuration file merging for shared configs (.zshrc, .config/fish/config.fish) — 60% of modules use this
-- Local override mechanism (.*.local files) — prevents committing machine-specific settings
-- Validation commands in README — speeds troubleshooting
-- Post-deployment instructions — documents manual steps (plugin installation, authentication)
-- Dependency declaration in README — makes prerequisites explicit
+**Should have (differentiators over current system):**
+- Debug/trace mode (`DOTFILES_DEBUG=1` in sourcing loop) for migration and future debugging
+- Fragment attribution comments (module name + purpose header in each file)
 
-**Defer (v2+):**
-- Automated testing framework — high setup cost, manual testing sufficient for personal dotfiles
-- Platform detection logic — single platform (macOS Apple Silicon), unnecessary complexity
-- Secret management integration — local overrides handle this simply
-- Module versioning and rollback — git provides repo-level versioning
+**Defer:**
+- Error isolation per fragment (let errors surface loudly)
+- Automated migration tooling (manual restructure is fine for 6 modules)
+- Fragment dependency resolution (numeric prefixes are sufficient)
+- Sub-directory nesting in conf.d (flat is better for this scale)
 
 ### Architecture Approach
 
-The architecture uses a declarative, modular pattern where each module is independent and self-documenting. Modules declare their needs (Homebrew packages, mergeable files, shell registration) in config.yml, and ansible-role-dotmodules handles all processing. The system provides four integration patterns: home directory dotfiles, XDG config directories, local binaries, and mergeable configuration files.
+Each module stows its own conf.d fragment files into shared conf.d directories. The shell (or tool) sources all fragments at runtime via glob patterns. The `.zshrc` and `config.fish` become single-owner files that orchestrate conf.d sourcing rather than being merge targets. Stow's existing `--no-folding` flag ensures conf.d directories are real directories with individual file symlinks, not directory symlinks. The EDITOR/VISUAL duplication between zsh and editor modules gets resolved by assigning clear ownership to the editor module.
 
 **Major components:**
-1. **Module directory** — Self-contained package with metadata (config.yml), files to deploy (files/), and documentation (README.md)
-2. **ansible-role-dotmodules** — External role that reads module metadata, installs packages, merges files, and runs Stow
-3. **Merged configuration** — Special module containing output from files contributed by multiple modules with source attribution
-4. **Deployment playbook** — Orchestrates module processing via dotmodules.install list with ordering determining merge priority
-
-**Key patterns:**
-- Modules are pure data (no custom Ansible tasks required for standard modules)
-- Dependencies are documented but not enforced (deployment order matters)
-- Symlinks enable instant updates (edit module files, changes reflect immediately)
-- Local overrides provide machine-specific customization without modifying tracked files
+1. **zsh module** -- Owns .zshrc (sole owner), adds conf.d glob loop, contributes environment and alias fragments
+2. **fish module** -- Owns config.fish (sole owner), other modules contribute to native conf.d
+3. **dev-tools module** -- Owns mise config.toml (sole owner), contributes mise activation fragments to zsh/fish conf.d
+4. **shell module** -- Contributes EZA_COLORS fragments to zsh and fish conf.d
+5. **editor module** -- Contributes EDITOR/VISUAL and alias fragments to zsh and fish conf.d
+6. **node module** -- Contributes tool versions to mise conf.d (with proper TOML headers)
+7. **ansible-role-dotmodules** -- merge_files.yml removed after all modules migrate
 
 ### Critical Pitfalls
 
-Research identified 15 common pitfalls, with most preventable through systematic checks. The top five account for 80% of module integration failures.
-
-1. **Duplicate module entries in playbook** — Same module listed twice causes redundant processing and stow conflicts. Prevention: grep playbook before adding module, maintain alphabetical order for visual scanning.
-
-2. **Missing module dependencies** — Installing module before its prerequisites causes "command not found" errors. Prevention: document dependencies in README, order modules in playbook with dependencies first (dev-tools before node, shell before zsh/fish).
-
-3. **Stow directory structure mismatches** — Files not mirroring home directory structure causes incorrect symlinks. Prevention: always start with `.config/` for XDG apps, verify with existing modules as templates.
-
-4. **Platform-specific hardcoded paths** — Hardcoding `/opt/homebrew` or `/usr/local` breaks on different architectures. Prevention: use `$(brew --prefix)` for Homebrew paths, `~` for home directory.
-
-5. **Ignoring local override patterns** — Modifying tracked files for machine-specific settings causes git conflicts. Prevention: add conditional sourcing to main configs (`[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local`), document pattern in README.
+1. **Duplicate definitions during transition** -- Migrate per-target-file, not per-module. Move ALL contributors to a merged file at once. Remove the merged file only when all its contributors have migrated.
+2. **Zsh sourcing order dependencies** -- Map all variable dependencies before creating conf.d files. Environment (00-19) before aliases (50-69) before tool activation (70-89). Use wide numeric gaps.
+3. **Fish conf.d sources BEFORE config.fish** -- Keep PATH setup and core environment in config.fish. Only move independent, cross-module fragments to conf.d.
+4. **TOML headers required in mise conf.d** -- Each conf.d file must be a valid standalone TOML document. The node module's current "omit [tools] header" hack must be reversed.
+5. **Stale symlinks from old merge structure** -- Unstow/clean old merged structure before deploying new conf.d structure. Check for broken symlinks in `~/.dotmodules/merged/`.
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure prioritizes simple, standalone modules first to validate the process, then progresses to complex integrations. Each phase builds confidence while delivering usable functionality.
+Based on research, suggested phase structure:
 
-### Phase 1: Foundation Setup
-**Rationale:** Validate the module creation process with the simplest possible implementation. Ghostty is config-only (no Homebrew packages, no mergeable files, no dependencies), providing a low-risk test case.
-**Delivers:** Working Ghostty terminal configuration module deployed via ansible-role-dotmodules
-**Addresses:**
-- Declarative configuration metadata (table stakes feature)
-- Standard directory structure (table stakes feature)
-- XDG config directory pattern from ARCHITECTURE.md
-**Avoids:**
-- Stow directory structure mismatches (pitfall #3) — use existing modules as template
-- Platform-specific paths (pitfall #4) — Ghostty config has no path references
-**Research needed:** None — pattern is well-established and documented
+### Phase 1: Zsh conf.d Migration
 
-### Phase 2: Homebrew Integration
-**Rationale:** Add module requiring package installation to understand Homebrew integration pattern. Claude CLI adds complexity (package installation, potential authentication) while remaining relatively isolated.
-**Delivers:** Claude CLI module with Homebrew package installation and optional configuration
-**Uses:**
-- Homebrew packages/casks from STACK.md
-- Config-only or CLI tool pattern from STACK.md
-**Implements:** Homebrew integration point from ARCHITECTURE.md
-**Avoids:**
-- Homebrew package name mismatches (pitfall #7) — verify with `brew search claude`
-- Missing post-deployment steps (pitfall #10) — document authentication setup
-**Research needed:** Moderate — verify Claude CLI availability in Homebrew, config location, authentication workflow
+**Rationale:** Zsh is the primary shell with the most merge participants (5 modules, 3 merged files). Establishing the pattern here informs all subsequent phases. It also delivers the highest value: the edit-deploy-test cycle affects zsh users most.
 
-### Phase 3: Shell Integration
-**Rationale:** Add module contributing to shared shell configurations (mergeable files). This tests the most complex integration pattern and validates merge behavior.
-**Delivers:** Module with shell aliases, environment variables, or functions merged into existing shell configs
-**Uses:**
-- Configuration file merging (enhancer feature)
-- Cross-shell compatibility (enhancer feature)
-**Implements:** Mergeable configuration component from ARCHITECTURE.md
-**Avoids:**
-- Conflicting mergeable file declarations (pitfall #3) — check existing mergeable_files first
-- Mergeable files without section markers (pitfall #9) — use distinctive headers
-- Module ordering dependencies (pitfall #12) — place after base shell modules
-**Research needed:** None — pattern demonstrated by 6 existing modules
+**Delivers:** Runtime conf.d sourcing for zsh, eliminating the Ansible merge step for .zshrc, aliases.sh, and environment.sh. EDITOR/VISUAL ownership resolved. Debug mode in sourcing loop.
 
-### Phase 4: System Validation
-**Rationale:** Test entire system on clean machine to catch integration issues. Validates dependency ordering, mergeable file behavior, and deployment idempotency.
-**Delivers:** Verified module deployment on fresh macOS installation
-**Addresses:**
-- Idempotent deployment (table stakes feature)
-- Dependency declaration (enhancer feature)
-**Avoids:**
-- Not testing on clean system (pitfall #15) — primary goal of this phase
-- Missing module dependencies (pitfall #2) — clean system reveals all dependencies
-**Research needed:** None — testing phase, not implementation
+**Addresses:** Glob-based sourcing loop, numeric prefix convention, module-owned fragments, debug mode, fragment attribution, EDITOR/VISUAL deduplication.
+
+**Avoids:** Pitfall 1 (duplicates) by migrating all contributors to each merged file at once. Pitfall 2 (ordering) by designing the numbering scheme upfront. Pitfall 5 (stale symlinks) by cleaning merged output before deploying. Pitfall 6 (.zshrc is special) by keeping it as an authored file. Pitfall 10 (empty globs) by using `(N)` qualifier. Pitfall 13 (duplicate EDITOR) by assigning ownership.
+
+### Phase 2: Fish conf.d Migration
+
+**Rationale:** Fish has native conf.d support, making this the simplest shell migration. The naming pattern from Phase 1 carries over directly.
+
+**Delivers:** Fish module contributions moved to native conf.d. config.fish becomes single-owner. Shell, editor, and dev-tools modules contribute via conf.d fragments.
+
+**Addresses:** Fish conf.d directory structure, module-owned fish fragments, fragment attribution.
+
+**Avoids:** Pitfall 3 (conf.d before config.fish) by keeping PATH/env in config.fish. Pitfall 7 (Fisher collisions) by using numeric-prefixed naming that won't collide with plugin files.
+
+### Phase 3: Mise conf.d Migration
+
+**Rationale:** Fewest participants (2 modules). Lowest risk. Fixes the fragile TOML concatenation hack where node module had to omit `[tools]` header.
+
+**Delivers:** Node module gets proper standalone TOML file with its own section headers. dev-tools module's config.toml becomes single-owner. Mise trusted_config_paths configured.
+
+**Addresses:** Mise conf.d structure, standalone TOML documents, trust configuration.
+
+**Avoids:** Pitfall 4 (TOML headers) by ensuring each file is valid standalone TOML.
+
+### Phase 4: Cleanup and Documentation
+
+**Rationale:** Can only happen after all modules have migrated. Removing merge logic while any module still uses it would break deployments.
+
+**Delivers:** Removed merge_files.yml and merged_file.j2 from ansible-role-dotmodules. Cleaned up ~/.dotmodules/merged/ directory. Documented numeric prefix convention. Verified no modules still declare mergeable_files.
+
+**Addresses:** Merge logic removal, stale file cleanup, convention documentation.
+
+**Avoids:** Pitfall 11 (stale mergeable_files) with final grep verification.
 
 ### Phase Ordering Rationale
 
-This ordering follows the **crawl-walk-run** principle discovered in the research:
-- **Crawl (Phase 1):** Simple config-only module validates basic stow deployment without additional complexity
-- **Walk (Phase 2):** Adding Homebrew integration introduces package management while staying isolated
-- **Run (Phase 3):** Mergeable files test the most complex integration pattern with multiple modules
-- **Validate (Phase 4):** Clean system deployment catches issues masked by development environment
-
-The order avoids common pitfalls by building complexity incrementally. Each phase validates one new integration point before proceeding. Module dependencies (shell before shell-integrated modules) are respected by sequencing simple standalone modules first.
-
-Architecture patterns support this ordering: standalone modules (Phase 1-2) have no dependencies, shell-integrated modules (Phase 3) depend on shell modules existing, and validation (Phase 4) requires all pieces in place.
+- **Zsh first** because it has the most complex merge situation (5 modules, 3 files) and the highest daily-use impact. If the pattern works for zsh, it works everywhere.
+- **Fish second** because native conf.d support means zero custom sourcing code, but the fish-specific ordering quirk (conf.d before config.fish) needs attention.
+- **Mise third** because it only involves 2 modules and the fix is simple (add TOML headers, move to conf.d directory).
+- **Cleanup last** because merge logic must remain functional during incremental migration. Removing it early would break any module not yet migrated.
 
 ### Research Flags
 
 Phases likely needing deeper research during planning:
-- **Phase 2 (Claude CLI):** Need to verify Homebrew availability, configuration format (YAML/TOML/JSON), authentication mechanism, and config file location. Current research flagged this as MEDIUM confidence requiring verification.
+- **Phase 1 (Zsh):** The numbering scheme design and .zshrc restructuring need careful planning. The EDITOR/VISUAL deduplication and p10k/compinit/plugin ordering constraints make this the most nuanced phase.
+- **Phase 2 (Fish):** Verify Fisher plugin conf.d state on deployed machines. The conf.d-before-config.fish ordering needs validation with actual fish module content.
 
 Phases with standard patterns (skip research-phase):
-- **Phase 1 (Ghostty):** Config-only pattern is well-documented, Ghostty config format is stable, 100% confidence
-- **Phase 3 (Shell Integration):** Mergeable files pattern demonstrated by 6 existing modules, clear examples available
-- **Phase 4 (Validation):** Testing phase, no new patterns to research
+- **Phase 3 (Mise):** Two files, well-documented native support, verified on installed version. Straightforward.
+- **Phase 4 (Cleanup):** Mechanical removal of dead code and files. No research needed.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All technologies are established, in use, and documented. No new stack additions required. |
-| Features | HIGH | Feature hierarchy extracted from 10 existing modules. Table stakes and enhancers validated by current usage. |
-| Architecture | HIGH | Integration patterns documented with working examples. All four patterns (dotfiles, XDG, binaries, mergeable) have multiple implementations. |
-| Pitfalls | HIGH | Pitfalls identified from real examples in codebase (duplicate 1password entry, dev-tools→node dependency). Prevention strategies tested. |
+| Stack | HIGH | All three tools tested/verified on installed versions. Zsh glob qualifiers stable since zsh 4.x. Fish and mise conf.d are native features. |
+| Features | HIGH | Feature set is well-scoped. Clear separation of table stakes vs differentiators. Anti-features are well-reasoned. |
+| Architecture | HIGH | Component boundaries are clean. Stow --no-folding already in use. Migration path is incremental and reversible per phase. |
+| Pitfalls | HIGH | 13 pitfalls identified with concrete prevention strategies. Phase-specific warnings mapped. Most pitfalls are well-understood Unix/Stow patterns. |
 
 **Overall confidence:** HIGH
 
-The research benefits from analyzing an existing, working system rather than designing from scratch. All patterns, features, and pitfalls are validated by real implementations. The only area of uncertainty is Claude CLI specifics (distribution method, config format), which is appropriately flagged for Phase 2 research.
-
 ### Gaps to Address
 
-- **Claude CLI distribution:** Research couldn't verify if Claude CLI is available via Homebrew in 2026, what the package name is, or where configuration lives. Resolution: Phase 2 should start with `brew search claude` and manual installation to discover config location. If not in Homebrew, use config-only pattern like Ghostty.
-
-- **Local override patterns for new tools:** While the pattern is documented (`.*.local` files), research didn't identify which new modules will need per-machine customization. Resolution: Make architectural decision during each phase—default to including local override support for any module with configuration files.
-
-- **Future module discovery:** Research focused on Ghostty and Claude CLI specifically, not comprehensive audit of tools needing modules. Resolution: After completing these two modules, audit `~/.config/` for unexpected directories and prioritize next modules.
+- **Fisher conf.d state:** Need to check what Fisher currently places in `~/.config/fish/conf.d/` on deployed machines before creating stow-managed files there. Run `ls ~/.config/fish/conf.d/` during Phase 2 planning.
+- **Mise conf.d merge semantics:** Verified that mise recognizes conf.d files, but the exact merge behavior (which setting wins when main config.toml and conf.d disagree) should be validated during Phase 3 implementation.
+- **Stow unstow cleanup:** The exact steps to cleanly remove the merged stow module need validation. Whether `stow -D merged` handles it or manual cleanup is required.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- Existing codebase modules (10 modules: git, fonts, 1password, shell, fish, zsh, dev-tools, node, editor) — provided working examples of all patterns
-- `/Users/mcravey/dotfiles/README.md` — documented module structure and deployment workflow
-- `/Users/mcravey/dotfiles/playbooks/deploy.yml` — showed module ordering and installation list
-- `/Users/mcravey/dotfiles/.planning/codebase/STACK.md` — documented current technology stack
-- `/Users/mcravey/dotfiles/.planning/codebase/ARCHITECTURE.md` — explained system architecture
-- XDG Base Directory Specification — industry standard for config locations
-- GNU Stow Manual — symlink deployment behavior
-- ansible-role-dotmodules GitHub repository — module processing logic
+- Zsh glob qualifiers: `man zshexpn` (installed locally, zsh 5.9)
+- Fish shell conf.d: [fishshell.com/docs/current](https://fishshell.com/docs/current/)
+- Mise configuration: [mise.jdx.dev/configuration](https://mise.jdx.dev/configuration.html)
+- GNU Stow manual: [gnu.org/software/stow/manual](https://www.gnu.org/software/stow/manual/stow.html)
+- ansible-role-dotmodules source: `~/.ansible/roles/ansible-role-dotmodules/` (read directly)
 
 ### Secondary (MEDIUM confidence)
-- Ghostty documentation (https://ghostty.org/docs/config) — config format and location verified
-- Homebrew search results — verified existing package names
+- Mise conf.d behavior: [deepwiki.com/jdx/mise](https://deepwiki.com/jdx/mise/3.2-configuration-system)
+- Fish conf.d ordering: [fish-shell/fish-shell#8553](https://github.com/fish-shell/fish-shell/issues/8553)
+- Community dotfiles patterns: [z0rc/dotfiles](https://github.com/z0rc/dotfiles), [mattmc3/zdotdir](https://github.com/mattmc3/zdotdir), [thoughtbot/dotfiles](https://github.com/thoughtbot/dotfiles)
 
 ### Tertiary (LOW confidence)
-- Claude CLI documentation — referenced but not verified (needs validation in Phase 2)
-- Module-specific plugin managers (vim-plug, fisher) — implementation examples exist but not comprehensively documented
+- Zsh startup optimization benchmarks: [coderlegion.com](https://coderlegion.com/11431/from-1-4s-to-53ms-optimizing-zsh-startup-on-macos) (useful for context, not directly applicable)
 
 ---
-*Research completed: 2026-01-23*
+*Research completed: 2026-03-10*
 *Ready for roadmap: yes*

@@ -39,6 +39,8 @@ dotfiles/
 └── README.md          # This file
 ```
 
+Modules contribute shell configuration via **conf.d fragments**, which are stowed into shell-specific `conf.d/` directories and sourced at startup. See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for the full conf.d convention.
+
 ## Module Structure
 
 Each module follows this structure:
@@ -48,9 +50,12 @@ module-name/
 ├── README.md          # Module documentation (purpose, features, usage)
 ├── config.yml         # Module configuration (Homebrew packages, stow dirs, etc.)
 └── files/             # Dotfiles to be deployed
-    ├── .config/       # Configuration files
-    ├── .bin/          # Binary/script files
-    └── .*rc           # Shell configuration files
+    ├── .zsh/conf.d/           # Zsh conf.d fragments (NN-module-desc.sh)
+    ├── .config/fish/conf.d/   # Fish conf.d fragments (NN-module-desc.fish)
+    ├── .config/mise/conf.d/   # Mise conf.d fragments (module-name.toml)
+    ├── .config/               # Other configuration files
+    ├── .bin/                  # Binary/script files
+    └── .*rc                   # Shell configuration files
 ```
 
 ## Usage
@@ -117,11 +122,10 @@ homebrew_packages:
   - stow
 
 stow_dirs:
-  - zsh
-
-mergeable_files:
-  - '.zshrc'  # Merged with other modules' contributions
+  - shell
 ```
+
+Modules contribute shell configuration by placing conf.d fragments in their `files/` directory (e.g., `files/.zsh/conf.d/50-shell-eza-colors.sh`). GNU Stow deploys these as symlinks, and shells source them at startup.
 
 ## Shell Registration
 
@@ -198,7 +202,8 @@ install:
 1. Create module directory: `modules/my-module/`
 2. Add `config.yml` with Homebrew packages and stow_dirs
 3. Add `files/` directory with your dotfiles
-4. Add module name to `install` list in `playbooks/deploy.yml`
+4. Add conf.d fragments for shell configuration (e.g., `files/.zsh/conf.d/50-my-module-desc.sh`). See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for naming conventions and prefix ranges.
+5. Add module name to `install` list in `playbooks/deploy.yml`
 
 ## Local Configuration Overrides
 
@@ -260,7 +265,8 @@ For detailed instructions, see each module's README file.
 1. Create a new directory in `modules/`
 2. Add a `config.yml` file with your configuration
 3. Create a `files/` directory with your dotfiles
-4. Add the module to your playbook's `install` list in `playbooks/deploy.yml`
+4. Add conf.d fragments for any shell configuration. Use the `NN-module-description` naming convention. See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for the full walkthrough.
+5. Add the module to your playbook's `install` list in `playbooks/deploy.yml`
 
 ### Modifying Existing Modules
 
@@ -271,10 +277,10 @@ For detailed instructions, see each module's README file.
 ## How It Works
 
 1. **Module Processing**: Each module is processed independently
-2. **Configuration Aggregation**: All module configurations are merged
-3. **Dependency Resolution**: Homebrew packages, taps, and casks are collected
-4. **Dotfile Deployment**: GNU Stow deploys all dotfiles
-5. **Package Installation**: Homebrew installs all dependencies
+2. **Dependency Resolution**: Homebrew packages, taps, and casks are collected
+3. **Package Installation**: Homebrew installs all dependencies
+4. **Dotfile Deployment**: GNU Stow deploys all dotfiles (including conf.d fragments)
+5. **Runtime Sourcing**: Shells source conf.d fragments at startup, so config edits are live on `git pull` without redeploying
 
 ## Benefits
 
@@ -282,7 +288,7 @@ For detailed instructions, see each module's README file.
 * **Automated**: One command sets up your entire environment
 * **Reproducible**: Same setup across multiple machines
 * **Version Controlled**: All configurations in Git
-* **Conflict Resolution**: Intelligent handling of configuration conflicts
+* **Live Updates**: Config changes take effect on next shell session after `git pull`
 
 ## Troubleshooting
 

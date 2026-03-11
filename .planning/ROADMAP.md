@@ -2,110 +2,48 @@
 
 **Project:** Dotfiles Configuration Management
 **Created:** 2026-01-23
-**Strategy:** Continuous improvement, no version numbers
 
 ---
 
-## Phase 1: Foundation & Ghostty Module
+## Milestones
 
-**Goal:** Fix existing tech debt and validate module creation pattern with simplest possible implementation.
+- ✅ **v1.0 Foundation** — Phases 1-3 (shipped 2026-01-24)
+- ✅ **v1.1 Runtime Includes** — Phases 4-7 (shipped 2026-03-11)
 
-**Plans:** 4 plans (3 waves)
+## Phases
 
-Plans:
-- [x] 01-01-PLAN.md - SpecKit cleanup (Wave 1)
-- [x] 01-02-PLAN.md - Remove duplicate 1password entry from deploy.yml (Wave 1)
-- [x] 01-03-PLAN.md - Create Ghostty module structure (Wave 2)
-- [x] 01-04-PLAN.md - Deploy and verify Ghostty module (Wave 3, checkpoint)
+<details>
+<summary>✅ v1.0 Foundation (Phases 1-3) — SHIPPED 2026-01-24</summary>
 
-**Success Criteria:**
-- Duplicate 1password entry removed from deploy.yml
-- Ghostty terminal configuration deployed via ansible-role-dotmodules
-- Ghostty config synchronized across machines
-- SpecKit artifacts cleaned up
+- [x] Phase 1: Foundation & Ghostty Module (4/4 plans) — completed 2026-01-23
+- [x] Phase 2: Claude CLI Module (2/2 plans) — completed 2026-01-24
+- [x] Phase 3: Ongoing Config Discovery — continuous
 
-**Deliverables:**
-- Fixed playbooks/deploy.yml (remove duplicate)
-- modules/ghostty/ with config.yml, files/, README.md
-- Ghostty config in .config/ghostty/config
+</details>
 
-**Complexity:** Low (config-only module, no dependencies)
+<details>
+<summary>✅ v1.1 Runtime Includes (Phases 4-7) — SHIPPED 2026-03-11</summary>
 
-**Status:** COMPLETE
+- [x] Phase 4: Zsh conf.d Migration (2/2 plans) — completed 2026-03-10
+- [x] Phase 5: Fish conf.d Migration (2/2 plans) — completed 2026-03-11
+- [x] Phase 6: Mise conf.d Migration (2/2 plans) — completed 2026-03-11
+- [x] Phase 7: Cleanup and Documentation (2/2 plans) — completed 2026-03-11
 
----
+</details>
 
-## Phase 2: Claude CLI Module
+## Progress
 
-**Goal:** Synchronize Claude Code CLI configuration across machines.
-
-**Plans:** 2 plans (2 waves)
-
-Plans:
-- [x] 02-01-PLAN.md - Create Claude module structure and populate files (Wave 1)
-- [x] 02-02-PLAN.md - Deploy and verify Claude module (Wave 2, checkpoint)
-
-**Success Criteria:**
-- Claude CLI configuration synchronized across machines
-- Custom statusline hook available on all machines
-- Authentication documented in module README
-
-**Deliverables:**
-- modules/claude/ with config.yml, files/, README.md
-- Claude config in ~/.claude/ (settings.json, statusline.js)
-- Post-deployment authentication instructions
-
-**Complexity:** Low (settings + single hook)
-
-**Research:** Complete (02-RESEARCH.md)
-
-**Status:** COMPLETE
-
-**Note:** Scope reduced from original plan - only syncing settings.json and statusline.js hook. Agents, commands, and GSD framework managed locally per machine.
-
----
-
-## Phase 3: Ongoing Config Discovery
-
-**Goal:** Continuous discovery and addition of configuration modules as needed.
-
-**Success Criteria:**
-- Home directory audit identifies additional config files
-- New modules added based on muscle memory consistency needs
-- Module quality maintained (constitutional principles followed)
-
-**Deliverables:**
-- Additional modules as discovered
-- Updated deploy.yml with new modules
-- Documentation for each new tool
-
-**Complexity:** Variable (depends on tool complexity)
-
-**Approach:** Continuous, not time-boxed
-
----
-
-## Dependencies
-
-**Phase 1 → Phase 2:**
-- Phase 1 validates module creation pattern before adding complexity
-
-**Phase 2 → Phase 3:**
-- Phase 2 completes initial planned work, Phase 3 is ongoing discovery
-
----
-
-## Out of Scope
-
-- Full machine provisioning (focus: configuration management)
-- Mac App Store applications (nerfed versions)
-- Universal software installation (selective, case-by-case)
-- Windows/Linux support (macOS Apple Silicon only)
-- Version numbers or formal releases (continuous improvement)
-- Shell integration testing module (defer until needed)
-- Clean system validation phase (defer until problems arise)
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 1. Foundation & Ghostty | v1.0 | 4/4 | Complete | 2026-01-23 |
+| 2. Claude CLI Module | v1.0 | 2/2 | Complete | 2026-01-24 |
+| 3. Ongoing Discovery | v1.0 | - | Continuous | - |
+| 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
+| 5. Fish conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
+| 6. Mise conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
+| 7. Cleanup and Documentation | v1.1 | 2/2 | Complete | 2026-03-11 |
 
 ---
 
 *Roadmap created: 2026-01-23*
-*Aligned with PROJECT.md active requirements*
+*Last updated: 2026-03-11 — v1.1 Runtime Includes shipped*

@@ -13,9 +13,3 @@ homebrew_packages:
 
 stow_dirs:
   - zsh
-
-# Files that should be merged with other modules
-mergeable_files:
-  - '.zshrc' # Git aliases and functions
-  - '.zsh/aliases.sh'
-  - '.zsh/environment.sh'
