@@ -21,8 +21,8 @@
 
 ### Tool Configuration
 
-- [ ] **TOOL-01**: Mise loads tool versions from `~/.config/mise/conf.d/*.toml` with standalone TOML headers
-- [ ] **TOOL-02**: Mise trusted_config_paths configured for conf.d directory (no per-file trust prompts)
+- [x] **TOOL-01**: Mise loads tool versions from `~/.config/mise/conf.d/*.toml` with standalone TOML headers
+- [x] **TOOL-02**: Mise trusted_config_paths configured for conf.d directory (no per-file trust prompts)
 
 ### Cleanup
 
@@ -60,8 +60,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MIGR-02 | Phase 4 | Complete |
 | MIGR-03 | Phase 4 | Complete |
 | MIGR-04 | Phase 4 | Complete |
-| TOOL-01 | Phase 6 | Pending |
-| TOOL-02 | Phase 6 | Pending |
+| TOOL-01 | Phase 6 | Complete |
+| TOOL-02 | Phase 6 | Complete |
 | CLNP-01 | Phase 7 | Pending |
 | CLNP-02 | Phase 7 | Pending |
 | CLNP-03 | Phase 7 | Pending |

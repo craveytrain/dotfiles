@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Runtime Includes
-status: completed
-stopped_at: Phase 6 context gathered
-last_updated: "2026-03-11T17:04:10.139Z"
-last_activity: 2026-03-11 -- Completed 05-02 fish conf.d deployment and verification
+status: in-progress
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-11T17:25:32Z"
+last_activity: 2026-03-11 -- Completed 06-01 mise conf.d fragment creation
 progress:
   total_phases: 7
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 12
+  completed_plans: 11
   percent: 100
 ---
 
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Muscle memory consistency. Config edits go live on git pull without redeploying.
-**Current focus:** Phase 5 complete, Phase 6 (Mise conf.d Migration) next
+**Current focus:** Phase 6 (Mise conf.d Migration) in progress
 
 ## Current Position
 
-Phase: 5 of 7 (Fish conf.d Migration) - COMPLETE
-Plan: 2 of 2 in current phase (2 complete)
-Status: Phase 5 complete, Phase 6 pending
-Last activity: 2026-03-11 -- Completed 05-02 fish conf.d deployment and verification
+Phase: 6 of 7 (Mise conf.d Migration) - IN PROGRESS
+Plan: 1 of 2 in current phase (1 complete)
+Status: Phase 6 Plan 01 complete, Plan 02 pending
+Last activity: 2026-03-11 -- Completed 06-01 mise conf.d fragment creation
 
-Progress: [██████████] 100% (10/10 plans complete)
+Progress: [█████████░] 92% (11/12 plans complete)
 
 ## Performance Metrics
 
@@ -50,10 +50,11 @@ Progress: [██████████] 100% (10/10 plans complete)
 | 4. Zsh conf.d P02 | 1 | 112min | 112min |
 | 5. Fish conf.d P01 | 1 | 2min | 2min |
 | 5. Fish conf.d P02 | 1 | ~15min | ~15min |
+| 6. Mise conf.d P01 | 1 | 1min | 1min |
 
 **Recent Trend:**
-- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint), 2min (05-01), ~15min (05-02 incl. checkpoint)
-- Trend: Phase 5 complete
+- Last 5 plans: 112min (04-02 incl. checkpoint), 2min (05-01), ~15min (05-02 incl. checkpoint), 1min (06-01)
+- Trend: Phase 6 in progress
 
 ## Accumulated Context
 
@@ -71,6 +72,8 @@ Recent decisions affecting current work:
 - [Phase 05]: Env vars and brew shellenv unguarded in conf.d (available to non-interactive fish scripts)
 - [Phase 05]: Mise activation switched from --shims to full activate for interactive shells
 - [Phase 05]: All fish function files get attribution header comments
+- [Phase 06]: Each conf.d fragment is standalone TOML with own [tools] header (no merge workarounds)
+- [Phase 06]: trusted_config_paths in dev-tools.toml since dev-tools module owns mise activation
 
 ### Pending Todos
 
@@ -84,9 +87,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-11T17:04:10.125Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-mise-conf-d-migration/06-CONTEXT.md
+Last session: 2026-03-11T17:25:32Z
+Stopped at: Completed 06-01-PLAN.md
+Resume file: .planning/phases/06-mise-conf-d-migration/06-02-PLAN.md
 
 ---
 
