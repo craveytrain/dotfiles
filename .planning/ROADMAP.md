@@ -129,10 +129,11 @@ Plans:
   2. The merge_files.yml, merged_file.j2, and conflict_resolution.yml files are removed from ansible-role-dotmodules
   3. Running the Ansible playbook cleans up any stale files in `~/.dotmodules/merged/` and leaves no broken symlinks
   4. A documented ordering convention explains numeric prefix ranges and how new modules should contribute conf.d fragments
-**Plans**: TBD
+**Plans**: 2 plans (1 wave)
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Remove merge infrastructure from config.yml files and role repo, clean stale files (Wave 1)
+- [ ] 07-02-PLAN.md — Update README.md and CODING_STANDARDS.md with conf.d conventions (Wave 1)
 
 ## Progress
 
@@ -148,9 +149,9 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
 | 5. Fish conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 6. Mise conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
-| 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
+| 7. Cleanup and Documentation | v1.1 | 0/2 | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-03-11 - Phase 6 complete (2/2 plans)*
+*Last updated: 2026-03-11 - Phase 7 planned (2 plans, 1 wave)*
