@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Runtime Includes
 status: in-progress
-stopped_at: Completed 05-01 fish conf.d fragment creation
-last_updated: "2026-03-11T01:12:23Z"
-last_activity: 2026-03-10 -- Completed 05-01 fish conf.d fragment creation
+stopped_at: Completed 05-02 fish conf.d deployment and verification
+last_updated: "2026-03-11T01:30:00Z"
+last_activity: 2026-03-11 -- Completed 05-02 fish conf.d deployment and verification
 progress:
   total_phases: 7
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
-  percent: 90
+  completed_plans: 10
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Muscle memory consistency. Config edits go live on git pull without redeploying.
-**Current focus:** Phase 5 in progress, fish conf.d fragment creation complete
+**Current focus:** Phase 5 complete, Phase 6 (Mise conf.d Migration) next
 
 ## Current Position
 
-Phase: 5 of 7 (Fish conf.d Migration) - IN PROGRESS
-Plan: 1 of 2 in current phase (1 complete)
-Status: Plan 01 complete, Plan 02 pending
-Last activity: 2026-03-10 -- Completed 05-01 fish conf.d fragment creation
+Phase: 5 of 7 (Fish conf.d Migration) - COMPLETE
+Plan: 2 of 2 in current phase (2 complete)
+Status: Phase 5 complete, Phase 6 pending
+Last activity: 2026-03-11 -- Completed 05-02 fish conf.d deployment and verification
 
-Progress: [█████████░] 90% (9/10 plans complete)
+Progress: [██████████] 100% (10/10 plans complete)
 
 ## Performance Metrics
 
@@ -49,10 +49,11 @@ Progress: [█████████░] 90% (9/10 plans complete)
 
 | 4. Zsh conf.d P02 | 1 | 112min | 112min |
 | 5. Fish conf.d P01 | 1 | 2min | 2min |
+| 5. Fish conf.d P02 | 1 | ~15min | ~15min |
 
 **Recent Trend:**
-- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint), 2min (05-01)
-- Trend: Phase 5 in progress
+- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint), 2min (05-01), ~15min (05-02 incl. checkpoint)
+- Trend: Phase 5 complete
 
 ## Accumulated Context
 
@@ -79,14 +80,13 @@ None yet.
 
 - BeyondTrust-managed machine requires `--skip-tags register_shell`
 - Corp IT blocks homebrew cask installs on managed machine
-- Fisher conf.d state needs checking during Phase 5 planning
 - Mise conf.d merge semantics need validation during Phase 6
 
 ## Session Continuity
 
-Last session: 2026-03-11T01:12:23Z
-Stopped at: Completed 05-01 fish conf.d fragment creation
-Resume file: .planning/phases/05-fish-conf-d-migration/05-01-SUMMARY.md
+Last session: 2026-03-11T01:30:00Z
+Stopped at: Completed 05-02 fish conf.d deployment and verification
+Resume file: .planning/phases/05-fish-conf-d-migration/05-02-SUMMARY.md
 
 ---
 

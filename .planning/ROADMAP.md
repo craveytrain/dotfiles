@@ -70,7 +70,7 @@ Plans:
 **Milestone Goal:** Eliminate Ansible-merged files so config edits are live immediately on git pull without redeploying. Each module stows its own conf.d fragment instead of contributing to a merged output.
 
 - [x] **Phase 4: Zsh conf.d Migration** - Replace Ansible-merged zsh config files with runtime conf.d sourcing (completed 2026-03-10)
-- [ ] **Phase 5: Fish conf.d Migration** - Migrate fish module contributions to native conf.d mechanism
+- [x] **Phase 5: Fish conf.d Migration** - Migrate fish module contributions to native conf.d mechanism (completed 2026-03-11)
 - [ ] **Phase 6: Mise conf.d Migration** - Replace merged mise config with native conf.d includes
 - [ ] **Phase 7: Cleanup and Documentation** - Remove dead merge logic, clean stale files, document conventions
 
@@ -103,8 +103,8 @@ Plans:
 **Plans**: 2 plans (2 waves)
 
 Plans:
-- [ ] 05-01-PLAN.md — Create conf.d fragments, extract mux function, rewrite config.fish skeleton (Wave 1)
-- [ ] 05-02-PLAN.md — Deploy via stow and verify live fish session (Wave 2, checkpoint)
+- [x] 05-01-PLAN.md — Create conf.d fragments, extract mux function, rewrite config.fish skeleton (Wave 1)
+- [x] 05-02-PLAN.md — Deploy via stow and verify live fish session (Wave 2, checkpoint)
 
 ### Phase 6: Mise conf.d Migration
 **Goal**: Mise loads tool versions and settings from individual conf.d TOML files instead of a single merged config
@@ -145,7 +145,7 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 2. Claude CLI Module | v1.0 | 2/2 | Complete | 2026-01-24 |
 | 3. Ongoing Discovery | v1.0 | - | Continuous | - |
 | 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
-| 5. Fish conf.d Migration | v1.1 | 0/2 | Planned | - |
+| 5. Fish conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 6. Mise conf.d Migration | v1.1 | 0/? | Not started | - |
 | 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
 
