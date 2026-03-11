@@ -114,10 +114,11 @@ Plans:
   1. Running `mise ls` shows tool versions loaded from conf.d fragment files in `~/.config/mise/conf.d/`
   2. Adding a new tool version file to the conf.d directory does not trigger a trust prompt (trusted_config_paths configured)
   3. Each conf.d TOML file is a valid standalone TOML document with its own section headers
-**Plans**: TBD
+**Plans**: 2 plans (2 waves)
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Create conf.d TOML fragments and update shell activation scripts (Wave 1)
+- [ ] 06-02-PLAN.md — Deploy via stow and verify live mise session (Wave 2, checkpoint)
 
 ### Phase 7: Cleanup and Documentation
 **Goal**: All merge infrastructure is removed and the conf.d convention is documented for future module authors
@@ -146,10 +147,10 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 3. Ongoing Discovery | v1.0 | - | Continuous | - |
 | 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
 | 5. Fish conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
-| 6. Mise conf.d Migration | v1.1 | 0/? | Not started | - |
+| 6. Mise conf.d Migration | v1.1 | 0/2 | Planned | - |
 | 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-03-10 - Phase 5 planned (2 plans, 2 waves)*
+*Last updated: 2026-03-11 - Phase 6 planned (2 plans, 2 waves)*
