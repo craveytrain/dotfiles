@@ -71,7 +71,7 @@ Plans:
 
 - [x] **Phase 4: Zsh conf.d Migration** - Replace Ansible-merged zsh config files with runtime conf.d sourcing (completed 2026-03-10)
 - [x] **Phase 5: Fish conf.d Migration** - Migrate fish module contributions to native conf.d mechanism (completed 2026-03-11)
-- [ ] **Phase 6: Mise conf.d Migration** - Replace merged mise config with native conf.d includes
+- [x] **Phase 6: Mise conf.d Migration** - Replace merged mise config with native conf.d includes (completed 2026-03-11)
 - [ ] **Phase 7: Cleanup and Documentation** - Remove dead merge logic, clean stale files, document conventions
 
 ## Phase Details
@@ -117,8 +117,8 @@ Plans:
 **Plans**: 2 plans (2 waves)
 
 Plans:
-- [ ] 06-01-PLAN.md — Create conf.d TOML fragments and update shell activation scripts (Wave 1)
-- [ ] 06-02-PLAN.md — Deploy via stow and verify live mise session (Wave 2, checkpoint)
+- [x] 06-01-PLAN.md — Create conf.d TOML fragments and update shell activation scripts (Wave 1)
+- [x] 06-02-PLAN.md — Deploy via stow and verify live mise session (Wave 2, checkpoint)
 
 ### Phase 7: Cleanup and Documentation
 **Goal**: All merge infrastructure is removed and the conf.d convention is documented for future module authors
@@ -147,10 +147,10 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 3. Ongoing Discovery | v1.0 | - | Continuous | - |
 | 4. Zsh conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-10 |
 | 5. Fish conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
-| 6. Mise conf.d Migration | v1.1 | 0/2 | Planned | - |
+| 6. Mise conf.d Migration | v1.1 | 2/2 | Complete | 2026-03-11 |
 | 7. Cleanup and Documentation | v1.1 | 0/? | Not started | - |
 
 ---
 
 *Roadmap created: 2026-01-23*
-*Last updated: 2026-03-11 - Phase 6 planned (2 plans, 2 waves)*
+*Last updated: 2026-03-11 - Phase 6 complete (2/2 plans)*
