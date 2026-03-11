@@ -14,7 +14,7 @@
 
 ### Module Migration
 
-- [ ] **MIGR-01**: All mergeable_files declarations removed from every module's config.yml
+- [x] **MIGR-01**: All mergeable_files declarations removed from every module's config.yml
 - [x] **MIGR-02**: Each module stows its own numbered conf.d fragment files (no shared merge targets)
 - [x] **MIGR-03**: Each conf.d fragment file has attribution comment header identifying owning module
 - [x] **MIGR-04**: EDITOR/VISUAL environment variables owned exclusively by editor module (no duplication)
@@ -26,8 +26,8 @@
 
 ### Cleanup
 
-- [ ] **CLNP-01**: Merge logic (merge_files.yml, merged_file.j2, conflict_resolution.yml) removed from ansible-role-dotmodules
-- [ ] **CLNP-02**: Stale symlinks and files in `~/.dotmodules/merged/` cleaned up during deployment
+- [x] **CLNP-01**: Merge logic (merge_files.yml, merged_file.j2, conflict_resolution.yml) removed from ansible-role-dotmodules
+- [x] **CLNP-02**: Stale symlinks and files in `~/.dotmodules/merged/` cleaned up during deployment
 - [x] **CLNP-03**: Ordering convention documented with numeric prefix ranges and module assignment guide
 
 ## Future Requirements
@@ -56,14 +56,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SHRC-02 | Phase 5 | Complete |
 | SHRC-03 | Phase 4 | Complete |
 | SHRC-04 | Phase 4 | Deferred (p10k conflict) |
-| MIGR-01 | Phase 7 | Pending |
+| MIGR-01 | Phase 7 | Complete |
 | MIGR-02 | Phase 4 | Complete |
 | MIGR-03 | Phase 4 | Complete |
 | MIGR-04 | Phase 4 | Complete |
 | TOOL-01 | Phase 6 | Complete |
 | TOOL-02 | Phase 6 | Complete |
-| CLNP-01 | Phase 7 | Pending |
-| CLNP-02 | Phase 7 | Pending |
+| CLNP-01 | Phase 7 | Complete |
+| CLNP-02 | Phase 7 | Complete |
 | CLNP-03 | Phase 7 | Complete |
 
 **Coverage:**
