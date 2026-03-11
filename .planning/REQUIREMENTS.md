@@ -28,7 +28,7 @@
 
 - [ ] **CLNP-01**: Merge logic (merge_files.yml, merged_file.j2, conflict_resolution.yml) removed from ansible-role-dotmodules
 - [ ] **CLNP-02**: Stale symlinks and files in `~/.dotmodules/merged/` cleaned up during deployment
-- [ ] **CLNP-03**: Ordering convention documented with numeric prefix ranges and module assignment guide
+- [x] **CLNP-03**: Ordering convention documented with numeric prefix ranges and module assignment guide
 
 ## Future Requirements
 
@@ -64,7 +64,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TOOL-02 | Phase 6 | Complete |
 | CLNP-01 | Phase 7 | Pending |
 | CLNP-02 | Phase 7 | Pending |
-| CLNP-03 | Phase 7 | Pending |
+| CLNP-03 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 13 total
