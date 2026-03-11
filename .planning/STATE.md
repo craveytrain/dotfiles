@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Runtime Includes
-status: completed
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-10T22:54:12.566Z"
-last_activity: 2026-03-10 -- Completed 04-02 zsh conf.d deployment and verification
+status: in-progress
+stopped_at: Completed 05-01 fish conf.d fragment creation
+last_updated: "2026-03-11T01:12:23Z"
+last_activity: 2026-03-10 -- Completed 05-01 fish conf.d fragment creation
 progress:
   total_phases: 7
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
-  percent: 100
+  total_plans: 10
+  completed_plans: 9
+  percent: 90
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-10)
 
 **Core value:** Muscle memory consistency. Config edits go live on git pull without redeploying.
-**Current focus:** Phase 4 complete, ready for Phase 5
+**Current focus:** Phase 5 in progress, fish conf.d fragment creation complete
 
 ## Current Position
 
-Phase: 4 of 7 (Zsh conf.d Migration) - COMPLETE
-Plan: 2 of 2 in current phase (all complete)
-Status: Phase 4 complete
-Last activity: 2026-03-10 -- Completed 04-02 zsh conf.d deployment and verification
+Phase: 5 of 7 (Fish conf.d Migration) - IN PROGRESS
+Plan: 1 of 2 in current phase (1 complete)
+Status: Plan 01 complete, Plan 02 pending
+Last activity: 2026-03-10 -- Completed 05-01 fish conf.d fragment creation
 
-Progress: [██████████] 100% (8/8 plans complete)
+Progress: [█████████░] 90% (9/10 plans complete)
 
 ## Performance Metrics
 
@@ -48,10 +48,11 @@ Progress: [██████████] 100% (8/8 plans complete)
 | 4. Zsh conf.d P01 | 1 | 2min | 2min |
 
 | 4. Zsh conf.d P02 | 1 | 112min | 112min |
+| 5. Fish conf.d P01 | 1 | 2min | 2min |
 
 **Recent Trend:**
-- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint)
-- Trend: Phase 4 complete
+- Last 5 plans: 2min (04-01), 112min (04-02 incl. checkpoint), 2min (05-01)
+- Trend: Phase 5 in progress
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - [Phase 04]: EDITOR/VISUAL exports exclusively in editor module fragment (MIGR-04)
 - [Phase 04]: DOTFILES_DEBUG removed: p10k instant prompt intercepts all output during shell init
 - [Phase 04]: SHRC-04 deferred: debug tracing incompatible with p10k, may revisit as standalone script
+- [Phase 05]: Env vars and brew shellenv unguarded in conf.d (available to non-interactive fish scripts)
+- [Phase 05]: Mise activation switched from --shims to full activate for interactive shells
+- [Phase 05]: All fish function files get attribution header comments
 
 ### Pending Todos
 
@@ -80,9 +84,9 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-10T22:54:12.555Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-fish-conf-d-migration/05-CONTEXT.md
+Last session: 2026-03-11T01:12:23Z
+Stopped at: Completed 05-01 fish conf.d fragment creation
+Resume file: .planning/phases/05-fish-conf-d-migration/05-01-SUMMARY.md
 
 ---
 
