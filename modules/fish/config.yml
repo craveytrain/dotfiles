@@ -12,7 +12,4 @@ homebrew_packages:
 stow_dirs:
   - fish
 
-mergeable_files:
-  - '.config/fish/config.fish'
-
 register_shell: fish

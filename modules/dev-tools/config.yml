@@ -11,8 +11,3 @@ homebrew_packages:
 
 stow_dirs:
   - dev-tools
-
-mergeable_files:
-  - '.zshrc'
-  - '.config/fish/config.fish'
-  - '.config/mise/config.toml'
