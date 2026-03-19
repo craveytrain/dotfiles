@@ -23,6 +23,7 @@
         - node
         - editor
         - ghostty
+        - tmux
         - claude
   roles:
     - role: ansible-role-dotmodules

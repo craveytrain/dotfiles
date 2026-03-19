@@ -1,0 +1,8 @@
+---
+# tmux terminal multiplexer configuration module
+
+homebrew_packages:
+  - tmux
+
+stow_dirs:
+  - tmux
