@@ -26,7 +26,7 @@ if status --is-interactive
     # Use -U with guards to work with tide's universal variable model
     # Only writes when the value doesn't match, so no unnecessary writes per shell launch
     test "$tide_left_prompt_items" != "pwd git newline status character"; and set -U tide_left_prompt_items pwd git newline status character
-    test "$tide_right_prompt_items" != "cmd_duration jobs direnv node python rustc go terraform"; and set -U tide_right_prompt_items cmd_duration jobs direnv node python rustc go terraform
+    test "$tide_right_prompt_items" != "context cmd_duration jobs direnv node python rustc go terraform"; and set -U tide_right_prompt_items context cmd_duration jobs direnv node python rustc go terraform
     test "$tide_git_truncation_length" != 32; and set -U tide_git_truncation_length 32
 
     # --- Colors (match p10k lean-8colors) ---
@@ -49,6 +49,10 @@ if status --is-interactive
     test "$tide_pwd_color_anchors" != 00AFFF; and set -U tide_pwd_color_anchors 00AFFF
     test "$tide_pwd_color_dirs" != 0087AF; and set -U tide_pwd_color_dirs 0087AF
     test "$tide_pwd_color_truncated_dirs" != 8787AF; and set -U tide_pwd_color_truncated_dirs 8787AF
+    # Context (user@host for SSH/MOSH sessions)
+    test "$tide_context_color_default" != yellow; and set -U tide_context_color_default yellow
+    test "$tide_context_color_root" != red; and set -U tide_context_color_root red
+    test "$tide_context_color_ssh" != yellow; and set -U tide_context_color_ssh yellow
     # Cmd Duration
     test "$tide_cmd_duration_color" != yellow; and set -U tide_cmd_duration_color yellow
     # Jobs
