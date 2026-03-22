@@ -33,6 +33,17 @@
           }
         ]
       }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/attention-notify.js",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
