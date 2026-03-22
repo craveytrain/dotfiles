@@ -1,9 +1,9 @@
 # Ghostty Configuration
 
 # Font Configuration
-font-family = MonoLisa Nerd Font
+font-family = MonoLisa Variable
 font-size = 14
-font-style = Regular
+font-style = Medium
 
 theme = "Shades of Purple"
 
