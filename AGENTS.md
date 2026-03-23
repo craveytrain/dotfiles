@@ -1,46 +1,40 @@
-# .dotfiles Development Guidelines
+# Dotfiles
 
-Auto-generated from all feature plans. Last updated: 2025-12-15
+## What This Is
 
-## Active Technologies
-- Ansible 2.9+, YAML configuration (002-fix-stow-conflicts)
-- File system (home directory, backup locations) (002-fix-stow-conflicts)
-- YAML (Ansible 2.9+), Bash (macOS default) + Ansible, ansible-role-dotmodules, GNU Stow, Homebrew (001-register-homebrew-shells)
-- System file `/etc/shells` (plain text, one path per line) (001-register-homebrew-shells)
-- YAML (Ansible 2.9+), TOML (mise config format), Bash (shell integration) + Homebrew (mise package), ansible-role-dotmodules, GNU Stow (001-mise-node-module)
-- File system (home directory dotfiles, ~/.dotmodules/merged/ for mergeable files) (003-local-config-overrides)
-- YAML (Ansible 2.9+), Shell scripts (bash/zsh/fish), Config formats (Git, Vim) + Ansible, GNU Stow, ansible-role-dotmodules (003-local-config-overrides)
-- Filesystem-based configuration files in module directory structure (001-mise-node-module)
-- YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules) (001-optional-shell-registration)
-- File-based configuration in YAML (module config.yml files), system files (/etc/shells) (001-optional-shell-registration)
-- File-based configuration in YAML (module config.yml files), system files (/etc/shells), Ansible extra variables (runtime) (002-runtime-skip-shell-registration)
-- Vim script (vim 8.0+), YAML (Ansible 2.9+), Bash (for vim-plug installation) + vim (already installed), vim-plug (plugin manager - to be added), vim-commentary (tpope/vim-commentary plugin), ansible-role-dotmodules, GNU Stow, Homebrew (001-vim-plug-commentary)
-- File-based configuration (`.vimrc`, module `config.yml`) (001-vim-plug-commentary)
-- YAML (Ansible 2.9+), Ghostty config format (plain text key=value) + ansible-role-dotmodules, GNU Stow (already installed via shell module) (001-ghostty-module)
-- File-based configuration (`~/.config/ghostty/config`) (001-ghostty-module)
+A modular Ansible-based system for managing tool configurations consistently across multiple macOS machines. Each module owns its own conf.d fragments that are stowed as symlinks, so config edits go live on `git pull` without redeploying. Muscle memory works everywhere: aliases, keybindings, shell functions, and tool settings stay synchronized.
 
-- Shell scripts (sh, bash) and Ruby script - no version constraints + Git (already installed via git module), GNU Stow (for deployment), Ansible (for automation) (001-move-git-scripts)
+## Core Value
 
-## Project Structure
+Muscle memory consistency. When you use a command, alias, or keybinding on one machine, it works identically on all your machines.
 
-```text
-src/
-tests/
-```
+## Architecture
 
-## Commands
+- **Modular design**: each tool/domain is a self-contained module in `modules/`
+- **Deployment**: Ansible playbook uses ansible-role-dotmodules role to process modules
+- **File management**: GNU Stow creates symlinks from module files to home directory
+- **Configuration**: each module stows its own conf.d fragments; shells source them at runtime
+- **Platform**: macOS Apple Silicon only (Homebrew at /opt/homebrew)
 
-# Add commands for Shell scripts (sh, bash) and Ruby script - no version constraints
+## Constraints
 
-## Code Style
+- **Platform**: macOS Apple Silicon only
+- **Deployment**: Ansible 2.9+ required
+- **Privileges**: must support restricted execution on BeyondTrust-managed machines via `--skip-tags register_shell`
+- **Architecture**: must follow ansible-role-dotmodules patterns; existing modules define the structure
+- **Dependencies**: Homebrew, ansible-role-dotmodules (external role), GNU Stow
+- **Declarative over imperative**: prefer YAML configs over shell scripts where possible
 
-Shell scripts (sh, bash) and Ruby script - no version constraints: Follow standard conventions
+## Key Conventions
 
-## Recent Changes
-- 001-ghostty-module: Added YAML (Ansible 2.9+), Ghostty config format (plain text key=value) + ansible-role-dotmodules, GNU Stow (already installed via shell module)
-- 001-vim-plug-commentary: Added Vim script (vim 8.0+), YAML (Ansible 2.9+), Bash (for vim-plug installation) + vim (already installed), vim-plug (plugin manager - to be added), vim-commentary (tpope/vim-commentary plugin), ansible-role-dotmodules, GNU Stow, Homebrew
-- 002-runtime-skip-shell-registration: Added YAML (Ansible 2.9+), Bash (macOS default) + Ansible Core Modules (set_fact, lineinfile, include_tasks), community.general collection (Homebrew modules)
+- Modules are self-contained and independent; no hard cross-module dependencies
+- All operations must be idempotent (safe to run repeatedly)
+- conf.d fragments use tens-based prefix grouping (10=core, 50=features, 80=late-loading integrations)
+- Local overrides via `.local` files (e.g., `.zshrc.local`, `.vimrc.local`)
+- No merged/mergeable files; everything uses runtime conf.d sourcing
 
+## Out of Scope
 
-<!-- MANUAL ADDITIONS START -->
-<!-- MANUAL ADDITIONS END -->
+- Full machine provisioning (this is config management, not setup automation)
+- Mac App Store applications
+- Windows/Linux support
