@@ -267,7 +267,9 @@ process.stdin.on('end', () => {
 	clearTimeout(stdinTimeout)
 	try {
 		const data = JSON.parse(input)
-		const model = data.model?.display_name || 'Claude'
+		const rawModel = data.model?.display_name || 'Claude'
+		// Shorten "(1M context)" → "(1M)"
+		const model = rawModel.replace(/\s*\((\d+[A-Za-z]+)\s+context\)$/, ' ($1)')
 		const dir = data.workspace?.current_dir || process.cwd()
 		const session = data.session_id || ''
 		const remaining = data.context_window?.remaining_percentage
@@ -351,7 +353,11 @@ process.stdin.on('end', () => {
 		const gitPart = formatGitStatus(gitStatus)
 
 		// Output - Order: model │ dir + git │ task │ context usage
-		const dirname = path.basename(dir)
+		let dirname = path.basename(dir)
+		// Truncate long directory names: first 12 + … + last 12
+		if (dirname.length > 32) {
+			dirname = dirname.slice(0, 12) + '…' + dirname.slice(-12)
+		}
 		const parts = []
 
 		// Always show model first
