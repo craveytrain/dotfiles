@@ -29,14 +29,6 @@ process.stdin.on('end', () => {
 			? 'Claude Code - Permission Needed'
 			: 'Claude Code - Ready for Input'
 
-		// macOS notification with sound (works even when terminal is in background)
-		try {
-			execSync(
-				`osascript -e 'display notification ${escapeAppleScript(message)} with title ${escapeAppleScript(notifTitle)} sound name "Ping"'`,
-				{ stdio: 'ignore', timeout: 5000 }
-			)
-		} catch {}
-
 		// Terminal bell - find the TTY by walking up the process tree
 		// In Ghostty with bell-features=attention,title this triggers:
 		//   1. Persistent bell emoji on tab title (stays until tab is focused)
