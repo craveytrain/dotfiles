@@ -1,3 +1,5 @@
 .DS_Store
+.env
+.envrc
 npm-debug.log*
 node_modules

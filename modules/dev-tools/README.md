@@ -7,6 +7,7 @@ This module provides essential command-line development utilities for modern sof
 The module delivers:
 
 - **Runtime management** with mise (asdf alternative)
+- **Environment management** with direnv (auto-loads `.env` files per directory)
 - **Code quality tools** for shell scripts and GitHub Actions
 - **Networking utilities** for debugging and analysis
 - **Data processing** tools for JSON and text
@@ -15,6 +16,7 @@ The module delivers:
 ## Installation Components
 
 **Homebrew packages installed:**
+- direnv - Per-directory environment variable loader
 - mise - Polyglot runtime manager (Node, Ruby, Python, etc.)
 - jq - Command-line JSON processor
 - shellcheck - Shell script static analysis
@@ -24,11 +26,51 @@ The module delivers:
 - nmap - Network exploration and security auditing
 
 **Configuration files:**
-- `.zshrc` - Zsh mise integration (mergeable)
-- `.config/fish/config.fish` - Fish mise integration (mergeable)
+- `.config/direnv/direnv.toml` - direnv global config (`load_dotenv = true`)
+- `.zsh/conf.d/80-dev-tools-direnv.sh` - Zsh direnv hook
+- `.zsh/conf.d/80-dev-tools-mise.sh` - Zsh mise integration
+- `.config/fish/conf.d/80-dev-tools-direnv.fish` - Fish direnv hook
+- `.config/fish/conf.d/80-dev-tools-mise.fish` - Fish mise integration
 - Additional tool-specific configs in `.config/`
 
 ## Key Tools
+
+### direnv
+Automatically loads and unloads environment variables when you `cd` into a directory. Configured with `load_dotenv = true`, so a plain `.env` file is all you need.
+
+**Basic usage:**
+```bash
+# Create a .env file in your project
+echo 'DATABASE_URL=postgres://localhost/myapp' > .env
+
+# direnv detects it and prompts you to allow
+direnv allow                      # Trust this directory
+
+# Variables are now in your shell. Leave the directory and they're gone.
+```
+
+**`.env` vs `.envrc`:**
+
+For most projects, `.env` is enough. An `.envrc` is a bash script for when you need more:
+
+```bash
+# .envrc examples
+export API_URL="https://${ENV}.example.com"
+PATH_add ./bin
+layout python                     # Auto-create virtualenv
+source_env ../.env                # Inherit parent env
+```
+
+**Security:**
+
+direnv won't load anything until you run `direnv allow`. If the file changes, you'll be prompted again. Both `.env` and `.envrc` are globally gitignored to prevent accidentally committing secrets.
+
+**Useful commands:**
+```bash
+direnv allow                      # Trust current directory
+direnv deny                       # Revoke trust
+direnv status                     # Show current state
+```
 
 ### mise
 Modern runtime version manager supporting multiple languages:

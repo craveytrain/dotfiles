@@ -23,7 +23,7 @@ dotfiles/
 │       └── CHANGELOG.md       # Change history
 ├── modules/           # Dotfile modules (each with config.yml and files/)
 │   ├── 1password/     # 1Password CLI for password management
-│   ├── dev-tools/     # Development utilities (mise, jq, shellcheck, etc.)
+│   ├── dev-tools/     # Development utilities (direnv, mise, jq, shellcheck, etc.)
 │   ├── editor/        # Editor configurations (vim)
 │   ├── fish/          # Fish shell configuration and functions
 │   ├── fonts/         # System fonts for development
@@ -94,7 +94,7 @@ module-name/
 | zsh           | Zsh shell configuration        | zsh, powerlevel10k                          |
 | git           | Git configuration              | git, gh, diff-so-fancy, difftastic          |
 | editor        | Editor configurations          | vim                                         |
-| dev-tools     | Development tools              | mise, jq, shellcheck, actionlint, bat       |
+| dev-tools     | Development tools              | direnv, mise, jq, shellcheck, actionlint, bat |
 | node          | Node.js development            | node, pnpm (via mise)                        |
 | 1password     | Password management CLI        | 1password-cli (op)                          |
 | fonts         | System fonts                   | Fira Code, Hack Nerd Font, Inconsolata, Input |

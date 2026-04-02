@@ -3,6 +3,7 @@
 homebrew_packages:
   - actionlint
   - bat
+  - direnv
   - jq
   - mise
   - ngrep
