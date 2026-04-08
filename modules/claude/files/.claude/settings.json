@@ -12,14 +12,14 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task",
         "hooks": [
           {
             "type": "command",
             "command": "node ~/.claude/hooks/gsd-context-monitor.js",
             "timeout": 10
           }
-        ],
-        "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task"
+        ]
       }
     ],
     "PreToolUse": [
@@ -51,6 +51,15 @@
     "command": "node ~/.claude/statusline.js"
   },
   "enabledPlugins": {
-    "warp@claude-code-warp": true
-  }
+    "discord@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "skipDangerousModePermissionPrompt": true
 }
