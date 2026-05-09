@@ -211,9 +211,9 @@ All modules support machine-specific configuration overrides via local config fi
 
 ### How It Works
 
-Base configuration files (`.gitconfig`, `.zshrc`, `.vimrc`, etc.) automatically load local config files if they exist:
-- **Git**: `~/.gitconfig.local` (loaded via `[include]` directive)
-- **Zsh**: `~/.zshrc.local` (loaded via conditional `source`)
+Base configuration files (`.config/git/config`, `.zshrc`, `.vimrc`, etc.) automatically load local config files if they exist:
+- **Git**: `~/.config/git/local` (loaded via `[include]` directive)
+- **Zsh**: `~/.config/zsh/.zshrc.local` (loaded via conditional `source`)
 - **Fish**: `~/.config/fish/config.local.fish` (loaded via conditional `source`)
 - **Vim**: `~/.vimrc.local` (loaded via conditional `source`)
 
@@ -226,8 +226,8 @@ Base configuration files (`.gitconfig`, `.zshrc`, `.vimrc`, etc.) automatically 
 
 **Example - Git local config:**
 ```bash
-# Create ~/.gitconfig.local
-vim ~/.gitconfig.local
+# Create ~/.config/git/local
+vim ~/.config/git/local
 
 # Add machine-specific settings
 [user]
@@ -237,8 +237,8 @@ vim ~/.gitconfig.local
 
 **Example - Shell local config (for environment variables):**
 ```bash
-# Create ~/.zshrc.local (or ~/.config/fish/config.local.fish for fish)
-vim ~/.zshrc.local
+# Create ~/.config/zsh/.zshrc.local (or ~/.config/fish/config.local.fish for fish)
+vim ~/.config/zsh/.zshrc.local
 
 # Add environment variable overrides for tools
 export NPM_CONFIG_REGISTRY=https://registry.company.com

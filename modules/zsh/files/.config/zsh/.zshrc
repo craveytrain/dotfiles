@@ -9,7 +9,7 @@ for conf in "$HOME/.zsh/conf.d/"*.sh(N); do
 done
 
 # Local overrides (machine-specific, not a module)
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[ -f "${ZDOTDIR:-$HOME}/.zshrc.local" ] && source "${ZDOTDIR:-$HOME}/.zshrc.local"
 
 # Completion
 autoload -Uz compinit && compinit
@@ -19,7 +19,7 @@ source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Prompt
 source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+[[ ! -f "${ZDOTDIR:-$HOME}/.p10k.zsh" ]] || source "${ZDOTDIR:-$HOME}/.p10k.zsh"
 
 # Syntax highlighting (MUST be last)
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -175,7 +175,7 @@ Some tools in this module (npm, mise, bat) don't support local config files but 
 
 **How it works**:
 1. Create your shell's local config file manually when needed:
-   - For zsh: `~/.zshrc.local`
+   - For zsh: `~/.config/zsh/.zshrc.local`
    - For fish: `~/.config/fish/config.local.fish`
 2. Add environment variables to override tool configurations (see examples below)
 3. Environment variables take precedence over config file settings
@@ -187,7 +187,7 @@ Some tools in this module (npm, mise, bat) don't support local config files but 
 
 Override npm settings via environment variables in your shell local config:
 
-**Zsh** (`~/.zshrc.local` - create this file manually):
+**Zsh** (`~/.config/zsh/.zshrc.local` - create this file manually):
 ```bash
 # Override npm registry
 export NPM_CONFIG_REGISTRY=https://registry.example.com
@@ -232,7 +232,7 @@ set -gx NPM_CONFIG_INIT_AUTHOR_EMAIL "your.email@example.com"
 
 Override mise settings via environment variables:
 
-**Zsh** (`~/.zshrc.local`):
+**Zsh** (`~/.config/zsh/.zshrc.local`):
 ```bash
 # Override mise config file location
 export MISE_CONFIG_FILE=~/.config/mise/config-custom.toml
@@ -265,7 +265,7 @@ set -gx MISE_LOG_LEVEL debug
 
 Override bat settings via environment variables:
 
-**Zsh** (`~/.zshrc.local`):
+**Zsh** (`~/.config/zsh/.zshrc.local`):
 ```bash
 # Override bat theme (run `bat --list-themes` to see available themes)
 export BAT_THEME=Dracula
@@ -296,7 +296,7 @@ set -gx BAT_PAGER "less -R"
 
 **Precedence**: Command-line options > environment variables > config file
 
-**Note**: Create your shell's local config file manually (`~/.zshrc.local` or `~/.config/fish/config.local.fish`) and add the environment variables you need. See the zsh or fish module READMEs for instructions on creating local config files.
+**Note**: Create your shell's local config file manually (`~/.config/zsh/.zshrc.local` or `~/.config/fish/config.local.fish`) and add the environment variables you need. See the zsh or fish module READMEs for instructions on creating local config files.
 
 ## Troubleshooting
 

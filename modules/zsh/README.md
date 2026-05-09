@@ -2,6 +2,12 @@
 
 This module provides a modern Zsh shell environment with Powerlevel10k prompt theme and custom configurations.
 
+> **Migration note (May 2026):** Zsh runcoms moved to `$ZDOTDIR=~/.config/zsh/`. Only `~/.zshenv` remains in `$HOME` (where it sets `ZDOTDIR`). Re-run the Ansible playbook to refresh symlinks. If you had a `~/.zshrc.local` or `~/.zshenv.local.zsh`, move them to `~/.config/zsh/`:
+> ```bash
+> mv ~/.zshrc.local ~/.config/zsh/.zshrc.local 2>/dev/null
+> mv ~/.zshenv.local.zsh ~/.config/zsh/.zshenv.local.zsh 2>/dev/null
+> ```
+
 ## Core Features
 
 The module delivers:
@@ -92,17 +98,17 @@ The zsh module supports local configuration overrides via `.zshrc.local`. This f
 
 ### How It Works
 
-**File location**: `~/.zshrc.local` (in your home directory - create this file manually)
+**File location**: `~/.config/zsh/.zshrc.local` (in your home directory - create this file manually)
 
 **Format**: Zsh shell script (same syntax as `.zshrc`)
 
-**Loading**: The base `.zshrc` automatically sources `~/.zshrc.local` at the end if it exists via conditional source. Settings in the local file are loaded last, overriding base configuration.
+**Loading**: The base `.zshrc` automatically sources `~/.config/zsh/.zshrc.local` at the end if it exists via conditional source. Settings in the local file are loaded last, overriding base configuration.
 
 **Creation**: Create this file manually in your home directory when you need machine-specific settings. If the file doesn't exist, Zsh loads normally without errors.
 
 ### When to Use Local Configuration
 
-Create `~/.zshrc.local` when you need:
+Create `~/.config/zsh/.zshrc.local` when you need:
 - Machine-specific PATH additions (work directories, custom tools)
 - Private environment variables (API keys, credentials, tokens)
 - Custom aliases for specific workflows or projects
@@ -113,7 +119,7 @@ Create `~/.zshrc.local` when you need:
 
 This is useful for adding work directories or project-specific tools to your PATH.
 
-Create `~/.zshrc.local`:
+Create `~/.config/zsh/.zshrc.local`:
 
 ```bash
 # Add work tools to PATH
@@ -183,7 +189,7 @@ Create the file manually in your home directory:
 
 ```bash
 # Create the local config file
-vim ~/.zshrc.local
+vim ~/.config/zsh/.zshrc.local
 
 # Add your machine-specific settings
 export PATH="$HOME/work/bin:$PATH"
@@ -198,7 +204,7 @@ After creating or modifying `.zshrc.local`:
 
 ```bash
 # Reload zsh configuration
-source ~/.zshrc
+source "${ZDOTDIR:-$HOME}/.zshrc"
 
 # Or restart the shell
 exec zsh
@@ -210,7 +216,7 @@ Check that your local config is being loaded:
 
 ```bash
 # Check if file exists and is being sourced
-test -f ~/.zshrc.local && echo "Local config exists" || echo "No local config"
+test -f ~/.config/zsh/.zshrc.local && echo "Local config exists" || echo "No local config"
 
 # Verify environment variables
 echo $PATH  # Should include your custom paths
@@ -231,7 +237,7 @@ echo $POWERLEVEL9K_MODE
 
 **Reload configuration:**
 ```bash
-source ~/.zshrc
+source "${ZDOTDIR:-$HOME}/.zshrc"
 ```
 
 Or simply:

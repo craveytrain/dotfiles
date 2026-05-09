@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+# Relocate zsh runcoms to XDG. Must be set here so subsequent files
+# (.zprofile, .zshrc, .zlogin) are loaded from $ZDOTDIR.
+export ZDOTDIR="$HOME/.config/zsh"
+
 export DOT="dotfiles"
 export DOTFILES="$HOME/$DOT"
 
@@ -10,4 +14,4 @@ if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; t
 fi
 
 # Local configuration (machine-specific overrides)
-[ -f ~/.zshenv.local.zsh ] && source ~/.zshenv.local.zsh
+[ -f "${ZDOTDIR:-$HOME}/.zshenv.local.zsh" ] && source "${ZDOTDIR:-$HOME}/.zshenv.local.zsh"
