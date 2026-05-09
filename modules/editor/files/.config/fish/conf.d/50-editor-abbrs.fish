@@ -11,6 +11,7 @@ else
 end
 
 if status --is-interactive
+    abbr -a e --position command '$VISUAL'
     abbr -a ia 'open -a "iA Writer"'
     abbr -a marked 'open -a "Marked 2"'
 end
