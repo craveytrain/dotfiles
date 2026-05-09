@@ -1,0 +1,97 @@
+# Starship prompt for Linux servers.
+# Layout and colors mirror the tide config in
+# modules/fish/files/.config/fish/conf.d/10-fish-core.fish
+# Adapted for server use: no language modules; username@hostname promoted.
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$direnv\
+$jobs\
+$cmd_duration\
+$line_break\
+$character"""
+
+add_newline = false
+
+[username]
+show_always = true
+style_user = "bold yellow"
+style_root = "bold red"
+format = "[$user]($style)"
+
+[hostname]
+ssh_only = false
+style = "bold yellow"
+format = "[@$hostname ]($style)"
+
+[directory]
+style = "fg:#00AFFF"
+truncation_length = 5
+truncation_symbol = "…/"
+read_only = " "
+
+[git_branch]
+symbol = " "
+style = "green"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "yellow"
+conflicted = "[=](red)"
+ahead = "[⇡${count}]($style)"
+behind = "[⇣${count}]($style)"
+diverged = "[⇕⇡${ahead_count}⇣${behind_count}]($style)"
+untracked = "[?](green)"
+stashed = "[\\$](green)"
+modified = "[!]($style)"
+staged = "[+]($style)"
+renamed = "[»]($style)"
+deleted = "[✘](red)"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+
+[fill]
+symbol = " "
+
+[cmd_duration]
+min_time = 2000
+style = "yellow"
+format = "[ $duration]($style)"
+
+[jobs]
+symbol = ""
+style = "red"
+number_threshold = 1
+format = "[$symbol$number]($style) "
+
+[direnv]
+disabled = false
+style = "yellow"
+format = "[direnv $loaded]($style) "
+allowed_msg = "✓"
+not_allowed_msg = "?"
+denied_msg = "[✗](red)"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+
+# Language modules disabled — this is a server, not a dev box.
+[nodejs]
+disabled = true
+[python]
+disabled = true
+[rust]
+disabled = true
+[golang]
+disabled = true
+[terraform]
+disabled = true
+[ruby]
+disabled = true
+[package]
+disabled = true

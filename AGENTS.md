@@ -14,11 +14,11 @@ Muscle memory consistency. When you use a command, alias, or keybinding on one m
 - **Deployment**: Ansible playbook uses ansible-role-dotmodules role to process modules
 - **File management**: GNU Stow creates symlinks from module files to home directory
 - **Configuration**: each module stows its own conf.d fragments; shells source them at runtime
-- **Platform**: macOS Apple Silicon only (Homebrew at /opt/homebrew)
+- **Platform**: macOS Apple Silicon (Ansible-managed); a minimal bash subset for Linux servers lives in `linux/` (standalone, no Ansible)
 
 ## Constraints
 
-- **Platform**: macOS Apple Silicon only
+- **Platform**: macOS Apple Silicon (primary). A separate minimal bash setup for Debian/Pi OS Linux servers lives in `linux/` — see `linux/README.md`.
 - **Deployment**: Ansible 2.9+ required
 - **Privileges**: must support restricted execution on BeyondTrust-managed machines via `--skip-tags register_shell`
 - **Architecture**: must follow ansible-role-dotmodules patterns; existing modules define the structure
@@ -37,4 +37,4 @@ Muscle memory consistency. When you use a command, alias, or keybinding on one m
 
 - Full machine provisioning (this is config management, not setup automation)
 - Mac App Store applications
-- Windows/Linux support
+- Windows support; full Linux desktop parity (only the minimal `linux/` server subset is supported)
