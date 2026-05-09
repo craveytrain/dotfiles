@@ -1,0 +1,12 @@
+# Mac-only git settings. Included from ~/.gitconfig via [include].
+# On non-Mac machines this file isn't symlinked; git silently ignores
+# the missing include.
+
+[github]
+  user = craveytrain
+
+[credential]
+  helper = osxkeychain
+
+[safe]
+  directory = /opt/homebrew

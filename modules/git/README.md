@@ -2,6 +2,11 @@
 
 This module establishes a comprehensive Git development environment with enhanced diff tools and GitHub CLI integration.
 
+> **Migration note (May 2026):** Git config moved to the XDG layout (`~/.config/git/config`) from the legacy `~/.gitconfig` location. Re-run the Ansible playbook to refresh symlinks. If you had a `~/.gitconfig.local` with machine-specific identity, move it manually:
+> ```bash
+> mv ~/.gitconfig.local ~/.config/git/local
+> ```
+
 ## Core Features
 
 The module provides:
@@ -19,9 +24,11 @@ The module provides:
 - diff-so-fancy (readable diffs with better formatting)
 - difftastic (structural diff tool that understands syntax)
 
-**Configuration files:**
-- `.gitconfig` - Git configuration with user settings, aliases, and diff tools
-- Additional Git-related dotfiles in `.config/git/`
+**Configuration files (XDG layout):**
+- `~/.config/git/config` — main git configuration
+- `~/.config/git/ignore` — global gitignore (auto-detected by git)
+- `~/.config/git/macos` — Mac-only settings (auto-included; ignored on other OSes)
+- `~/.config/git/local` — machine-specific overrides (auto-included; create manually)
 
 ## GitHub CLI (gh)
 
@@ -60,7 +67,7 @@ Structural diff tool that:
 
 ## Git Configuration
 
-The `.gitconfig` file includes sensible defaults for:
+The `~/.config/git/config` file includes sensible defaults for:
 
 - **User settings** - name, email (configure these for your identity)
 - **Color output** - enhanced readability for status, diff, branch
@@ -78,21 +85,21 @@ git config --global user.email "your.email@example.com"
 
 ## Local Configuration
 
-The git module supports local configuration overrides via `.gitconfig.local`. This file is **not tracked in version control** and allows machine-specific settings.
+The git module supports local configuration overrides via `~/.config/git/local`. This file is **not tracked in version control** and allows machine-specific settings.
 
 ### How It Works
 
-**File location**: `~/.gitconfig.local` (in your home directory - create this file manually)
+**File location**: `~/.config/git/local` (in your home directory - create this file manually)
 
-**Format**: Standard Git config format (same as `.gitconfig`)
+**Format**: Standard Git config format (same as `~/.config/git/config`)
 
-**Loading**: The base `.gitconfig` automatically includes `~/.gitconfig.local` if it exists via the `[include]` directive. Settings in the local file override base configuration.
+**Loading**: The base `~/.config/git/config` automatically includes `~/.config/git/local` if it exists via the `[include]` directive. Settings in the local file override base configuration.
 
 **Creation**: Create this file manually in your home directory when you need machine-specific settings. If the file doesn't exist, Git loads normally without errors.
 
 ### When to Use Local Configuration
 
-Create `~/.gitconfig.local` when you need:
+Create `~/.config/git/local` when you need:
 - Different user identity on work vs. personal machines
 - Machine-specific signing keys or GPG settings
 - Custom aliases for specific workflows
@@ -102,7 +109,7 @@ Create `~/.gitconfig.local` when you need:
 
 This is the most common use case - maintaining different identities on different machines.
 
-Create `~/.gitconfig.local`:
+Create `~/.config/git/local`:
 
 ```ini
 [user]
@@ -144,7 +151,7 @@ Create the file manually in your home directory:
 
 ```bash
 # Create the local config file
-vim ~/.gitconfig.local
+vim ~/.config/git/local
 
 # Add your machine-specific settings
 [user]
@@ -160,7 +167,7 @@ Check that your local config is being loaded:
 
 ```bash
 # Show all config with sources
-git config --list --show-origin | grep gitconfig.local
+git config --list --show-origin | grep "config/git/local"
 
 # Check effective user identity
 git config user.name
@@ -169,7 +176,7 @@ git config user.email
 
 ## Git Aliases
 
-Check your `.gitconfig` for configured aliases. Common patterns include:
+Check your `~/.config/git/config` for configured aliases. Common patterns include:
 
 ```bash
 git st                  # Status
@@ -186,7 +193,7 @@ To use difftastic for a specific diff:
 git difftool
 ```
 
-Or set it as your default diff tool in `.gitconfig`.
+Or set it as your default diff tool in `~/.config/git/config`.
 
 ## Troubleshooting
 
@@ -207,7 +214,7 @@ git config --list
 Run `gh auth login` and follow the interactive prompts.
 
 **Diff tools not working:**
-Ensure your `.gitconfig` properly references the diff tool paths:
+Ensure your `~/.config/git/config` properly references the diff tool paths:
 ```bash
 which diff-so-fancy
 which difftastic

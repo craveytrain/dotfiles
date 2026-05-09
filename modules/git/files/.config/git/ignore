@@ -3,3 +3,4 @@
 .envrc
 npm-debug.log*
 node_modules
+**/.claude/settings.local.json
