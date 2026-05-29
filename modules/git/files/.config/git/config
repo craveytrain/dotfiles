@@ -126,3 +126,8 @@
     path = ~/.config/git/local
 [url "https://github.com/"]
 	insteadOf = git@github.com:
+[gpg]
+	format = ssh
+# Commit signing is opt-in per machine: set user.signingkey and
+# commit.gpgsign in ~/.config/git/local (the key path and whether to
+# sign are machine-specific).
