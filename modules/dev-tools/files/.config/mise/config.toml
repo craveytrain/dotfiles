@@ -1,0 +1,18 @@
+# mise configuration — runtimes and settings
+# Managed by dotfiles dev-tools module.
+#
+# Single config by design: this is the only module that contributes mise config,
+# so a directory-of-one conf.d fragment isn't worth it. mise reads this file
+# natively at runtime (stowed as a symlink), so edits go live on `git pull` with
+# no rebuild step. (Shells still use conf.d, where many modules each contribute.)
+
+[settings]
+asdf_compat = true
+# Read idiomatic version files (.nvmrc, .node-version) so project-local
+# version pins from non-mise tools are respected. Disabled by default in mise.
+idiomatic_version_file_enable_tools = ["node"]
+
+[tools]
+python = "3.13.2"
+node = "latest"   # Always use latest Node.js version
+pnpm = "latest"   # PNPM has no LTS concept, so latest tracks newest fixes

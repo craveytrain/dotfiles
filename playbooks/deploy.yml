@@ -20,7 +20,6 @@
         - fish
         - zsh
         - dev-tools
-        - node
         - editor
         - ghostty
         - tmux

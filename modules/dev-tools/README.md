@@ -11,7 +11,7 @@ The module delivers:
 - **Code quality tools** for shell scripts and GitHub Actions
 - **Networking utilities** for debugging and analysis
 - **Data processing** tools for JSON and text
-- **Shell integration** with mergeable configuration files
+- **Shell integration** via runtime `conf.d` sourcing
 
 ## Installation Components
 
@@ -26,6 +26,8 @@ The module delivers:
 - nmap - Network exploration and security auditing
 
 **Configuration files:**
+- `.config/mise/config.toml` - mise runtimes (python, node, pnpm) and settings
+- `.npmrc` - npm defaults
 - `.config/direnv/direnv.toml` - direnv global config (`load_dotenv = true`)
 - `.zsh/conf.d/80-dev-tools-direnv.sh` - Zsh direnv hook
 - `.zsh/conf.d/80-dev-tools-mise.sh` - Zsh mise integration
@@ -151,23 +153,34 @@ nmap -sn 192.168.1.0/24          # Network discovery
 
 ## mise Configuration
 
-After installation, activate mise in your shell (already configured via mergeable files):
+All mise config lives in a single `.config/mise/config.toml` owned by this module:
+runtimes (python, node, pnpm) and `[settings]`.
+
+**Why one file instead of `conf.d`:** the rest of this repo uses runtime `conf.d`
+sourcing because many modules each contribute fragments (shells especially). mise
+is the one place where a single module owns everything, so a directory-of-one
+fragment earns nothing. mise reads `config.toml` natively at runtime and it's
+stowed as a symlink, so edits still go live on `git pull` with no rebuild step.
 
 **Verify activation:**
 ```bash
 mise doctor
 ```
 
-**Configure default tools:**
+**See what's active:**
 ```bash
-mise use -g python@latest         # Latest Python
+mise config ls                    # config sources mise is reading
+mise current                      # resolved tool versions
 ```
 
-**Note**: Node.js and pnpm versions are managed by the `node` module. The dev-tools module only manages Python and mise installation. The mise configuration files are merged across modules, with the node module contributing Node.js-specific tool versions.
+**Idiomatic version files:** `idiomatic_version_file_enable_tools = ["node"]` is
+set so mise respects project-local `.nvmrc` / `.node-version` files (off by
+default in mise). Add tools to that list to extend it (e.g. `"python"`).
 
 ## Shell Integration
 
-The module automatically configures mise activation in both Fish and Zsh via mergeable configuration files, ensuring seamless runtime management across shells.
+The module configures mise activation in both Fish and Zsh via `conf.d` fragments
+(`80-dev-tools-mise.*`), ensuring seamless runtime management across shells.
 
 ## Local Configuration
 
