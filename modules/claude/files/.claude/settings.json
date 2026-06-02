@@ -1,4 +1,5 @@
 {
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -28,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/mcravey/.claude/hooks/gsd-prompt-guard.js\"",
+            "command": "node \"$HOME/.claude/hooks/gsd-prompt-guard.js\"",
             "timeout": 5
           }
         ]
@@ -51,7 +52,9 @@
     "command": "node ~/.claude/statusline.js"
   },
   "enabledPlugins": {
-    "discord@claude-plugins-official": true
+    "feature-dev@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -61,5 +64,6 @@
       }
     }
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto"
 }

@@ -25,3 +25,6 @@ modules/merged/
 # Claude Code local settings
 .claude/settings.local.json
 
+# gh-managed state (identity + oauth token); let `gh auth login` own it per-machine
+modules/git/files/.config/gh/hosts.yml
+

@@ -102,10 +102,10 @@
 	trustExitCode = true
 
 [filter "lfs"]
-  clean = git lfs clean %f
-  smudge = git lfs smudge %f
-  required = true
-  process = git-lfs filter-process
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	required = true
+	process = git-lfs filter-process
 
 [init]
 	defaultBranch = main
@@ -114,9 +114,6 @@
 	helper =
 	helper = !gh auth git-credential
 [credential "https://gist.github.com"]
-	helper =
-	helper = !gh auth git-credential
-[credential "https://github.expedia.biz"]
 	helper =
 	helper = !gh auth git-credential
 
