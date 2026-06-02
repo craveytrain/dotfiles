@@ -76,8 +76,10 @@ modules/claude/
 ├── README.md                         # This file
 └── files/
     └── .claude/
-        ├── settings.json             # Claude Code settings
-        └── statusline.js             # Custom statusline with git info
+        ├── settings.json             # Portable Claude Code settings (machine-local overrides go in settings.local.json)
+        ├── statusline.js             # Custom statusline with git info
+        └── hooks/
+            └── attention-notify.js   # Notification hook (synced)
 ```
 
 ## Statusline Features
@@ -96,11 +98,13 @@ The statusline.js provides:
 
 | Path | Reason |
 |------|--------|
-| `settings.local.json` | Authentication tokens and machine-specific settings |
+| `settings.local.json` | Machine-local settings: `model`, GSD hooks, plugin enablement, marketplaces, permissions, and acceptance flags |
 | `agents/` | Manage locally per machine |
 | `commands/` | Manage locally per machine |
 | `get-shit-done/` | GSD framework (manage locally) |
-| `hooks/` | May have machine-specific paths |
+| `hooks/gsd-*.js` | GSD framework hooks (installed locally, not in repo) |
+
+Note: `hooks/attention-notify.js` **is** synced (it lives in this module). Only the GSD hooks above are machine-local.
 
 ## References
 

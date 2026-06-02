@@ -1,40 +1,5 @@
 {
-  "model": "opus[1m]",
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ~/.claude/hooks/gsd-check-update.js"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ~/.claude/hooks/gsd-context-monitor.js",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$HOME/.claude/hooks/gsd-prompt-guard.js\"",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
@@ -51,19 +16,5 @@
     "type": "command",
     "command": "node ~/.claude/statusline.js"
   },
-  "enabledPlugins": {
-    "feature-dev@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "swift-lsp@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-plugins-official": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/claude-plugins-official"
-      }
-    }
-  },
-  "skipDangerousModePermissionPrompt": true,
   "theme": "auto"
 }
