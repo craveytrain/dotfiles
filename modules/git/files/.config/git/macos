@@ -2,9 +2,6 @@
 # On non-Mac machines this file isn't symlinked; git silently ignores
 # the missing include.
 
-[github]
-  user = craveytrain
-
 [credential]
   helper = osxkeychain
 
