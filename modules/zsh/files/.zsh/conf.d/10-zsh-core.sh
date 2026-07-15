@@ -207,3 +207,6 @@ rationalise-dot() {
 }
 zle -N rationalise-dot
 bindkey . rationalise-dot
+# Keep "." literal inside incremental search (Ctrl-R); without this the
+# main-keymap rebind above makes "." abort the search instead of extending it.
+bindkey -M isearch . self-insert
