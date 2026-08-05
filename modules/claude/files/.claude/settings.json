@@ -1,4 +1,63 @@
 {
+  "permissions": {
+    "allow": [
+      "Read(~/dotfiles/**)",
+      "Read(~/.claude/**)",
+      "Read(~/.config/fish/**)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:*.github.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:claude.ai)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:caniuse.com)",
+      "WebFetch(domain:www.w3.org)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:figma.com)",
+      "WebFetch(domain:*.figma.com)",
+      "WebFetch(domain:zeroheight.com)",
+      "WebFetch(domain:*.zeroheight.com)",
+      "WebFetch(domain:*.asana.com)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git -C * status*)",
+      "Bash(git -C * diff*)",
+      "Bash(git -C * log*)",
+      "Bash(git -C * show*)",
+      "Bash(git -C * branch*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(rg *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(wc *)",
+      "Bash(stat *)",
+      "Bash(command -v *)",
+      "Bash(cmux --help)",
+      "Bash(cmux workspace-group *)",
+      "WebFetch(domain:cmux.com)",
+      "Skill(claude-api)",
+      "mcp__claude_ai_Figma__get_design_context",
+      "mcp__claude_ai_Figma__get_metadata",
+      "mcp__claude_ai_Figma__get_screenshot",
+      "mcp__claude_ai_Asana__get_me",
+      "mcp__claude_ai_Asana__get_task",
+      "mcp__claude_ai_Asana__get_attachments",
+      "mcp__claude_ai_Asana__search_tasks",
+      "mcp__claude_ai_Slack__slack_read_channel",
+      "mcp__claude_ai_Slack__slack_read_thread",
+      "mcp__claude_ai_Slack__slack_search_channels"
+    ]
+  },
   "hooks": {
     "Notification": [
       {
@@ -7,6 +66,17 @@
             "type": "command",
             "command": "node ~/.claude/hooks/attention-notify.js",
             "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -f ~/.claude/hooks/ai-usage-nudge.mjs && node ~/.claude/hooks/ai-usage-nudge.mjs; true",
+            "timeout": 10
           }
         ]
       }
