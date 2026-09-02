@@ -28,6 +28,3 @@ modules/merged/
 # gh-managed state (identity + oauth token); let `gh auth login` own it per-machine
 modules/git/files/.config/gh/hosts.yml
 
-
-# AI usage log (references work projects; keep out of the public repo)
-docs/AI_USAGE.md
