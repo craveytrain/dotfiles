@@ -28,59 +28,36 @@ if status --is-interactive
     abbr du "du -kh"
 
     # --- Prompt (Tide) ---
-    # Use -U with guards to work with tide's universal variable model
-    # Only writes when the value doesn't match, so no unnecessary writes per shell launch
-    test "$tide_left_prompt_items" != "pwd git newline status character"; and set -U tide_left_prompt_items pwd git newline status character
-    test "$tide_right_prompt_items" != "context cmd_duration jobs direnv node python rustc go terraform"; and set -U tide_right_prompt_items context cmd_duration jobs direnv node python rustc go terraform
-    test "$tide_git_truncation_length" != 32; and set -U tide_git_truncation_length 32
+    # The baseline is written ONCE into fish's universal variables by the
+    # `tide configure --auto ...` command in modules/fish/README.md. Re-run it
+    # when setting up a new machine; it is idempotent.
+    #
+    # Only genuine deviations from that baseline belong here, and they use
+    # `set -g`, not `set -U`. Tide resolves its config through ordinary
+    # variable lookup, so a global shadows the universal at prompt-render
+    # time. That keeps this non-destructive: the universal store stays
+    # whatever `tide configure` last wrote, so the prompt can be re-tuned
+    # interactively without this file silently reverting it on the next shell.
+    set -g tide_git_truncation_length 32
 
-    # --- Colors (match p10k lean-8colors) ---
-    # Character
-    test "$tide_character_color" != green; and set -U tide_character_color green
-    test "$tide_character_color_failure" != red; and set -U tide_character_color_failure red
-    # Git
-    test "$tide_git_color_branch" != green; and set -U tide_git_color_branch green
-    test "$tide_git_color_conflicted" != red; and set -U tide_git_color_conflicted red
-    test "$tide_git_color_dirty" != yellow; and set -U tide_git_color_dirty yellow
-    test "$tide_git_color_operation" != red; and set -U tide_git_color_operation red
-    test "$tide_git_color_staged" != yellow; and set -U tide_git_color_staged yellow
-    test "$tide_git_color_stash" != green; and set -U tide_git_color_stash green
-    test "$tide_git_color_untracked" != green; and set -U tide_git_color_untracked green
-    test "$tide_git_color_upstream" != green; and set -U tide_git_color_upstream green
-    # Status
-    test "$tide_status_color" != green; and set -U tide_status_color green
-    test "$tide_status_color_failure" != red; and set -U tide_status_color_failure red
-    # PWD: intentionally unset, so tide's own defaults apply
-    # Context (user@host for SSH/MOSH sessions)
-    test "$tide_context_color_default" != yellow; and set -U tide_context_color_default yellow
-    test "$tide_context_color_root" != red; and set -U tide_context_color_root red
-    test "$tide_context_color_ssh" != yellow; and set -U tide_context_color_ssh yellow
-    # Cmd Duration
-    test "$tide_cmd_duration_color" != yellow; and set -U tide_cmd_duration_color yellow
-    # Jobs
-    test "$tide_jobs_color" != red; and set -U tide_jobs_color red
-    # Direnv
-    test "$tide_direnv_color" != yellow; and set -U tide_direnv_color yellow
-    test "$tide_direnv_color_denied" != red; and set -U tide_direnv_color_denied red
-    # Node
-    test "$tide_node_color" != green; and set -U tide_node_color green
-    # Python
-    test "$tide_python_color" != cyan; and set -U tide_python_color cyan
-    # Rustc
-    test "$tide_rustc_color" != blue; and set -U tide_rustc_color blue
-    # Go
-    test "$tide_go_color" != cyan; and set -U tide_go_color cyan
-    # Terraform
-    test "$tide_terraform_color" != blue; and set -U tide_terraform_color blue
-
-    # --- Icons (match p10k nerdfont-complete) ---
-    test "$tide_pwd_icon" != \uf07b; and set -U tide_pwd_icon \uf07b
-    test "$tide_git_icon" != \uf126; and set -U tide_git_icon \uf126
-    test "$tide_node_icon" != \ue617; and set -U tide_node_icon \ue617
-    test "$tide_go_icon" != \ue626; and set -U tide_go_icon \ue626
-    test "$tide_cmd_duration_icon" != \uf252; and set -U tide_cmd_duration_icon \uf252
-    test "$tide_jobs_icon" != \uf013; and set -U tide_jobs_icon \uf013
-    test "$tide_rustc_icon" != \ue7a8; and set -U tide_rustc_icon \ue7a8
-    test "$tide_python_icon" != \ue73c; and set -U tide_python_icon \ue73c
-    test "$tide_terraform_icon" != \U000F1062; and set -U tide_terraform_icon \U000F1062
+    # Git icon follows the remote host, the way p10k's nerdfont-complete mode
+    # does: octocat for GitHub, fox for GitLab, else a plain fork. Same
+    # codepoints p10k uses (internal/icons.zsh).
+    #
+    # This has to live in conf.d rather than an `--on-variable PWD` handler.
+    # Tide renders the prompt in a freshly spawned `fish -c` that inherits only
+    # PATH, CMD_DURATION, fish_bind_mode and the universal variables, so a
+    # global set in the parent would never reach it. That child does run
+    # conf.d, and in the current directory, so deciding here gets it right per
+    # repo. Costs one `git config` lookup per prompt.
+    switch (git config --get remote.origin.url 2>/dev/null)
+        case '*github.com*'
+            set -g tide_git_icon \uf113
+        case '*gitlab.com*'
+            set -g tide_git_icon \uf296
+        case '*bitbucket.org*'
+            set -g tide_git_icon \uf171
+        case '*'
+            set -g tide_git_icon \uf126
+    end
 end
