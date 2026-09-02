@@ -8,8 +8,10 @@
 // ever injects a NON-BLOCKING reminder (hookSpecificOutput.additionalContext) —
 // it never blocks the stop or forces a loop.
 //
-// Registered under hooks.Stop in ~/.claude/settings.local.json (machine-local).
-// To disable: remove that entry. Tunables via env:
+// Registered under the Stop hook event in both harnesses: hooks.Stop in the Claude
+// Code settings.json, and hooks.Stop in ~/.codex/hooks.json. To disable: remove that
+// entry. Codex requires hooks to be trusted once in an interactive session before
+// they run at all. Tunables via env:
 //   AI_USAGE_NUDGE_MIN   meaningful edits required to nudge (default 3)
 //   AI_USAGE_NUDGE_OFF   set to any value to disable entirely
 //
@@ -18,10 +20,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const EDIT_TOOLS = new Set(["Write", "Edit", "MultiEdit", "NotebookEdit"]);
+const CODEX_EDIT_TOOLS = new Set(["apply_patch"]);
 const MIN_EDITS = Number(process.env.AI_USAGE_NUDGE_MIN || 3);
-const MARKER_DIR = join(homedir(), ".claude", "cache", "ai-usage-nudge");
+// Harness-neutral marker location: Codex sets CODEX_HOME, Claude Code does not.
+const HARNESS_HOME = process.env.CODEX_HOME || join(homedir(), ".claude");
+const MARKER_DIR = join(HARNESS_HOME, "cache", "ai-usage-nudge");
 
 function done(output) {
   if (output) process.stdout.write(JSON.stringify(output));
@@ -36,19 +42,24 @@ function readStdin() {
   }
 }
 
-// Walk up from cwd to (and including) home, looking for a project CLAUDE.md that
-// opts out. The global ~/.claude/CLAUDE.md is NOT a project file and is skipped.
+// Walk up from cwd to (and including) home, looking for a project instruction file
+// that opts out. Checks both CLAUDE.md and AGENTS.md so the same rule holds under
+// Claude Code and Codex. Global instruction files (~/.claude, ~/.codex) are NOT
+// project files and are skipped.
 function optedOut(cwd) {
   if (!cwd) return false;
   const home = resolve(homedir());
   const claudeDir = resolve(join(home, ".claude"));
+  const codexDir = resolve(join(home, ".codex"));
   let dir = resolve(cwd);
   while (true) {
-    if (dir !== claudeDir) {
-      const f = join(dir, "CLAUDE.md");
-      try {
-        if (existsSync(f) && /no AI usage logging/i.test(readFileSync(f, "utf8"))) return true;
-      } catch {}
+    if (dir !== claudeDir && dir !== codexDir) {
+      for (const name of ["CLAUDE.md", "AGENTS.md"]) {
+        const f = join(dir, name);
+        try {
+          if (existsSync(f) && /no AI usage logging/i.test(readFileSync(f, "utf8"))) return true;
+        } catch {}
+      }
     }
     if (dir === home || dir === "/") break;
     const parent = dirname(dir);
@@ -61,7 +72,7 @@ function optedOut(cwd) {
 // Scan the session transcript (JSONL) for: count of edit-tool uses, and whether
 // any AI_USAGE.md was touched (logged) this session. Best-effort and defensive
 // about shape variation.
-function scanTranscript(path) {
+export function scanTranscript(path) {
   let edits = 0;
   let logged = false;
   let text;
@@ -79,18 +90,30 @@ function scanTranscript(path) {
       continue;
     }
     const content = obj?.message?.content;
-    if (!Array.isArray(content)) continue;
-    for (const item of content) {
-      if (item?.type !== "tool_use") continue;
-      const name = item.name;
-      const input = item.input || {};
-      const fp = String(input.file_path || "");
-      const cmd = String(input.command || "");
-      if (/AI_USAGE\.md/.test(fp) || /AI_USAGE\.md/.test(cmd)) {
-        logged = true;
-        continue; // touching the log doesn't count as a "meaningful edit" to nudge about
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        if (item?.type !== "tool_use") continue;
+        const name = item.name;
+        const input = item.input || {};
+        const fp = String(input.file_path || "");
+        const cmd = String(input.command || "");
+        if (/AI_USAGE\.md/.test(fp) || /AI_USAGE\.md/.test(cmd)) {
+          logged = true;
+          continue; // touching the log doesn't count as a "meaningful edit" to nudge about
+        }
+        if (EDIT_TOOLS.has(name)) edits++;
       }
-      if (EDIT_TOOLS.has(name)) edits++;
+    }
+
+    const payload = obj?.type === "response_item" ? obj.payload : null;
+    if (payload && (payload.type === "custom_tool_call" || payload.type === "function_call")) {
+      const rawInput = payload.arguments ?? payload.input ?? "";
+      const inputText = typeof rawInput === "string" ? rawInput : JSON.stringify(rawInput);
+      if (/AI_USAGE\.md/.test(inputText)) {
+        logged = true;
+        continue;
+      }
+      if (CODEX_EDIT_TOOLS.has(payload.name) || /(?:tools\.)?apply_patch\s*\(/.test(inputText)) edits++;
     }
   }
   return { edits, logged };
@@ -154,4 +177,4 @@ function writeMarker(path, why) {
   } catch {}
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
