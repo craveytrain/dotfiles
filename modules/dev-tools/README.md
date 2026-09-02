@@ -33,6 +33,8 @@ The module delivers:
 - `.zsh/conf.d/80-dev-tools-mise.sh` - Zsh mise integration
 - `.config/fish/conf.d/80-dev-tools-direnv.fish` - Fish direnv hook
 - `.config/fish/conf.d/80-dev-tools-mise.fish` - Fish mise integration
+- `.zsh/conf.d/50-dev-tools-npx-aliases.sh` - Zsh aliases for on-demand npx tools
+- `.config/fish/conf.d/50-dev-tools-npx-abbrs.fish` - Fish abbreviations for on-demand npx tools
 - Additional tool-specific configs in `.config/`
 
 ## Key Tools
