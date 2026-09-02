@@ -20,6 +20,7 @@ The module delivers essential modern command-line tools:
 - atuin, eza, ripgrep, tldr, trash, wget, stow
 
 **Configuration files:**
+- `.config/atuin/config.toml` - atuin settings (deviations from default only)
 - `.config/fish/conf.d/zz-shell-atuin.fish` - atuin init for fish
 - `.zsh/conf.d/80-shell-atuin.sh` - atuin init for zsh
 
@@ -38,6 +39,12 @@ Replaces Ctrl-R in both shells with a searchable, optionally synced history:
 - `atuin stats` - usage statistics
 - `atuin login` / `atuin sync` - sync between machines (optional; history works
   locally without an account)
+
+Settings live in `files/.config/atuin/config.toml` and are stowed, so they
+apply on every machine. It carries only deviations from atuin's shipped
+defaults (daemon-backed fuzzy search, the background daemon, AI); run
+`atuin default-config` to see the full annotated template. The sync account is
+deliberately not in there, since credentials are per-machine.
 
 Up-arrow and the `?` AI binding are deliberately disabled, so up-arrow keeps
 fish's prefix search and zsh's `history-search-backward`.

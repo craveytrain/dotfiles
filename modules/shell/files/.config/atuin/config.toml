@@ -1,0 +1,20 @@
+# shell module - atuin
+#
+# Only settings that deviate from atuin's shipped defaults. Everything else is
+# left to atuin so this file doesn't rot against upstream changes. Run
+# `atuin default-config` to see the full annotated template.
+#
+# Note: the sync account is NOT configured here. Run `atuin login` once per
+# machine (see QUICKSTART.md); credentials live in ~/.local/share/atuin.
+
+# Fuzzy search backed by the daemon, rather than plain "fuzzy".
+search_mode = "daemon-fuzzy"
+
+[daemon]
+# Background daemon keeps search fast and decouples history writes from the
+# shell hook, so a slow write never stalls the prompt.
+enabled = true
+autostart = true
+
+[ai]
+enabled = true

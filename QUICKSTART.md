@@ -69,8 +69,9 @@ Run these once per machine, in order.
    mise install
    ```
 
-4. **Connect atuin (optional).** Shell history works immediately without this;
-   it is only needed to sync history between machines:
+4. **Connect atuin (optional).** Atuin's settings are stowed from the shell
+   module, so search behaviour matches on every machine already. This step is
+   only needed to sync the history itself between machines:
    ```bash
    atuin login -u <username>    # existing account
    atuin register -u <username> -e <email>   # first machine
