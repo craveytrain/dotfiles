@@ -13,9 +13,14 @@ set -gx CDPATH . ~ (test -e ~/Work; and echo ~/Work)
 set -gx LS_COLORS 'rs=0:di=00;38;5;39:ex=00;32:ln=00;38;5;5:'
 
 if status --is-interactive
+    # Pin the key-binding mode before plugin conf.d files load. Fish's
+    # generated conf.d/fish_frozen_key_bindings.fish erases the universal
+    # `fish_key_bindings`, so plugins that bind keys (puffer-fish) would
+    # otherwise see it unset and bind into `insert` mode instead of `default`.
+    set -g fish_key_bindings fish_default_key_bindings
+
     # --- Abbreviations ---
     abbr dot "cd $DOTFILES"
-    abbr dotdot --position anywhere --regex '^\.\.\.+$' --function multidot
     abbr ip "dig +short myip.opendns.com @resolver1.opendns.com"
     abbr pubkey "cat ~/.ssh/*.pub | pbcopy; echo '=> Public key copied to clipboard.'"
     abbr mkdir "mkdir -p"
