@@ -1,6 +1,6 @@
 # Fish
 
-Installs Fish and Fisher, registers Fish in `/etc/shells`, and stows shell configuration, plugins, and functions.
+Installs Fish and Fisher, registers Fish in `/etc/shells`, and stows shell configuration, plugins, and functions. Restricted deployment (`./deploy --restricted`) skips registration but performs the remaining setup.
 
 Deployment installs the plugins listed in `fish_plugins`. The prompt baseline is the one manual step, run from Fish:
 
