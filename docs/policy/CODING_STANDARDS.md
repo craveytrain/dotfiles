@@ -152,16 +152,32 @@ Fragments use a numeric prefix to control load order. Lower numbers load first.
 | 20-49 | Reserved for future core modules | (unused) |
 | 50-69 | Module features (utilities, editor, aliases) | editor (50), shell (50) |
 | 70-79 | Reserved for future feature modules | (unused) |
-| 80-99 | Late-loading (runtime managers, tools needing PATH) | dev-tools (80) |
+| 80-99 | Late-loading (runtime managers, tools needing PATH) | dev-tools (80), shell (80, zsh only) |
+| `zz-` | Fish only: must load after fisher plugin fragments | shell (`zz-shell-atuin`) |
 
 Runtime managers like mise go high (80+) because they may depend on PATH being set by earlier fragments. Core shell config goes low (10) because other fragments may depend on environment variables or shell options set there.
+
+### The Fish Plugin-Ordering Exception
+
+Fish loads `conf.d` in filename order, and fisher plugin fragments (`fzf.fish`,
+`pisces.fish`, `puffer_fish_key_bindings.fish`) carry no numeric prefix. Digits
+sort before letters, so **every** numeric fragment loads before **every** plugin
+fragment. No number is high enough to win: `90-` still loses to `fzf`.
+
+A fragment that must override a plugin's key bindings therefore needs a letter
+prefix, not a bigger number. `zz-` is the convention. This applies only to fish;
+zsh sources its `conf.d` from `.zshrc` with no plugin fragments in the mix, so
+the numeric ranges hold there.
+
+Prefer a numeric prefix. Reach for `zz-` only when a plugin would otherwise
+clobber the fragment's work.
 
 ### Fragment Naming Pattern
 
 Each shell type has its own directory and naming convention:
 
 - **Zsh:** `NN-module-description.sh` in `files/.zsh/conf.d/`
-- **Fish:** `NN-module-description.fish` in `files/.config/fish/conf.d/`
+- **Fish:** `NN-module-description.fish` in `files/.config/fish/conf.d/` (or `zz-module-description.fish` when it must load after fisher plugins; see above)
 - **Mise:** `module-name.toml` in `files/.config/mise/conf.d/` (no numeric prefix, mise has no ordering concerns)
 
 ### Fragment Header Format

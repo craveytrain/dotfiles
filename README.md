@@ -3,7 +3,7 @@
 A comprehensive dotfiles management system using the `ansible-role-dotmodules` role for automated system configuration and dotfile deployment.
 
 **Governance**: See [Constitution v1.0.0](docs/policy/CONSTITUTION.md) for project principles
-**AI-Assisted Development**: Integrated with GitHub Spec-Kit for spec-driven development
+**AI-Assisted Development**: See [AGENTS.md](AGENTS.md) for the conventions agents follow in this repo
 **Quick Start**: New to this repo? See [QUICKSTART.md](QUICKSTART.md) for fast setup
 
 ## Overview
@@ -14,26 +14,30 @@ This repository contains modular dotfile configurations that can be deployed usi
 
 ```
 dotfiles/
-├── .specify/          # Spec-Kit specifications (auto-managed)
 ├── docs/              # Documentation and policy
 │   └── policy/        # Governance and policy documents
 │       ├── CONSTITUTION.md    # Core principles (v1.0.0)
 │       ├── GOVERNANCE.md      # Governance model
 │       ├── CODING_STANDARDS.md # Coding standards
 │       └── CHANGELOG.md       # Change history
+├── linux/             # Minimal bash setup for Debian/Pi OS servers
 ├── modules/           # Dotfile modules (each with config.yml and files/)
 │   ├── 1password/     # 1Password CLI for password management
+│   ├── claude/        # Claude Code settings and skills
 │   ├── dev-tools/     # Development utilities (direnv, mise, jq, shellcheck, etc.)
 │   ├── editor/        # Editor configurations (vim)
-│   ├── fish/          # Fish shell configuration and functions
+│   ├── fish/          # Fish shell configuration, plugins, and functions
 │   ├── fonts/         # System fonts for development
+│   ├── ghostty/       # Ghostty terminal configuration
 │   ├── git/           # Git configuration and tools
-│   ├── node/          # Node.js development (node, pnpm via mise)
-│   ├── shell/         # Common shell utilities (eza, ripgrep, etc.)
+│   ├── shell/         # Shell-agnostic utilities (atuin, eza, ripgrep, etc.)
+│   ├── tmux/          # tmux configuration
 │   └── zsh/           # Zsh shell configuration and prompt theme
 ├── playbooks/         # Ansible playbooks for deployment
 │   ├── deploy.yml     # Main deployment playbook
 │   └── inventory      # Ansible inventory file
+├── AGENTS.md          # Conventions for AI agents (CLAUDE.md symlinks here)
+├── ansible.cfg        # Ansible configuration
 ├── QUICKSTART.md      # Quick start guide for new users
 ├── requirements.yml   # Ansible Galaxy requirements
 └── README.md          # This file
@@ -306,54 +310,16 @@ Run with verbose output to see what's happening:
 ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass -v
 ```
 
-## Development with Spec-Kit
+## AI-Assisted Development
 
-This repository uses GitHub Spec-Kit for spec-driven development with Cursor AI.
+Conventions for AI agents working in this repo live in [AGENTS.md](AGENTS.md);
+`CLAUDE.md` is a symlink to it. That file covers the module layout, the conf.d
+prefix convention, and the constraints that are easy to get wrong (idempotency,
+restricted-execution machines, no cross-module dependencies).
 
-**Note:** Spec-Kit commands require the GitHub Spec-Kit extension to be installed in Cursor. The commands are provided by the extension, not by files in this repository.
-
-### Installing Spec-Kit
-
-Spec-Kit is installed via UV (Python tool manager), not as a Cursor extension:
-
-```bash
-# Install UV if not already installed
-brew install uv
-
-# Install Spec-Kit CLI
-uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
-
-# Verify installation
-specify check
-```
-
-Once installed, the `/speckit.*` slash commands will be available in Cursor's AI chat (press `Cmd+K`).
-
-For detailed usage instructions, see [CURSOR.md](CURSOR.md).
-
-### Quick Start
-
-Once the Spec-Kit extension is installed, press `Cmd+K` in Cursor and use slash commands:
-
-1. **Create specification**: `/speckit.specify Add Firefox module with developer edition`
-2. **Create plan**: `/speckit.plan Install via Homebrew, configure for development`
-3. **Generate tasks**: `/speckit.tasks`
-4. **Implement**: `/speckit.implement`
-
-### Available Commands
-
-These commands are provided by the GitHub Spec-Kit extension:
-
-* `/speckit.constitution` - View/update project principles
-* `/speckit.specify` - Create feature specifications
-* `/speckit.clarify` - Interactive requirement clarification
-* `/speckit.plan` - Generate implementation plans
-* `/speckit.tasks` - Break down into actionable tasks
-* `/speckit.implement` - Execute implementation
-* `/speckit.analyze` - Verify cross-artifact consistency
-* `/speckit.checklist` - Quality validation gates
-
-See `CURSOR.md` for comprehensive development guidelines and patterns.
+Read [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) before adding a
+module, and [CONSTITUTION.md](docs/policy/CONSTITUTION.md) for the principles
+those standards derive from.
 
 ## Policy Documents
 

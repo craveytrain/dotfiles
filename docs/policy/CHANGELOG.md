@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Coding standards documentation
 - Module structure: shell, git, editor, dev-tools
 - Ansible playbooks for deployment
-- Spec-Kit integration for AI-assisted development
 
 ### Changed
 - Migrated from bootstrap.sh to Ansible-based deployment

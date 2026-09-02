@@ -12,7 +12,7 @@ All decisions should align with the [Constitution](CONSTITUTION.md) principles. 
 
 1. **Proposal**: Create an issue or specification describing the change
 2. **Review**: Review against constitution principles
-3. **Implementation**: Follow spec-driven development workflow
+3. **Implementation**: Make the change, keeping it idempotent and self-contained
 4. **Validation**: Ensure compliance with all principles
 5. **Documentation**: Update relevant documentation
 
@@ -20,7 +20,7 @@ All decisions should align with the [Constitution](CONSTITUTION.md) principles. 
 
 ### Adding Modules
 
-1. Create specification using `/speckit.specify`
+1. Describe the module's purpose and the packages it owns
 2. Ensure module follows all 8 core principles
 3. Create module directory with `config.yml` and `files/`
 4. Update playbook to include module

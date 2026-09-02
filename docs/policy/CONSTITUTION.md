@@ -127,11 +127,6 @@ All contributions and changes to this repository must comply with these principl
 
 - [Ansible Best Practices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html)
 - [GNU Stow Documentation](https://www.gnu.org/software/stow/)
-- [GitHub Spec-Kit Documentation](https://github.com/spec-kit)
-
-## Note on Spec-Kit Integration
-
-This constitution is also maintained at `.specify/memory/constitution.md` for use with GitHub Spec-Kit's `/speckit.*` commands. The canonical version is this file (`docs/policy/CONSTITUTION.md`).
 
 ---
 
