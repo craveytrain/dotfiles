@@ -29,9 +29,24 @@
 
 - name: Install Homebrew casks
   community.general.homebrew_cask:
-    name: '{{ dotmodules_homebrew_casks | unique }}'
+    name: '{{ dotmodule_cask }}'
     state: present
     accept_external_apps: true
+  loop: '{{ dotmodules_homebrew_casks | unique }}'
+  loop_control:
+    loop_var: dotmodule_cask
+    label: '{{ dotmodule_cask }}'
+  register: dotmodule_cask_install
+  # community.general only recognizes Homebrew's old unprefixed external-app
+  # error. Current Homebrew prefixes it with the cask name, so handle that
+  # equally narrow form while preserving every other installation failure.
+  failed_when: >-
+    (dotmodule_cask_install.failed | default(false))
+    and
+    (
+      ('Error: ' ~ dotmodule_cask ~ ': It seems there is already an App at')
+      not in (dotmodule_cask_install.msg | default(''))
+    )
   when: dotmodules_homebrew_casks | length > 0
 
 - name: Deploy module files
