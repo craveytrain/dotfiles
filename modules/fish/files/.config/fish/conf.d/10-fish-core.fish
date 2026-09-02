@@ -40,24 +40,32 @@ if status --is-interactive
     # interactively without this file silently reverting it on the next shell.
     set -g tide_git_truncation_length 32
 
-    # Git icon follows the remote host, the way p10k's nerdfont-complete mode
-    # does: octocat for GitHub, fox for GitLab, else a plain fork. Same
-    # codepoints p10k uses (internal/icons.zsh).
-    #
-    # This has to live in conf.d rather than an `--on-variable PWD` handler.
-    # Tide renders the prompt in a freshly spawned `fish -c` that inherits only
-    # PATH, CMD_DURATION, fish_bind_mode and the universal variables, so a
-    # global set in the parent would never reach it. That child does run
-    # conf.d, and in the current directory, so deciding here gets it right per
-    # repo. Costs one `git config` lookup per prompt.
-    switch (git config --get remote.origin.url 2>/dev/null)
-        case '*github.com*'
-            set -g tide_git_icon \uf113
-        case '*gitlab.com*'
-            set -g tide_git_icon \uf296
-        case '*bitbucket.org*'
-            set -g tide_git_icon \uf171
-        case '*'
-            set -g tide_git_icon \uf126
+end
+
+# Git icon follows the remote host, the way p10k's nerdfont-complete mode does:
+# octocat for GitHub, fox for GitLab, else a plain fork. Same codepoints p10k
+# uses (internal/icons.zsh).
+#
+# Deliberately OUTSIDE `status --is-interactive`. Tide renders the prompt in a
+# spawned non-interactive `fish -c`, and that child is what actually calls
+# _tide_item_git, so anything behind the interactive guard never reaches it.
+#
+# Wrapping the item rather than setting the variable at conf.d load keeps the
+# `git config` lookup off the shell-startup path: it runs only when the git
+# segment actually renders.
+if functions -q _tide_item_git; and not functions -q _tide_item_git_upstream
+    functions --copy _tide_item_git _tide_item_git_upstream
+    function _tide_item_git
+        switch (git config --get remote.origin.url 2>/dev/null)
+            case '*github.com*'
+                set -g tide_git_icon \uf113
+            case '*gitlab.com*'
+                set -g tide_git_icon \uf296
+            case '*bitbucket.org*'
+                set -g tide_git_icon \uf171
+            case '*'
+                set -g tide_git_icon \uf126
+        end
+        _tide_item_git_upstream
     end
 end
