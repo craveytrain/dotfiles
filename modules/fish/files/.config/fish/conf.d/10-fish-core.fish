@@ -27,20 +27,34 @@ if status --is-interactive
     abbr df "df -kh"
     abbr du "du -kh"
 
-    # --- Prompt (Tide) ---
-    # The baseline is written ONCE into fish's universal variables by the
-    # `tide configure --auto ...` command in modules/fish/README.md. Re-run it
-    # when setting up a new machine; it is idempotent.
-    #
-    # Only genuine deviations from that baseline belong here, and they use
-    # `set -g`, not `set -U`. Tide resolves its config through ordinary
-    # variable lookup, so a global shadows the universal at prompt-render
-    # time. That keeps this non-destructive: the universal store stays
-    # whatever `tide configure` last wrote, so the prompt can be re-tuned
-    # interactively without this file silently reverting it on the next shell.
-    set -g tide_git_truncation_length 32
-
 end
+
+# --- Prompt (Tide) ---
+# The baseline is written ONCE into fish's universal variables by the
+# `tide configure --auto ...` command in modules/fish/README.md. Re-run it
+# when setting up a new machine; it is idempotent.
+#
+# Only genuine deviations from that baseline belong here, and they use
+# `set -g`, not `set -U`. Tide resolves its config through ordinary variable
+# lookup, so a global shadows the universal at prompt-render time. That keeps
+# this non-destructive: the universal store stays whatever `tide configure`
+# last wrote, so the prompt can be re-tuned interactively without this file
+# silently reverting it on the next shell.
+#
+# Deliberately OUTSIDE `status --is-interactive`, for the same reason as the
+# git item below: fish_prompt renders the prompt in a spawned non-interactive
+# `fish -c`, and that child is what reads these. Universals reach it because
+# they are shared process-wide; a global set behind the interactive guard does
+# not, and silently falls back to tide's own default.
+set -g tide_git_truncation_length 32
+
+# `tide configure --prompt_colors='True color'` writes explicit 24-bit hex for
+# every segment, but it leaves tide_os_color at `normal` because the os item is
+# not part of the default lean prompt. `normal` resolves to the terminal's
+# default foreground, which the Gruvbox palette sets to #ebdbb2. Naming a color
+# would not help either: the theme remaps palette 0-15, so `white` is #ebdbb2
+# too. Hex bypasses the palette entirely.
+set -g tide_os_color FFFFFF
 
 # Git icon follows the remote host, the way p10k's nerdfont-complete mode does:
 # octocat for GitHub, fox for GitLab, else a plain fork. Same codepoints p10k

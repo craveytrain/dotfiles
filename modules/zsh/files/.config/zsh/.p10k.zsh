@@ -142,7 +142,10 @@
 
   #################################[ os_icon: os identifier ]##################################
   # OS identifier color.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=
+  # Hex, not a color name or palette index: the terminal theme remaps palette
+  # 0-15, so `white` renders as the theme's off-white. p10k passes #rrggbb
+  # through as 24-bit color, matching tide's os segment.
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND='#ffffff'
   # Custom icon.
   # typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⭐'
 
