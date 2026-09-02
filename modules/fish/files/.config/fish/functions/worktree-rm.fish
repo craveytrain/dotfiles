@@ -33,7 +33,7 @@ function worktree-rm
     echo "Remove worktree: $wt_path (branch: $branch)?"
     read -l -P "Continue? [y/N] " confirm
     if test "$confirm" != y; and test "$confirm" != Y
-        echo "Cancelled"
+        echo Cancelled
         return 0
     end
 

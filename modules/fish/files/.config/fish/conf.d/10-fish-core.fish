@@ -50,10 +50,7 @@ if status --is-interactive
     # Status
     test "$tide_status_color" != green; and set -U tide_status_color green
     test "$tide_status_color_failure" != red; and set -U tide_status_color_failure red
-    # PWD (keep tide defaults)
-    test "$tide_pwd_color_anchors" != 00AFFF; and set -U tide_pwd_color_anchors 00AFFF
-    test "$tide_pwd_color_dirs" != 0087AF; and set -U tide_pwd_color_dirs 0087AF
-    test "$tide_pwd_color_truncated_dirs" != 8787AF; and set -U tide_pwd_color_truncated_dirs 8787AF
+    # PWD: intentionally unset, so tide's own defaults apply
     # Context (user@host for SSH/MOSH sessions)
     test "$tide_context_color_default" != yellow; and set -U tide_context_color_default yellow
     test "$tide_context_color_root" != red; and set -U tide_context_color_root red

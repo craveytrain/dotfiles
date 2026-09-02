@@ -1,6 +1,6 @@
 # fish module - scan local network for active hosts
 # Scans the local network for active hosts
 function lanscan
-		set IP (ipconfig getifaddr en0)
-		nmap -sn $IP/24
+    set IP (ipconfig getifaddr en0)
+    nmap -sn $IP/24
 end

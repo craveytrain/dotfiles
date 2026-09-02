@@ -1,5 +1,5 @@
 # fish module - print HTTP headers for a URL
 # Prints headers of a URL
 function headers
-  curl -IL $argv[1]
+    curl -IL $argv[1]
 end
