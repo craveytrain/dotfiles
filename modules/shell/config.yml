@@ -4,6 +4,7 @@
 # These are shared packages that work with any shell
 
 homebrew_packages:
+  - atuin # Shell history with sync, search, and stats (fish + zsh)
   - eza # Modern ls replacement (used by zsh aliases, useful for fish)
   - ripgrep # Fast grep alternative
   - stow # Symlink manager (used by deployment system)
