@@ -3,7 +3,7 @@
 const { argv, cwd } = require('node:process')
 const { createReadStream, promises } = require('node:fs')
 const { createServer } = require('node:http')
-const { join, extname } = require('node:path')
+const { join, extname, sep } = require('node:path')
 const { Readable } = require('node:stream')
 const { access } = promises
 
@@ -12,13 +12,31 @@ const PORT = argv.at(2) || 8080
 const MIME_TYPES = {
 	default: 'application/octet-stream',
 	html: 'text/html; charset=UTF-8',
-	js: 'application/javascript',
+	js: 'text/javascript',
+	mjs: 'text/javascript',
 	css: 'text/css',
+	json: 'application/json',
+	map: 'application/json',
+	webmanifest: 'application/manifest+json',
+	xml: 'application/xml',
+	txt: 'text/plain; charset=UTF-8',
+	md: 'text/markdown; charset=UTF-8',
+	wasm: 'application/wasm',
 	png: 'image/png',
-	jpg: 'image/jpg',
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
 	gif: 'image/gif',
+	webp: 'image/webp',
+	avif: 'image/avif',
 	ico: 'image/x-icon',
 	svg: 'image/svg+xml',
+	woff: 'font/woff',
+	woff2: 'font/woff2',
+	ttf: 'font/ttf',
+	otf: 'font/otf',
+	mp4: 'video/mp4',
+	webm: 'video/webm',
+	pdf: 'application/pdf',
 }
 
 const STATIC_PATH = cwd()
@@ -44,11 +62,25 @@ function createPage(page) {
 	return stream
 }
 
+// strip the query string and hash, then percent-decode, so /app.css?v=2 and
+// /my%20file.html resolve to real paths instead of 404ing
+function toPathname(url) {
+	try {
+		return decodeURIComponent(new URL(url, 'http://localhost').pathname)
+	} catch {
+		return null
+	}
+}
+
 async function prepareFile(url) {
-	const paths = [STATIC_PATH, url]
-	if (url.endsWith('/')) paths.push('index.html')
+	const pathname = toPathname(url)
+	if (pathname === null) return { found: false, ext: 'html', stream: createPage(error404) }
+	const paths = [STATIC_PATH, pathname]
+	if (pathname.endsWith('/')) paths.push('index.html')
 	const filePath = join(...paths)
-	const pathTraversal = !filePath.startsWith(STATIC_PATH)
+	// compare against STATIC_PATH + separator so a sibling dir sharing the prefix
+	// (../static-evil next to ../static) cannot pass the check
+	const pathTraversal = !filePath.startsWith(STATIC_PATH + sep)
 	const exists = await access(filePath).then(...toBool)
 	const found = !pathTraversal && exists
 	const ext = found ? extname(filePath).substring(1).toLowerCase() : 'html'
