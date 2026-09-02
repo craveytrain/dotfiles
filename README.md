@@ -42,31 +42,22 @@ ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags registe
 
    Use `--skip-tags register_shell` instead of `--ask-become-pass` on a BeyondTrust-managed or otherwise restricted machine.
 
-3. Finish the per-machine setup:
+3. Set the Tide prompt baseline, from Fish:
 
    ```fish
-   fisher update
    tide configure --auto --style=Lean --prompt_colors='True color' \
      --show_time=No --lean_prompt_height='Two lines' \
      --prompt_connection=Disconnected --prompt_spacing=Sparse \
      --icons='Many icons' --transient=No
-   mise install
    ```
+
+   This one is manual by design: it writes per-machine universal variables as a one-time baseline, and the tracked `10-fish-core.fish` applies shared adjustments on top. Re-running it would discard those. Fish plugins and mise tool versions need no manual step — the playbook installs both.
 
 4. On an unrestricted machine, make Fish the login shell:
 
    ```bash
    chsh -s /opt/homebrew/bin/fish
    ```
-
-Optional history sync:
-
-```bash
-atuin login -u <username>
-atuin sync
-```
-
-Use `atuin register -u <username> -e <email>` instead of `login` for a new account.
 
 ## Modules
 

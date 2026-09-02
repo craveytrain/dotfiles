@@ -2,10 +2,9 @@
 
 Installs Fish and Fisher, registers Fish in `/etc/shells`, and stows shell configuration, plugins, and functions.
 
-After the first deployment, run:
+Deployment installs the plugins listed in `fish_plugins`. The prompt baseline is the one manual step, run from Fish:
 
 ```fish
-fisher update
 tide configure --auto --style=Lean --prompt_colors='True color' \
   --show_time=No --lean_prompt_height='Two lines' \
   --prompt_connection=Disconnected --prompt_spacing=Sparse \

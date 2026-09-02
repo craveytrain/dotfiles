@@ -84,7 +84,7 @@ Use `--skip-tags register_shell`. This leaves `/etc/shells` and the current logi
 
 ### Fish prompt or plugins are missing
 
-From Fish, run:
+Deployment syncs plugins whenever the tracked `fish_plugins` and the installed set differ, so needing this by hand means that step was skipped or failed. From Fish:
 
 ```fish
 fisher update
@@ -93,6 +93,8 @@ fisher update
 Re-run the Tide command in the root README if the prompt baseline is missing.
 
 ### mise tools are missing
+
+Deployment runs this too, so the same caveat applies:
 
 ```bash
 mise install
