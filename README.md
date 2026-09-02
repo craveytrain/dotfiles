@@ -50,7 +50,7 @@ On a machine where sudo is restricted:
      --icons='Many icons' --transient=No
    ```
 
-   This one is manual by design: it writes per-machine universal variables as a one-time baseline, and the tracked `10-fish-core.fish` applies shared adjustments on top. Re-running it would discard those. Fish plugins and mise tool versions need no manual step — the playbook installs both.
+   This one is manual by design: it writes per-machine universal variables as a one-time baseline, and the tracked `10-fish-core.fish` applies shared adjustments on top. Re-running it would discard those. Fish plugins and mise tool versions need no manual step — deployment installs both.
 
 4. On an unrestricted machine, make Fish the login shell:
 

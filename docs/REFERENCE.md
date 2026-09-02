@@ -22,7 +22,7 @@ Shell registration writes the Homebrew shell path to `/etc/shells`. It is the on
 
 `playbooks/deploy.yml` passes its `dotmodules.install` list to the small `roles/dotmodules` role in this repository. For every selected module, the role reads `modules/<name>/config.yml`, installs declared Homebrew dependencies, and uses GNU Stow for any declared `stow_dirs`.
 
-Stow creates home-directory symlinks to files in this checkout. Editing a tracked config therefore changes the deployed config immediately; package or module-list changes require another playbook run.
+Stow creates home-directory symlinks to files in this checkout. Editing a tracked config therefore changes the deployed config immediately; package or module-list changes require another `./deploy` run.
 
 If a module has a `tasks.yml`, the role runs those module-specific deployment tasks after packages and files are in place. Fish uses this to synchronize plugins, and dev-tools uses it to install mise tool versions. After the role runs, the playbook points this repo's `core.hooksPath` at `.githooks`, which holds a pre-commit check for the Claude Code module.
 
@@ -79,7 +79,7 @@ Deployment deliberately stops rather than deleting an existing file. Move the fi
 
 ### A pulled change is not visible
 
-Restart the application or start a new shell. Re-run the playbook if the change added a package, module, or newly stowed path.
+Restart the application or start a new shell. Re-run `./deploy` if the change added a package, module, or newly stowed path.
 
 ### Shell registration fails
 

@@ -2,7 +2,7 @@
 
 A small, standalone bash setup for Linux servers (Debian, Ubuntu, Raspberry Pi OS). Separate from the Mac Ansible path; safe to run on a fresh box.
 
-Intended for occasional SSH management — not a full dev environment. If you want the full Mac configuration, use the Ansible playbook in `playbooks/` instead (Mac only).
+Intended for occasional SSH management — not a full dev environment. If you want the full Mac configuration, use `./deploy` instead (Mac only).
 
 ## What it installs
 
