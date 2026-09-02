@@ -17,3 +17,4 @@ python = "3.13.2"
 node = "latest"   # Always use latest Node.js version
 pnpm = "latest"   # PNPM has no LTS concept, so latest tracks newest fixes
 go = "1.26.3"
+rust = "1.97.1"
