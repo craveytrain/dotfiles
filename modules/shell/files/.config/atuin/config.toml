@@ -5,7 +5,7 @@
 # `atuin default-config` to see the full annotated template.
 #
 # Note: the sync account is NOT configured here. Run `atuin login` once per
-# machine (see QUICKSTART.md); credentials live in ~/.local/share/atuin.
+# machine (see the repository README); credentials live in ~/.local/share/atuin.
 
 # Fuzzy search backed by the daemon, rather than plain "fuzzy".
 search_mode = "daemon-fuzzy"

@@ -1,350 +1,112 @@
-# Dotfiles Repository
+# Dotfiles
 
-A comprehensive dotfiles management system using the `ansible-role-dotmodules` role for automated system configuration and dotfile deployment.
+Personal macOS configuration managed with Ansible, Homebrew, and GNU Stow. The
+deployed files are symlinks into this repository, so most configuration changes
+take effect after `git pull` and a shell or application restart.
 
-**Governance**: See [Constitution v1.0.0](docs/policy/CONSTITUTION.md) for project principles
-**AI-Assisted Development**: See [AGENTS.md](AGENTS.md) for the conventions agents follow in this repo
-**Quick Start**: New to this repo? See [QUICKSTART.md](QUICKSTART.md) for fast setup
+## Daily use
 
-## Overview
-
-This repository contains modular dotfile configurations that can be deployed using Ansible automation. Each module is self-contained and can be mixed and matched to create a personalized development environment.
-
-## Repository Structure
-
-```
-dotfiles/
-├── docs/              # Documentation and policy
-│   └── policy/        # Governance and policy documents
-│       ├── CONSTITUTION.md    # Core principles (v1.0.0)
-│       ├── GOVERNANCE.md      # Governance model
-│       ├── CODING_STANDARDS.md # Coding standards
-│       └── CHANGELOG.md       # Change history
-├── linux/             # Minimal bash setup for Debian/Pi OS servers
-├── modules/           # Dotfile modules (each with config.yml and files/)
-│   ├── 1password/     # 1Password CLI for password management
-│   ├── claude/        # Claude Code settings and skills
-│   ├── dev-tools/     # Development utilities (direnv, mise, jq, shellcheck, etc.)
-│   ├── editor/        # Editor configurations (vim)
-│   ├── fish/          # Fish shell configuration, plugins, and functions
-│   ├── fonts/         # System fonts for development
-│   ├── ghostty/       # Ghostty terminal configuration
-│   ├── git/           # Git configuration and tools
-│   ├── shell/         # Shell-agnostic utilities (atuin, eza, ripgrep, etc.)
-│   ├── tmux/          # tmux configuration
-│   └── zsh/           # Zsh shell configuration and prompt theme
-├── playbooks/         # Ansible playbooks for deployment
-│   ├── deploy.yml     # Main deployment playbook
-│   └── inventory      # Ansible inventory file
-├── AGENTS.md          # Conventions for AI agents (CLAUDE.md symlinks here)
-├── ansible.cfg        # Ansible configuration
-├── QUICKSTART.md      # Quick start guide for new users
-├── requirements.yml   # Ansible Galaxy requirements
-└── README.md          # This file
+```bash
+cd ~/dotfiles
+git pull
 ```
 
-Modules contribute shell configuration via **conf.d fragments**, which are stowed into shell-specific `conf.d/` directories and sourced at startup. See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for the full conf.d convention.
+Re-run deployment only when a module or its packages changed:
 
-## Module Structure
-
-Each module follows this structure:
-
-```
-module-name/
-├── README.md          # Module documentation (purpose, features, usage)
-├── config.yml         # Module configuration (Homebrew packages, stow dirs, etc.)
-└── files/             # Dotfiles to be deployed
-    ├── .zsh/conf.d/           # Zsh conf.d fragments (NN-module-desc.sh)
-    ├── .config/fish/conf.d/   # Fish conf.d fragments (NN-module-desc.fish)
-    ├── .config/mise/conf.d/   # Mise conf.d fragments (module-name.toml)
-    ├── .config/               # Other configuration files
-    ├── .bin/                  # Binary/script files
-    └── .*rc                   # Shell configuration files
+```bash
+ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
 ```
 
-## Usage
-
-### Prerequisites
-
-* macOS (required for Homebrew integration)
-* Ansible 2.9+
-* GNU Stow (for dotfile deployment)
-* Homebrew (for package management)
-
-### Installation
-
-1. **Clone this repository:**
-   ```bash
-   git clone https://github.com/yourusername/dotfiles.git
-   cd dotfiles
-   ```
-
-2. **Install the ansible-role-dotmodules role:**
-   ```bash
-   ansible-galaxy install -r requirements.yml
-   ```
-
-3. **Run the playbook:**
-   ```bash
-   ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
-   ```
-
-### Available Modules
-
-| Module        | Description                    | Key Tools                                   |
-| ------------- | ------------------------------ | ------------------------------------------- |
-| shell         | Common shell utilities         | eza, ripgrep, tldr, trash, wget, stow      |
-| fish          | Fish shell configuration       | fish, fisher, tide                          |
-| zsh           | Zsh shell configuration        | zsh, powerlevel10k                          |
-| git           | Git configuration              | git, gh, diff-so-fancy, difftastic          |
-| editor        | Editor configurations          | vim                                         |
-| dev-tools     | Development tools              | direnv, mise, jq, shellcheck, actionlint, bat |
-| node          | Node.js development            | node, pnpm (via mise)                        |
-| 1password     | Password management CLI        | 1password-cli (op)                          |
-| fonts         | System fonts                   | Fira Code, Hack Nerd Font, Inconsolata, Input |
-
-## Configuration
-
-Each module's `config.yml` file defines:
-
-* **Homebrew packages** to install
-* **Homebrew taps** to add
-* **Homebrew casks** to install
-* **Stow directories** for dotfile deployment
-
-Example `config.yml`:
-
-```yaml
----
-# Shell common utilities module
-homebrew_packages:
-  - eza
-  - ripgrep
-  - tldr
-  - trash
-  - wget
-  - stow
-
-stow_dirs:
-  - shell
-```
-
-Modules contribute shell configuration by placing conf.d fragments in their `files/` directory (e.g., `files/.zsh/conf.d/50-shell-eza-colors.sh`). GNU Stow deploys these as symlinks, and shells source them at startup.
-
-## Shell Registration
-
-Modules can automatically register shells in `/etc/shells`, which is required to use them as your default shell via `chsh`.
-
-### How It Works
-
-Add `register_shell` to your module's `config.yml` to enable automatic registration:
-
-```yaml
-# modules/fish/config.yml
-homebrew_packages:
-  - fish
-
-register_shell: fish  # Automatically registers /opt/homebrew/bin/fish (or /usr/local/bin/fish on Intel)
-```
-
-Shell paths are automatically detected based on your system architecture:
-- **Apple Silicon (M1/M2/M3)**: `/opt/homebrew/bin/fish`
-- **Intel Mac**: `/usr/local/bin/fish`
-
-### Skipping Registration
-
-**To disable shell registration permanently**, simply remove or comment out the `register_shell` line from your module's `config.yml`.
-
-**To skip registration for a single deployment** (useful for CI/CD, testing, or restricted environments), use the `--skip-tags` flag:
+On a machine where sudo is restricted:
 
 ```bash
 ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
 ```
 
-Note: When using `--skip-tags register_shell`, you don't need `--ask-become-pass` since no sudo privileges are required.
+## Set up a new Mac
 
-### When to Skip Registration
+1. Install the Xcode command line tools and
+   [Homebrew](https://brew.sh/):
 
-Use `--skip-tags register_shell` when:
-- **CI/CD pipelines**: No sudo access available
-- **Testing deployments**: Don't want to modify system files
-- **Restricted environments**: Corporate systems with policies preventing `/etc/shells` modification
-- **Quick deployments**: Shell registration not needed for the current session
-
-## Updating Dotfiles
-
-After making changes to your dotfiles:
-
-1. **Commit your changes**:
    ```bash
-   git add .
-   git commit -m "Update dotfiles"
+   xcode-select --install
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
 
-2. **Re-run the playbook** to apply changes:
+2. Clone and deploy:
+
    ```bash
+   git clone https://github.com/craveytrain/dotfiles.git ~/dotfiles
+   cd ~/dotfiles
+   brew install ansible
+   ansible-galaxy install -r requirements.yml
    ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
-## Module Management
+   Use `--skip-tags register_shell` instead of `--ask-become-pass` on a
+   BeyondTrust-managed or otherwise restricted machine.
 
-### Enable/Disable Modules
+3. Finish the per-machine setup:
 
-Edit `playbooks/deploy.yml` and modify the `install` list:
+   ```fish
+   fisher update
+   tide configure --auto --style=Lean --prompt_colors='True color' \
+     --show_time=No --lean_prompt_height='Two lines' \
+     --prompt_connection=Disconnected --prompt_spacing=Sparse \
+     --icons='Many icons' --transient=No
+   mise install
+   ```
 
-```yaml
-install:
-  - fish
-  - zsh
-  - git
-  # - editor  # Comment out to disable
-  - dev-tools
-```
+4. On an unrestricted machine, make Fish the login shell:
 
-### Add a New Module
+   ```bash
+   chsh -s /opt/homebrew/bin/fish
+   ```
 
-1. Create module directory: `modules/my-module/`
-2. Add `config.yml` with Homebrew packages and stow_dirs
-3. Add `files/` directory with your dotfiles
-4. Add conf.d fragments for shell configuration (e.g., `files/.zsh/conf.d/50-my-module-desc.sh`). See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for naming conventions and prefix ranges.
-5. Add module name to `install` list in `playbooks/deploy.yml`
-
-## Local Configuration Overrides
-
-All modules support machine-specific configuration overrides via local config files. These files are **not tracked in version control** and allow you to customize settings per-machine without modifying the base dotfiles.
-
-### How It Works
-
-Base configuration files (`.config/git/config`, `.zshrc`, `.vimrc`, etc.) automatically load local config files if they exist:
-- **Git**: `~/.config/git/local` (loaded via `[include]` directive)
-- **Zsh**: `~/.config/zsh/.zshrc.local` (loaded via conditional `source`)
-- **Fish**: `~/.config/fish/config.local.fish` (loaded via conditional `source`)
-- **Vim**: `~/.vimrc.local` (loaded via conditional `source`)
-
-### Creating Local Config Files
-
-**You create these files manually** in your home directory when you need machine-specific settings. Each module's README documents:
-- Where to create the local config file
-- What format/syntax to use
-- Concrete examples for common use cases
-
-**Example - Git local config:**
-```bash
-# Create ~/.config/git/local
-vim ~/.config/git/local
-
-# Add machine-specific settings
-[user]
-    name = Your Name (Work Laptop)
-    email = work@company.com
-```
-
-**Example - Shell local config (for environment variables):**
-```bash
-# Create ~/.config/zsh/.zshrc.local (or ~/.config/fish/config.local.fish for fish)
-vim ~/.config/zsh/.zshrc.local
-
-# Add environment variable overrides for tools
-export NPM_CONFIG_REGISTRY=https://registry.company.com
-export BAT_THEME="Monokai Extended Light"
-```
-
-### Tools Without Local Config Support
-
-Some tools (npm, mise, bat) don't support local config files but respect environment variables. See the [dev-tools module README](modules/dev-tools/README.md) for available environment variables and how to set them in your shell's local config file.
-
-### Benefits
-
-- **Machine-specific settings**: Different identities, paths, or preferences per machine
-- **Private credentials**: Store API keys and tokens without committing to git
-- **No conflicts**: Local configs override base configs without modifying tracked files
-- **Zero errors**: Base configs load normally if local files don't exist
-
-For detailed instructions, see each module's README file.
-
-## Customization
-
-### Adding New Modules
-
-1. Create a new directory in `modules/`
-2. Add a `config.yml` file with your configuration
-3. Create a `files/` directory with your dotfiles
-4. Add conf.d fragments for any shell configuration. Use the `NN-module-description` naming convention. See [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) for the full walkthrough.
-5. Add the module to your playbook's `install` list in `playbooks/deploy.yml`
-
-### Modifying Existing Modules
-
-1. Edit the module's `config.yml` to change dependencies
-2. Modify files in the `files/` directory
-3. Re-run your playbook to apply changes
-
-## How It Works
-
-1. **Module Processing**: Each module is processed independently
-2. **Dependency Resolution**: Homebrew packages, taps, and casks are collected
-3. **Package Installation**: Homebrew installs all dependencies
-4. **Dotfile Deployment**: GNU Stow deploys all dotfiles (including conf.d fragments)
-5. **Runtime Sourcing**: Shells source conf.d fragments at startup, so config edits are live on `git pull` without redeploying
-
-## Benefits
-
-* **Modular**: Mix and match modules for different setups
-* **Automated**: One command sets up your entire environment
-* **Reproducible**: Same setup across multiple machines
-* **Version Controlled**: All configurations in Git
-* **Live Updates**: Config changes take effect on next shell session after `git pull`
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Missing dependencies**: Ensure all required Ansible roles are installed
-2. **Stow conflicts**: Check for existing dotfiles that might conflict
-3. **Homebrew issues**: Ensure Homebrew is properly installed
-
-### Debug Mode
-
-Run with verbose output to see what's happening:
+Optional history sync:
 
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass -v
+atuin login -u <username>
+atuin sync
 ```
 
-## AI-Assisted Development
+Use `atuin register -u <username> -e <email>` instead of `login` for a new
+account.
 
-Conventions for AI agents working in this repo live in [AGENTS.md](AGENTS.md);
-`CLAUDE.md` is a symlink to it. That file covers the module layout, the conf.d
-prefix convention, and the constraints that are easy to get wrong (idempotency,
-restricted-execution machines, no cross-module dependencies).
+## Modules
 
-Read [CODING_STANDARDS.md](docs/policy/CODING_STANDARDS.md) before adding a
-module, and [CONSTITUTION.md](docs/policy/CONSTITUTION.md) for the principles
-those standards derive from.
+The enabled modules are listed in `playbooks/deploy.yml`.
 
-## Policy Documents
+| Module | Provides |
+| --- | --- |
+| `1password` | 1Password CLI |
+| `claude` | Claude Code settings and hooks |
+| `dev-tools` | mise, direnv, bat, jq, linters, and network tools |
+| `editor` | Vim |
+| `fish` | Fish, Fisher, Tide, plugins, and functions |
+| `fonts` | Coding and Nerd Fonts |
+| `ghostty` | Ghostty and its configuration |
+| `git` | Git, GitHub CLI, diff tools, and shared config |
+| `shell` | Shared command-line utilities and Atuin |
+| `tmux` | tmux and its configuration |
+| `zsh` | Zsh, Powerlevel10k, and shell plugins |
 
-This repository is governed by a set of policy documents:
+Each module's README covers only its special setup and the files it owns.
 
-- **[Constitution](docs/policy/CONSTITUTION.md)** - Core principles and governance framework (v1.0.0)
-- **[Governance Model](docs/policy/GOVERNANCE.md)** - Decision-making and change processes
-- **[Coding Standards](docs/policy/CODING_STANDARDS.md)** - Code quality and style guidelines
-- **[Changelog](docs/policy/CHANGELOG.md)** - History of changes and versions
+## Local overrides
 
-All contributions must comply with the principles defined in the Constitution.
+Keep machine-specific values and secrets out of this repository:
 
-## Migration from Old Structure
+| Tool | Local file |
+| --- | --- |
+| Fish | `~/.config/fish/config.local.fish` |
+| Git | `~/.config/git/local` |
+| Vim | `~/.vimrc.local` |
+| Zsh | `~/.config/zsh/.zshrc.local` |
 
-If you were using the old `bootstrap.sh` script, the new structure is fully compatible. The Ansible playbook replaces the bootstrap script and provides the same functionality with additional benefits:
+## More
 
-* Automated dependency management
-* Idempotent operations
-* Better error handling
-* Cross-platform support (with configuration)
-
-## Credits
-
-Thanks to [getfatday](https://github.com/getfatday/dotfiles) for the ansible-role-dotmodules structure and inspiration.
-
-## License
-
-MIT License - see LICENSE file for details.
+- [Reference](docs/REFERENCE.md): dry runs, troubleshooting, architecture, and
+  module development
+- [Linux server setup](linux/README.md): separate minimal Debian/Pi OS path
+- `modules/*/README.md`: module-specific notes
