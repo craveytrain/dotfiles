@@ -1,7 +1,6 @@
 # Fish
 
-Installs Fish and Fisher, registers Fish in `/etc/shells`, and stows shell
-configuration, plugins, and functions.
+Installs Fish and Fisher, registers Fish in `/etc/shells`, and stows shell configuration, plugins, and functions.
 
 After the first deployment, run:
 
@@ -13,8 +12,6 @@ tide configure --auto --style=Lean --prompt_colors='True color' \
   --icons='Many icons' --transient=No
 ```
 
-The Tide command stores its baseline in per-machine universal variables. The
-tracked `10-fish-core.fish` fragment applies shared adjustments on top.
+The Tide command stores its baseline in per-machine universal variables. The tracked `10-fish-core.fish` fragment applies shared adjustments on top.
 
-Use `~/.config/fish/config.local.fish` for private or machine-specific settings.
-The tracked `config.fish` loads it when present.
+Use `~/.config/fish/config.local.fish` for private or machine-specific settings. The tracked `config.fish` loads it when present.
