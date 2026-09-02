@@ -18,7 +18,14 @@ The module provides:
 - fisher
 
 **Configuration files:**
-- `.config/fish/config.fish` - Main Fish configuration (mergeable with other modules)
+- `.config/fish/config.fish` - entry point; calls `fish_default_key_bindings` and sources `config.local.fish`
+- `.config/fish/conf.d/10-fish-core.fish` - environment, abbreviations, tide deviations
+- `.config/fish/fish_plugins` - fisher plugin list
+- `.config/fish/functions/*.fish` - `ll`, `lt`, `mux`, `worktree-new`, and friends
+
+Note on `config.fish`: the `fish_default_key_bindings` call on line 1 looks
+redundant but is not. Without it fish installs only 48 of its 122 default
+bindings, and up/down degrade from `up-or-search` to `up-line`.
 
 **Shell registration:**
 - Automatically registers Fish shell in `/etc/shells` for system use via `register_shell: fish` config option
@@ -38,7 +45,34 @@ After running the Ansible playbook, complete the Fisher setup:
    fisher update
    ```
 
-This installs all Fisher plugins defined in your `config.fish` file.
+This installs the plugins listed in `files/.config/fish/fish_plugins`:
+
+| Plugin | Purpose |
+|---|---|
+| `jorgebucaran/fisher` | the plugin manager itself |
+| `ilancosman/tide` | prompt |
+| `patrickf1/fzf.fish` | fzf bindings (ctrl-alt-f/l/s, ctrl-v) |
+| `franciscolourenco/done` | notify on long-running commands |
+| `edc/bass` | run bash scripts and import their env |
+| `laughedelic/pisces` | auto-close brackets and quotes |
+| `nickeb96/puffer-fish` | `...` -> `../..`, `!!`, `!$`, `!*` |
+
+3. **Set the tide prompt baseline:**
+
+   ```fish
+   tide configure --auto --style=Lean --prompt_colors='True color' \
+     --show_time=No --lean_prompt_height='Two lines' \
+     --prompt_connection=Disconnected --prompt_spacing=Sparse \
+     --icons='Many icons' --transient=No
+   ```
+
+   Tide keeps its config in fish universal variables, which live in
+   `~/.config/fish/fish_variables` and are therefore per-machine and not in
+   git. This command writes that whole baseline and is idempotent, so it is
+   safe to re-run. `conf.d/10-fish-core.fish` then layers the few genuine
+   deviations on top with `set -g`, which shadows the universal without
+   overwriting it. That is why `tide configure` stays usable for experiments:
+   comment out the block and the configured prompt comes back untouched.
 
 ## Fish Features
 

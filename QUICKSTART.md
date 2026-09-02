@@ -18,7 +18,7 @@ Before you begin, ensure you have:
 
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/yourusername/dotfiles.git ~/dotfiles
+   git clone https://github.com/craveytrain/dotfiles.git ~/dotfiles
    cd ~/dotfiles
    ```
 
@@ -37,7 +37,50 @@ Before you begin, ensure you have:
    ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
-That's it! Your dotfiles are now deployed and all configured tools are installed.
+Ansible installs the packages and stows the config symlinks. A few things
+can't be automated and need one manual pass.
+
+## Post-Deployment Steps
+
+Run these once per machine, in order.
+
+1. **Install fish plugins.** Ansible installs `fisher` itself but not the
+   plugins. From a fish shell:
+   ```fish
+   fisher update
+   ```
+   This reads `~/.config/fish/fish_plugins` and installs tide, fzf.fish, done,
+   bass, pisces and puffer-fish.
+
+2. **Set the tide prompt baseline.** Tide stores its config in fish universal
+   variables, which are per-machine and not in git. This command writes the
+   whole baseline and is idempotent:
+   ```fish
+   tide configure --auto --style=Lean --prompt_colors='True color' \
+     --show_time=No --lean_prompt_height='Two lines' \
+     --prompt_connection=Disconnected --prompt_spacing=Sparse \
+     --icons='Many icons' --transient=No
+   ```
+   `modules/fish/files/.config/fish/conf.d/10-fish-core.fish` then applies the
+   handful of deviations from that baseline on top.
+
+3. **Install the mise-managed runtimes:**
+   ```bash
+   mise install
+   ```
+
+4. **Connect atuin (optional).** Shell history works immediately without this;
+   it is only needed to sync history between machines:
+   ```bash
+   atuin login -u <username>    # existing account
+   atuin register -u <username> -e <email>   # first machine
+   atuin sync
+   ```
+
+5. **Set your login shell**, if this is a fresh machine:
+   ```bash
+   chsh -s /opt/homebrew/bin/fish
+   ```
 
 ## What Gets Installed
 
