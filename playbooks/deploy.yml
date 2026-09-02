@@ -26,3 +26,10 @@
         - claude
   roles:
     - role: ansible-role-dotmodules
+  post_tasks:
+    - name: Point this repo's git hooks at .githooks (pre-commit scrub-check for settings.json)
+      community.general.git_config:
+        repo: '{{ playbook_dir }}/..'
+        scope: local
+        name: core.hooksPath
+        value: .githooks

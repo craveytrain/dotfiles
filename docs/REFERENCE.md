@@ -30,6 +30,9 @@ Stow creates home-directory symlinks to files in this checkout. Editing a
 tracked config therefore changes the deployed config immediately; package or
 module-list changes require another playbook run.
 
+After the role runs, the playbook points this repo's `core.hooksPath` at
+`.githooks`, which holds a pre-commit check for the Claude Code module.
+
 ## Module layout
 
 ```text
