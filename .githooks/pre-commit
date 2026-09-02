@@ -1,0 +1,49 @@
+#!/bin/sh
+# pre-commit — backstop for the scrub-volatile-settings.mjs SessionEnd hook.
+#
+# Blocks a commit that stages modules/claude/files/.claude/settings.json with
+# any of Claude Code's volatile runtime keys still present at the top level.
+# The SessionEnd hook won't fire if Claude Code is SIGKILLed or the terminal
+# is destroyed, so this catches what that hook missed before it reaches git
+# history — this repo is public.
+#
+# Wired via `git config core.hooksPath .githooks` (set by playbooks/deploy.yml).
+# Requires jq; if it's missing this warns and allows the commit rather than
+# blocking on a missing dependency.
+
+set -eu
+
+SETTINGS_PATH="modules/claude/files/.claude/settings.json"
+VOLATILE_KEYS="model enabledPlugins autoMode"
+
+# No-op unless the settings file has a staged change in this commit.
+if ! git diff --cached --name-only | grep -qx "$SETTINGS_PATH"; then
+  exit 0
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "pre-commit: jq not found — skipping volatile-key check for $SETTINGS_PATH" >&2
+  exit 0
+fi
+
+# Read the staged blob, not the worktree copy — a scrub run after `git add`
+# but re-edited in the worktree would otherwise hide a leak.
+staged=$(git show ":$SETTINGS_PATH" 2>/dev/null) || exit 0 # staged deletion: nothing to scan
+
+found=""
+for key in $VOLATILE_KEYS; do
+  if printf '%s' "$staged" | jq -e --arg k "$key" 'has($k)' >/dev/null 2>&1; then
+    found="$found $key"
+  fi
+done
+
+if [ -n "$found" ]; then
+  {
+    echo "pre-commit: staged $SETTINGS_PATH still has volatile Claude Code key(s):$found"
+    echo "These are machine-local runtime state (model step-ups, enabled plugins, auto-mode config) and must never land in this public repo."
+    echo "Fix: node ~/.claude/hooks/scrub-volatile-settings.mjs < /dev/null && git add $SETTINGS_PATH"
+  } >&2
+  exit 1
+fi
+
+exit 0

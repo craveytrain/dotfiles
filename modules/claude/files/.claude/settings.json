@@ -77,6 +77,17 @@
           }
         ]
       }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -f ~/.claude/hooks/scrub-volatile-settings.mjs && node ~/.claude/hooks/scrub-volatile-settings.mjs; true",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
