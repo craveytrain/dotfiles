@@ -8,5 +8,4 @@ Installs these Homebrew font casks:
 - Inconsolata Nerd Font
 - Input
 
-Fonts have no stowed configuration. Restart applications before selecting a
-newly installed font.
+Fonts have no stowed configuration. Restart applications before selecting a newly installed font.

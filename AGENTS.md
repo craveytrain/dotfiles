@@ -13,10 +13,7 @@ Modular Ansible + GNU Stow dotfiles shared across multiple macOS machines: each 
 
 - Modules are self-contained and independent; no hard cross-module dependencies.
 - All operations must be idempotent (safe to run repeatedly).
-- conf.d fragments use tens-based prefix grouping (10=core, 50=features, 80=late-loading integrations).
-  Exception: fish loads conf.d alphabetically and fisher plugin fragments carry no numeric prefix, so
-  they always sort after any digit. A fragment that must override a plugin's key bindings needs a
-  letter prefix instead (see `zz-shell-atuin.fish`), not a higher number.
+- conf.d fragments use tens-based prefix grouping (10=core, 50=features, 80=late-loading integrations). Exception: fish loads conf.d alphabetically and fisher plugin fragments carry no numeric prefix, so they always sort after any digit. A fragment that must override a plugin's key bindings needs a letter prefix instead (see `zz-shell-atuin.fish`), not a higher number.
 - Local overrides via `.local` files (e.g., `.zshrc.local`, `.vimrc.local`).
 - No merged/mergeable files; everything uses runtime conf.d sourcing.
 

@@ -1,8 +1,6 @@
 # Dotfiles
 
-Personal macOS configuration managed with Ansible, Homebrew, and GNU Stow. The
-deployed files are symlinks into this repository, so most configuration changes
-take effect after `git pull` and a shell or application restart.
+Personal macOS configuration managed with Ansible, Homebrew, and GNU Stow. The deployed files are symlinks into this repository, so most configuration changes take effect after `git pull` and a shell or application restart.
 
 ## Daily use
 
@@ -25,8 +23,7 @@ ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags registe
 
 ## Set up a new Mac
 
-1. Install the Xcode command line tools and
-   [Homebrew](https://brew.sh/):
+1. Install the Xcode command line tools and [Homebrew](https://brew.sh/):
 
    ```bash
    xcode-select --install
@@ -43,8 +40,7 @@ ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags registe
    ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
    ```
 
-   Use `--skip-tags register_shell` instead of `--ask-become-pass` on a
-   BeyondTrust-managed or otherwise restricted machine.
+   Use `--skip-tags register_shell` instead of `--ask-become-pass` on a BeyondTrust-managed or otherwise restricted machine.
 
 3. Finish the per-machine setup:
 
@@ -70,8 +66,7 @@ atuin login -u <username>
 atuin sync
 ```
 
-Use `atuin register -u <username> -e <email>` instead of `login` for a new
-account.
+Use `atuin register -u <username> -e <email>` instead of `login` for a new account.
 
 ## Modules
 
@@ -106,7 +101,6 @@ Keep machine-specific values and secrets out of this repository:
 
 ## More
 
-- [Reference](docs/REFERENCE.md): dry runs, troubleshooting, architecture, and
-  module development
+- [Reference](docs/REFERENCE.md): dry runs, troubleshooting, architecture, and module development
 - [Linux server setup](linux/README.md): separate minimal Debian/Pi OS path
 - `modules/*/README.md`: module-specific notes
