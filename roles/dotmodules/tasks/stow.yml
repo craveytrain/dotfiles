@@ -1,0 +1,48 @@
+---
+- name: Preview {{ dotmodule_name }} Stow changes
+  ansible.builtin.command:
+    argv:
+      - stow
+      - --simulate
+      - --verbose=1
+      - --no-folding
+      - --dir
+      - '{{ dotmodules_root }}/{{ dotmodule_name }}'
+      - --target
+      - '{{ dotmodules_target_home }}'
+      - files
+  register: dotmodule_stow_preview
+  changed_when: false
+  check_mode: false
+
+- name: Determine pending {{ dotmodule_name }} Stow changes
+  ansible.builtin.set_fact:
+    dotmodule_stow_actions: >-
+      {{
+        (dotmodule_stow_preview.stderr_lines + dotmodule_stow_preview.stdout_lines)
+        | reject('equalto', 'WARNING: in simulation mode so not modifying filesystem.')
+        | list
+      }}
+
+- name: Report pending {{ dotmodule_name }} Stow changes
+  ansible.builtin.debug:
+    msg: >-
+      {{ dotmodule_name }} would change:
+      {{ dotmodule_stow_actions | join('; ') }}
+  when:
+    - ansible_check_mode
+    - dotmodule_stow_actions | length > 0
+
+- name: Apply {{ dotmodule_name }} Stow changes
+  ansible.builtin.command:
+    argv:
+      - stow
+      - --no-folding
+      - --dir
+      - '{{ dotmodules_root }}/{{ dotmodule_name }}'
+      - --target
+      - '{{ dotmodules_target_home }}'
+      - files
+  when:
+    - not ansible_check_mode
+    - dotmodule_stow_actions | length > 0

@@ -1,0 +1,6 @@
+---
+- name: Install tool versions declared in the shared mise config
+  ansible.builtin.command: mise install
+  register: dotfiles_mise_install
+  changed_when: "'all tools are installed' not in dotfiles_mise_install.stderr"
+  when: not ansible_check_mode

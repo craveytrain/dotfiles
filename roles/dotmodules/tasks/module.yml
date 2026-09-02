@@ -1,0 +1,28 @@
+---
+- name: Load {{ dotmodule_name }} configuration
+  ansible.builtin.include_vars:
+    file: '{{ dotmodules_root }}/{{ dotmodule_name }}/config.yml'
+    name: dotmodule_config
+
+- name: Validate {{ dotmodule_name }} configuration
+  ansible.builtin.assert:
+    that:
+      - dotmodule_config is mapping
+      - dotmodule_config.keys() | difference(['homebrew_packages', 'homebrew_casks', 'stow_dirs', 'register_shell']) | length == 0
+    fail_msg: >-
+      {{ dotmodule_name }}/config.yml contains an unsupported key. Supported keys are
+      homebrew_packages, homebrew_casks, stow_dirs, and register_shell.
+
+- name: Collect {{ dotmodule_name }} configuration
+  ansible.builtin.set_fact:
+    dotmodules_homebrew_packages: >-
+      {{ dotmodules_homebrew_packages + (dotmodule_config.homebrew_packages | default([])) }}
+    dotmodules_homebrew_casks: >-
+      {{ dotmodules_homebrew_casks + (dotmodule_config.homebrew_casks | default([])) }}
+    dotmodules_stow_dirs: >-
+      {{ dotmodules_stow_dirs + (dotmodule_config.stow_dirs | default([])) }}
+    dotmodules_shells: >-
+      {{
+        dotmodules_shells
+        + ([dotmodule_config.register_shell] if dotmodule_config.register_shell is defined else [])
+      }}

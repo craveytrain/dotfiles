@@ -12,13 +12,13 @@ git pull
 Re-run deployment only when a module or its packages changed:
 
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
+./deploy
 ```
 
 On a machine where sudo is restricted:
 
 ```bash
-ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
+./deploy --restricted
 ```
 
 ## Set up a new Mac
@@ -36,11 +36,10 @@ ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags registe
    git clone https://github.com/craveytrain/dotfiles.git ~/dotfiles
    cd ~/dotfiles
    brew install ansible
-   ansible-galaxy install -r requirements.yml
-   ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
+   ./deploy
    ```
 
-   Use `--skip-tags register_shell` instead of `--ask-become-pass` on a BeyondTrust-managed or otherwise restricted machine.
+   `./deploy` installs the required public Ansible collection when it is missing. Use `./deploy --restricted` on a BeyondTrust-managed or otherwise restricted machine.
 
 3. Set the Tide prompt baseline, from Fish:
 

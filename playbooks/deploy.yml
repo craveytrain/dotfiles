@@ -1,17 +1,12 @@
 ---
-# Main deployment playbook for dotfiles
-# Run with: ansible-playbook -i playbooks/inventory playbooks/deploy.yml --ask-become-pass
-# (--ask-become-pass required for shell registration in /etc/shells)
-#
-# To skip shell registration (useful for CI/CD or restricted environments):
-# ansible-playbook -i playbooks/inventory playbooks/deploy.yml --skip-tags register_shell
-- name: Deploy dotfiles using ansible-role-dotmodules
+# Main deployment playbook for dotfiles. Run it through ./deploy.
+- name: Deploy dotfiles
   hosts: localhost
   tags:
     - dotfiles
   vars:
     dotmodules:
-      repo: 'file://{{ playbook_dir }}/../modules'
+      root: '{{ playbook_dir }}/../modules'
       install:
         - git
         - fonts
@@ -25,7 +20,7 @@
         - tmux
         - claude
   roles:
-    - role: ansible-role-dotmodules
+    - role: dotmodules
   post_tasks:
     - name: Point this repo's git hooks at .githooks (pre-commit scrub-check for settings.json)
       community.general.git_config:
@@ -33,35 +28,3 @@
         scope: local
         name: core.hooksPath
         value: .githooks
-
-    - name: Install tool versions declared in the shared mise config
-      ansible.builtin.command: mise install
-      register: dotfiles_mise_install
-      # mise reports progress on stderr, not stdout, and says "all tools are
-      # installed" when there is nothing to do.
-      changed_when: "'all tools are installed' not in dotfiles_mise_install.stderr"
-      when: "'dev-tools' in dotmodules.install"
-
-    # fisher update reinstalls every plugin and always reports success, so it has
-    # no "nothing to do" signal of its own. Compare the tracked list against what
-    # is installed and only sync when they differ, rather than refetching all of
-    # them on every deploy.
-    - name: Read the tracked Fish plugin list
-      ansible.builtin.slurp:
-        src: '{{ playbook_dir }}/../modules/fish/files/.config/fish/fish_plugins'
-      register: dotfiles_fish_plugins
-      when: "'fish' in dotmodules.install"
-
-    - name: Read the installed Fish plugins
-      ansible.builtin.command: fish -c 'fisher list'
-      register: dotfiles_fisher_list
-      changed_when: false
-      check_mode: false
-      when: "'fish' in dotmodules.install"
-
-    - name: Sync Fish plugins to the tracked list
-      ansible.builtin.command: fish -c 'fisher update'
-      when:
-        - "'fish' in dotmodules.install"
-        - (dotfiles_fish_plugins.content | b64decode).split() | sort
-          != dotfiles_fisher_list.stdout_lines | sort

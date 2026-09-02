@@ -1,0 +1,18 @@
+---
+- name: Resolve {{ dotmodule_shell }} login shell path
+  ansible.builtin.set_fact:
+    dotmodule_shell_path: >-
+      {{
+        dotmodule_shell
+        if '/' in dotmodule_shell
+        else ('/opt/homebrew' if ansible_machine == 'arm64' else '/usr/local') + '/bin/' + dotmodule_shell
+      }}
+
+- name: Add {{ dotmodule_shell_path }} to /etc/shells
+  ansible.builtin.lineinfile:
+    path: /etc/shells
+    line: '{{ dotmodule_shell_path }}'
+    state: present
+    create: true
+    mode: '0644'
+  become: true

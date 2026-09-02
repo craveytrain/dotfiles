@@ -1,0 +1,10 @@
+---
+- name: Check for {{ dotmodule_name }} deployment tasks
+  ansible.builtin.stat:
+    path: '{{ dotmodules_root }}/{{ dotmodule_name }}/tasks.yml'
+  register: dotmodule_tasks_file
+  changed_when: false
+
+- name: Run {{ dotmodule_name }} deployment tasks
+  ansible.builtin.include_tasks: '{{ dotmodules_root }}/{{ dotmodule_name }}/tasks.yml'
+  when: dotmodule_tasks_file.stat.exists

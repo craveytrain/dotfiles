@@ -6,7 +6,7 @@ Modular Ansible + GNU Stow dotfiles shared across multiple macOS machines: each 
 
 - **Platform**: macOS Apple Silicon (primary). A separate minimal bash setup for Debian/Pi OS Linux servers lives in `linux/` — see `linux/README.md`. No Windows support; no full Linux desktop parity.
 - **Privileges**: must support restricted execution on BeyondTrust-managed machines via `--skip-tags register_shell`.
-- **Architecture**: must follow ansible-role-dotmodules patterns (external role; Ansible 2.9+); existing modules define the structure.
+- **Architecture**: deployment uses the purpose-built `roles/dotmodules` role in this repository (Ansible 2.9+); existing modules define the structure.
 - **Declarative over imperative**: prefer YAML configs over shell scripts where possible.
 
 ## Key Conventions

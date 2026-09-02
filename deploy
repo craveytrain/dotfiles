@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+args=()
+ask_become=true
+
+usage() {
+  cat <<'EOF'
+Usage: ./deploy [--restricted] [ansible-playbook options]
+
+Deploy packages and dotfiles to this Mac.
+
+  --restricted  Skip the only privileged operation: adding Fish to /etc/shells
+  -h, --help    Show this help
+
+Examples:
+  ./deploy
+  ./deploy --restricted
+  ./deploy --check --restricted
+  ./deploy --limit localhost -v
+EOF
+}
+
+while (($#)); do
+  case "$1" in
+    --restricted)
+      ask_become=false
+      args+=(--skip-tags register_shell)
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      args+=("$1")
+      ;;
+  esac
+  shift
+done
+
+if ! command -v ansible-playbook >/dev/null 2>&1; then
+  printf 'ansible-playbook is required. Install it with: brew install ansible\n' >&2
+  exit 1
+fi
+
+if ! ansible-galaxy collection list community.general 2>/dev/null |
+  grep '^community\.general ' >/dev/null; then
+  printf 'Installing the required Ansible collection...\n'
+  ansible-galaxy collection install -r "$repo_dir/requirements.yml"
+fi
+
+if "$ask_become"; then
+  args=(--ask-become-pass "${args[@]}")
+fi
+
+cd "$repo_dir"
+exec ansible-playbook -i playbooks/inventory playbooks/deploy.yml "${args[@]}"

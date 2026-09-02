@@ -1,0 +1,62 @@
+---
+- name: Verify the macOS deployment target
+  ansible.builtin.assert:
+    that:
+      - ansible_system == 'Darwin'
+    fail_msg: Use linux/setup.sh for the separate Linux server configuration.
+
+- name: Initialize module configuration
+  ansible.builtin.set_fact:
+    dotmodules_root: '{{ dotmodules.root }}'
+    dotmodules_target_home: '{{ dotmodules_home | default(lookup("env", "HOME")) }}'
+    dotmodules_homebrew_packages: []
+    dotmodules_homebrew_casks: []
+    dotmodules_stow_dirs: []
+    dotmodules_shells: []
+
+- name: Read enabled module configuration
+  ansible.builtin.include_tasks: module.yml
+  loop: '{{ dotmodules.install }}'
+  loop_control:
+    loop_var: dotmodule_name
+    label: '{{ dotmodule_name }}'
+
+- name: Install Homebrew packages
+  community.general.homebrew:
+    name: '{{ dotmodules_homebrew_packages | unique }}'
+    state: present
+  when: dotmodules_homebrew_packages | length > 0
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: '{{ dotmodules_homebrew_casks | unique }}'
+    state: present
+    accept_external_apps: true
+  when: dotmodules_homebrew_casks | length > 0
+
+- name: Deploy module files
+  ansible.builtin.include_tasks: stow.yml
+  loop: '{{ dotmodules_stow_dirs | unique }}'
+  loop_control:
+    loop_var: dotmodule_name
+    label: '{{ dotmodule_name }}'
+
+- name: Register configured login shells
+  ansible.builtin.include_tasks:
+    file: register-shell.yml
+    apply:
+      tags:
+        - register_shell
+  loop: '{{ dotmodules_shells | unique }}'
+  loop_control:
+    loop_var: dotmodule_shell
+    label: '{{ dotmodule_shell }}'
+  tags:
+    - register_shell
+
+- name: Run module-specific deployment tasks
+  ansible.builtin.include_tasks: module-tasks.yml
+  loop: '{{ dotmodules.install }}'
+  loop_control:
+    loop_var: dotmodule_name
+    label: '{{ dotmodule_name }}'

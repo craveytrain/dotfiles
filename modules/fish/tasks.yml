@@ -1,0 +1,27 @@
+---
+# fisher update always reinstalls every plugin, so compare membership first.
+- name: Read the tracked Fish plugin list
+  ansible.builtin.slurp:
+    src: '{{ dotmodules_root }}/fish/files/.config/fish/fish_plugins'
+  register: dotfiles_fish_plugins
+
+- name: Read the installed Fish plugins
+  ansible.builtin.command: fish -c 'fisher list'
+  register: dotfiles_fisher_list
+  changed_when: false
+  check_mode: false
+
+- name: Report Fish plugin drift
+  ansible.builtin.debug:
+    msg: Fish plugins would be synchronized to the tracked list.
+  when:
+    - ansible_check_mode
+    - (dotfiles_fish_plugins.content | b64decode).split() | sort
+      != dotfiles_fisher_list.stdout_lines | sort
+
+- name: Sync Fish plugins to the tracked list
+  ansible.builtin.command: fish -c 'fisher update'
+  when:
+    - not ansible_check_mode
+    - (dotfiles_fish_plugins.content | b64decode).split() | sort
+      != dotfiles_fisher_list.stdout_lines | sort
