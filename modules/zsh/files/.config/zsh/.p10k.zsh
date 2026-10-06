@@ -5,8 +5,8 @@
 # instant_prompt=verbose.
 # Type `p10k configure` to generate another config.
 #
-# Config for Powerlevel10k with 8-color lean prompt style. Type `p10k configure` to generate
-# your own config based on it.
+# Lean Powerlevel10k layout with an explicit 24-bit palette matching Tide.
+# Edit DOTFILES_ZSH_PROMPT_COLORS below; `p10k configure` overwrites this file.
 #
 # Tip: Looking for a nice color? Here's a one-liner to print colormap.
 #
@@ -28,6 +28,46 @@
 
   # Zsh >= 5.1 is required.
   [[ $ZSH_VERSION == (5.<1->*|<6->.*) ]] || return
+
+  # Tide's Lean / True color palette, captured here so Zsh works independently.
+  # Hex bypasses the terminal's ANSI palette. Colors for enabled segments live here.
+  # Optional per-machine overrides: DOTFILES_ZSH_PROMPT_COLOR_OVERRIDES in .zshrc.local.
+  typeset -gA DOTFILES_ZSH_PROMPT_COLORS=(
+    os                 '#FFFFFF'
+    character          '#5FD700'
+    character_failure  '#FF0000'
+    pwd_dirs           '#0087AF'
+    pwd_anchors        '#00AFFF'
+    pwd_truncated      '#8787AF'
+    git_branch         '#5FD700'
+    git_staged         '#D7AF00'
+    git_dirty          '#D7AF00'
+    git_untracked      '#00AFFF'
+    git_conflicted     '#FF0000'
+    git_operation      '#FF0000'
+    git_upstream       '#5FD700'
+    git_stash          '#5FD700'
+    muted              '#949494'
+    status             '#5FAF00'
+    status_failure     '#D70000'
+    duration           '#87875F'
+    jobs               '#5FAF00'
+    direnv             '#D7AF00'
+    context            '#D7AF87'
+    context_root       '#D7AF00'
+    node               '#44883E'
+    python             '#00AFAF'
+    go                 '#00ACD7'
+    rust               '#F74C00'
+    ruby               '#B31209'
+    java               '#ED8B00'
+    php                '#617CBE'
+    elixir             '#4E2A8E'
+    terraform          '#844FBA'
+  )
+  if (( ${+DOTFILES_ZSH_PROMPT_COLOR_OVERRIDES} )); then
+    DOTFILES_ZSH_PROMPT_COLORS+=( "${(@kv)DOTFILES_ZSH_PROMPT_COLOR_OVERRIDES}" )
+  fi
 
   # The list of segments shown on the left. Fill it with the most important segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -145,15 +185,15 @@
   # Hex, not a color name or palette index: the terminal theme remaps palette
   # 0-15, so `white` renders as the theme's off-white. p10k passes #rrggbb
   # through as 24-bit color, matching tide's os segment.
-  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND='#ffffff'
+  typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[os]
   # Custom icon.
   # typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='⭐'
 
   ################################[ prompt_char: prompt symbol ]################################
   # Green prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=2
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[character]
   # Red prompt symbol if the last command failed.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=1
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS,VIOWR}_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[character_failure]
   # Default prompt symbol.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_{OK,ERROR}_VIINS_CONTENT_EXPANSION='❯'
   # Prompt symbol in command vi mode.
@@ -170,17 +210,17 @@
 
   ##################################[ dir: current directory ]##################################
   # Default current directory color.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=39
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[pwd_dirs]
   # If directory is too long, shorten some of its segments to the shortest possible unique
   # prefix. The shortened directory can be tab-completed to the original.
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
   # Replace removed segment suffixes with this symbol.
   typeset -g POWERLEVEL9K_SHORTEN_DELIMITER=
   # Color of the shortened directory segments.
-  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=4
+  typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[pwd_truncated]
   # Color of the anchor directory segments. Anchor segments are never shortened. The first
   # segment is always an anchor.
-  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=39
+  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[pwd_anchors]
   # Set to true to display anchor directory segments in bold.
   typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=false
   # Don't shorten directories that contain any of these files. They are anchors.
@@ -338,18 +378,26 @@
 
     if (( $1 )); then
       # Styling for up-to-date Git status.
-      local       meta='%f'   # default foreground
-      local      clean='%2F'  # green foreground
-      local   modified='%3F'  # yellow foreground
-      local  untracked='%4F'  # blue foreground
-      local conflicted='%1F'  # red foreground
+      local       meta="%F{$DOTFILES_ZSH_PROMPT_COLORS[os]}"
+      local      clean="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_branch]}"
+      local   modified="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_dirty]}"
+      local     staged="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_staged]}"
+      local  untracked="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_untracked]}"
+      local conflicted="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_conflicted]}"
+      local  operation="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_operation]}"
+      local   upstream="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_upstream]}"
+      local      stash="%F{$DOTFILES_ZSH_PROMPT_COLORS[git_stash]}"
     else
       # Styling for incomplete and stale Git status.
-      local       meta='%f'  # default foreground
-      local      clean='%f'  # default foreground
-      local   modified='%f'  # default foreground
-      local  untracked='%f'  # default foreground
-      local conflicted='%f'  # default foreground
+      local meta="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local clean="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local modified="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local staged="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local untracked="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local conflicted="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local operation="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local upstream="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
+      local stash="%F{$DOTFILES_ZSH_PROMPT_COLORS[muted]}"
     fi
 
     local res
@@ -393,28 +441,28 @@
 
     if (( VCS_STATUS_COMMITS_AHEAD || VCS_STATUS_COMMITS_BEHIND )); then
       # ⇣42 if behind the remote.
-      (( VCS_STATUS_COMMITS_BEHIND )) && res+=" ${clean}⇣${VCS_STATUS_COMMITS_BEHIND}"
+      (( VCS_STATUS_COMMITS_BEHIND )) && res+=" ${upstream}⇣${VCS_STATUS_COMMITS_BEHIND}"
       # ⇡42 if ahead of the remote; no leading space if also behind the remote: ⇣42⇡42.
       (( VCS_STATUS_COMMITS_AHEAD && !VCS_STATUS_COMMITS_BEHIND )) && res+=" "
-      (( VCS_STATUS_COMMITS_AHEAD  )) && res+="${clean}⇡${VCS_STATUS_COMMITS_AHEAD}"
+      (( VCS_STATUS_COMMITS_AHEAD  )) && res+="${upstream}⇡${VCS_STATUS_COMMITS_AHEAD}"
     elif [[ -n $VCS_STATUS_REMOTE_BRANCH ]]; then
       # Tip: Uncomment the next line to display '=' if up to date with the remote.
       # res+=" ${clean}="
     fi
 
     # ⇠42 if behind the push remote.
-    (( VCS_STATUS_PUSH_COMMITS_BEHIND )) && res+=" ${clean}⇠${VCS_STATUS_PUSH_COMMITS_BEHIND}"
+    (( VCS_STATUS_PUSH_COMMITS_BEHIND )) && res+=" ${upstream}⇠${VCS_STATUS_PUSH_COMMITS_BEHIND}"
     (( VCS_STATUS_PUSH_COMMITS_AHEAD && !VCS_STATUS_PUSH_COMMITS_BEHIND )) && res+=" "
     # ⇢42 if ahead of the push remote; no leading space if also behind: ⇠42⇢42.
-    (( VCS_STATUS_PUSH_COMMITS_AHEAD  )) && res+="${clean}⇢${VCS_STATUS_PUSH_COMMITS_AHEAD}"
+    (( VCS_STATUS_PUSH_COMMITS_AHEAD  )) && res+="${upstream}⇢${VCS_STATUS_PUSH_COMMITS_AHEAD}"
     # *42 if have stashes.
-    (( VCS_STATUS_STASHES        )) && res+=" ${clean}*${VCS_STATUS_STASHES}"
+    (( VCS_STATUS_STASHES        )) && res+=" ${stash}*${VCS_STATUS_STASHES}"
     # 'merge' if the repo is in an unusual state.
-    [[ -n $VCS_STATUS_ACTION     ]] && res+=" ${conflicted}${VCS_STATUS_ACTION}"
+    [[ -n $VCS_STATUS_ACTION     ]] && res+=" ${operation}${VCS_STATUS_ACTION}"
     # ~42 if have merge conflicts.
     (( VCS_STATUS_NUM_CONFLICTED )) && res+=" ${conflicted}~${VCS_STATUS_NUM_CONFLICTED}"
     # +42 if have staged changes.
-    (( VCS_STATUS_NUM_STAGED     )) && res+=" ${modified}+${VCS_STATUS_NUM_STAGED}"
+    (( VCS_STATUS_NUM_STAGED     )) && res+=" ${staged}+${VCS_STATUS_NUM_STAGED}"
     # !42 if have unstaged changes.
     (( VCS_STATUS_NUM_UNSTAGED   )) && res+=" ${modified}!${VCS_STATUS_NUM_UNSTAGED}"
     # ?42 if have untracked files. It's really a question mark, your font isn't broken.
@@ -455,8 +503,8 @@
   typeset -g POWERLEVEL9K_VCS_{STAGED,UNSTAGED,UNTRACKED,CONFLICTED,COMMITS_AHEAD,COMMITS_BEHIND}_MAX_NUM=-1
 
   # Icon color.
-  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=2
-  typeset -g POWERLEVEL9K_VCS_LOADING_VISUAL_IDENTIFIER_COLOR=
+  typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_COLOR=$DOTFILES_ZSH_PROMPT_COLORS[git_branch]
+  typeset -g POWERLEVEL9K_VCS_LOADING_VISUAL_IDENTIFIER_COLOR=$DOTFILES_ZSH_PROMPT_COLORS[muted]
   # Custom icon.
   # typeset -g POWERLEVEL9K_VCS_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # Custom prefix.
@@ -469,9 +517,9 @@
 
   # These settings are used for repositories other than Git or when gitstatusd fails and
   # Powerlevel10k has to fall back to using vcs_info.
-  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=2
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=2
-  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=3
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[git_branch]
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[git_untracked]
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[git_dirty]
 
   ##########################[ status: exit code of the last command ]###########################
   # Enable OK_PIPE, ERROR_PIPE and ERROR_SIGNAL status states to allow us to enable, disable and
@@ -481,24 +529,24 @@
   # Status on success. No content, just an icon. No need to show it if prompt_char is enabled as
   # it will signify success by turning green.
   typeset -g POWERLEVEL9K_STATUS_OK=false
-  typeset -g POWERLEVEL9K_STATUS_OK_FOREGROUND=2
+  typeset -g POWERLEVEL9K_STATUS_OK_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[status]
   typeset -g POWERLEVEL9K_STATUS_OK_VISUAL_IDENTIFIER_EXPANSION='✔'
 
   # Status when some part of a pipe command fails but the overall exit status is zero. It may look
   # like this: 1|0.
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE=true
-  typeset -g POWERLEVEL9K_STATUS_OK_PIPE_FOREGROUND=2
+  typeset -g POWERLEVEL9K_STATUS_OK_PIPE_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[status]
   typeset -g POWERLEVEL9K_STATUS_OK_PIPE_VISUAL_IDENTIFIER_EXPANSION='✔'
 
   # Status when it's just an error code (e.g., '1'). No need to show it if prompt_char is enabled as
   # it will signify error by turning red.
   typeset -g POWERLEVEL9K_STATUS_ERROR=false
-  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[status_failure]
   typeset -g POWERLEVEL9K_STATUS_ERROR_VISUAL_IDENTIFIER_EXPANSION='✘'
 
   # Status when the last command was terminated by a signal.
   typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL=true
-  typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_FOREGROUND=1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[status_failure]
   # Use terse signal names: "INT" instead of "SIGINT(2)".
   typeset -g POWERLEVEL9K_STATUS_VERBOSE_SIGNAME=false
   typeset -g POWERLEVEL9K_STATUS_ERROR_SIGNAL_VISUAL_IDENTIFIER_EXPANSION='✘'
@@ -506,7 +554,7 @@
   # Status when some part of a pipe command fails and the overall exit status is also non-zero.
   # It may look like this: 1|0.
   typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE=true
-  typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_FOREGROUND=1
+  typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[status_failure]
   typeset -g POWERLEVEL9K_STATUS_ERROR_PIPE_VISUAL_IDENTIFIER_EXPANSION='✘'
 
   ###################[ command_execution_time: duration of the last command ]###################
@@ -515,7 +563,7 @@
   # Show this many fractional digits. Zero means round to seconds.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION=0
   # Execution time color.
-  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=3
+  typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[duration]
   # Duration format: 1d 2h 3m 4s.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FORMAT='d h m s'
   # Custom icon.
@@ -527,20 +575,20 @@
   # Don't show the number of background jobs.
   typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VERBOSE=false
   # Background jobs color.
-  typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=1
+  typeset -g POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[jobs]
   # Custom icon.
   # typeset -g POWERLEVEL9K_BACKGROUND_JOBS_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   #######################[ direnv: direnv status (https://direnv.net/) ]########################
   # Direnv color.
-  typeset -g POWERLEVEL9K_DIRENV_FOREGROUND=3
+  typeset -g POWERLEVEL9K_DIRENV_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[direnv]
   # Custom icon.
   # typeset -g POWERLEVEL9K_DIRENV_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   ###############[ asdf: asdf version manager (https://github.com/asdf-vm/asdf) ]###############
   # Default asdf color. Only used to display tools for which there is no color override (see below).
   # Tip:  Override this parameter for ${TOOL} with POWERLEVEL9K_ASDF_${TOOL}_FOREGROUND.
-  typeset -g POWERLEVEL9K_ASDF_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ASDF_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
 
   # There are four parameters that can be used to hide asdf tools. Each parameter describes
   # conditions under which a tool gets hidden. Parameters can hide tools but not unhide them. If at
@@ -598,82 +646,82 @@
   typeset -g POWERLEVEL9K_ASDF_SHOW_ON_UPGLOB=
 
   # Ruby version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_RUBY_FOREGROUND=1
+  typeset -g POWERLEVEL9K_ASDF_RUBY_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[ruby]
   # typeset -g POWERLEVEL9K_ASDF_RUBY_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_RUBY_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Python version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_PYTHON_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ASDF_PYTHON_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
   # typeset -g POWERLEVEL9K_ASDF_PYTHON_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_PYTHON_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Go version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_GOLANG_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ASDF_GOLANG_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[go]
   # typeset -g POWERLEVEL9K_ASDF_GOLANG_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_GOLANG_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Node.js version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_NODEJS_FOREGROUND=2
+  typeset -g POWERLEVEL9K_ASDF_NODEJS_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[node]
   # typeset -g POWERLEVEL9K_ASDF_NODEJS_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_NODEJS_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Rust version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_RUST_FOREGROUND=4
+  typeset -g POWERLEVEL9K_ASDF_RUST_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[rust]
   # typeset -g POWERLEVEL9K_ASDF_RUST_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_RUST_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # .NET Core version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_DOTNET_CORE_FOREGROUND=5
+  typeset -g POWERLEVEL9K_ASDF_DOTNET_CORE_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[php]
   # typeset -g POWERLEVEL9K_ASDF_DOTNET_CORE_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_DOTNET_CORE_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Flutter version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_FLUTTER_FOREGROUND=4
+  typeset -g POWERLEVEL9K_ASDF_FLUTTER_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[pwd_anchors]
   # typeset -g POWERLEVEL9K_ASDF_FLUTTER_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_FLUTTER_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Lua version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_LUA_FOREGROUND=4
+  typeset -g POWERLEVEL9K_ASDF_LUA_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[pwd_anchors]
   # typeset -g POWERLEVEL9K_ASDF_LUA_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_LUA_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Java version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_JAVA_FOREGROUND=4
+  typeset -g POWERLEVEL9K_ASDF_JAVA_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[java]
   # typeset -g POWERLEVEL9K_ASDF_JAVA_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_JAVA_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Perl version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_PERL_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ASDF_PERL_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
   # typeset -g POWERLEVEL9K_ASDF_PERL_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_PERL_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Erlang version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_ERLANG_FOREGROUND=1
+  typeset -g POWERLEVEL9K_ASDF_ERLANG_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[ruby]
   # typeset -g POWERLEVEL9K_ASDF_ERLANG_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_ERLANG_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Elixir version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_ELIXIR_FOREGROUND=5
+  typeset -g POWERLEVEL9K_ASDF_ELIXIR_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[elixir]
   # typeset -g POWERLEVEL9K_ASDF_ELIXIR_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_ELIXIR_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Postgres version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_POSTGRES_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ASDF_POSTGRES_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
   # typeset -g POWERLEVEL9K_ASDF_POSTGRES_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_POSTGRES_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # PHP version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_PHP_FOREGROUND=5
+  typeset -g POWERLEVEL9K_ASDF_PHP_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[php]
   # typeset -g POWERLEVEL9K_ASDF_PHP_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_PHP_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Haskell version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_HASKELL_FOREGROUND=3
+  typeset -g POWERLEVEL9K_ASDF_HASKELL_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[direnv]
   # typeset -g POWERLEVEL9K_ASDF_HASKELL_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_HASKELL_SHOW_ON_UPGLOB='*.foo|*.bar'
 
   # Julia version from asdf.
-  typeset -g POWERLEVEL9K_ASDF_JULIA_FOREGROUND=2
+  typeset -g POWERLEVEL9K_ASDF_JULIA_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[character]
   # typeset -g POWERLEVEL9K_ASDF_JULIA_VISUAL_IDENTIFIER_EXPANSION='⭐'
   # typeset -g POWERLEVEL9K_ASDF_JULIA_SHOW_ON_UPGLOB='*.foo|*.bar'
 
@@ -860,11 +908,11 @@
 
   ##################################[ context: user@hostname ]##################################
   # Context color when running with privileges.
-  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=1
+  typeset -g POWERLEVEL9K_CONTEXT_ROOT_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[context_root]
   # Context color in SSH without privileges.
-  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_FOREGROUND=7
+  typeset -g POWERLEVEL9K_CONTEXT_{REMOTE,REMOTE_SUDO}_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[context]
   # Default context color (no privileges, no SSH).
-  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=7
+  typeset -g POWERLEVEL9K_CONTEXT_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[context]
 
   # Context format when running with privileges: bold user@hostname.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE='%B%n@%m'
@@ -886,7 +934,7 @@
 
   ###[ virtualenv: python virtual environment (https://docs.python.org/3/library/venv.html) ]###
   # Python virtual environment color.
-  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=6
+  typeset -g POWERLEVEL9K_VIRTUALENV_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
   # Don't show Python version next to the virtual environment name.
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=false
   # If set to "false", won't show virtualenv if pyenv is already shown.
@@ -899,7 +947,7 @@
 
   #####################[ anaconda: conda environment (https://conda.io/) ]######################
   # Anaconda environment color.
-  typeset -g POWERLEVEL9K_ANACONDA_FOREGROUND=6
+  typeset -g POWERLEVEL9K_ANACONDA_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
 
   # Anaconda segment format. The following parameters are available within the expansion.
   #
@@ -932,7 +980,7 @@
 
   ################[ pyenv: python environment (https://github.com/pyenv/pyenv) ]################
   # Pyenv color.
-  typeset -g POWERLEVEL9K_PYENV_FOREGROUND=6
+  typeset -g POWERLEVEL9K_PYENV_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[python]
   # Hide python version if it doesn't come from one of these sources.
   typeset -g POWERLEVEL9K_PYENV_SOURCES=(shell local global)
   # If set to false, hide python version if it's the same as global:
@@ -971,7 +1019,7 @@
 
   ##########[ nodenv: node.js version from nodenv (https://github.com/nodenv/nodenv) ]##########
   # Nodenv color.
-  typeset -g POWERLEVEL9K_NODENV_FOREGROUND=2
+  typeset -g POWERLEVEL9K_NODENV_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[node]
   # Hide node version if it doesn't come from one of these sources.
   typeset -g POWERLEVEL9K_NODENV_SOURCES=(shell local global)
   # If set to false, hide node version if it's the same as global:
@@ -984,7 +1032,7 @@
 
   ##############[ nvm: node.js version from nvm (https://github.com/nvm-sh/nvm) ]###############
   # Nvm color.
-  typeset -g POWERLEVEL9K_NVM_FOREGROUND=2
+  typeset -g POWERLEVEL9K_NVM_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[node]
   # If set to false, hide node version if it's the same as default:
   # $(nvm version current) == $(nvm version default).
   typeset -g POWERLEVEL9K_NVM_PROMPT_ALWAYS_SHOW=false
@@ -995,7 +1043,7 @@
 
   ############[ nodeenv: node.js environment (https://github.com/ekalinin/nodeenv) ]############
   # Nodeenv color.
-  typeset -g POWERLEVEL9K_NODEENV_FOREGROUND=2
+  typeset -g POWERLEVEL9K_NODEENV_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[node]
   # Don't show Node version next to the environment name.
   typeset -g POWERLEVEL9K_NODEENV_SHOW_NODE_VERSION=false
   # Separate environment name from Node version only with a space.
@@ -1013,7 +1061,7 @@
 
   #######################[ go_version: go version (https://golang.org) ]########################
   # Go version color.
-  typeset -g POWERLEVEL9K_GO_VERSION_FOREGROUND=6
+  typeset -g POWERLEVEL9K_GO_VERSION_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[go]
   # Show go version only when in a go project subdirectory.
   typeset -g POWERLEVEL9K_GO_VERSION_PROJECT_ONLY=true
   # Custom icon.
@@ -1021,7 +1069,7 @@
 
   #################[ rust_version: rustc version (https://www.rust-lang.org) ]##################
   # Rust version color.
-  typeset -g POWERLEVEL9K_RUST_VERSION_FOREGROUND=4
+  typeset -g POWERLEVEL9K_RUST_VERSION_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[rust]
   # Show rust version only when in a rust project subdirectory.
   typeset -g POWERLEVEL9K_RUST_VERSION_PROJECT_ONLY=true
   # Custom icon.
@@ -1307,7 +1355,7 @@
       # '*prod*'  PROD    # These values are examples that are unlikely
       # '*test*'  TEST    # to match your needs. Customize them as needed.
       '*'         OTHER)
-  typeset -g POWERLEVEL9K_TERRAFORM_OTHER_FOREGROUND=4
+  typeset -g POWERLEVEL9K_TERRAFORM_OTHER_FOREGROUND=$DOTFILES_ZSH_PROMPT_COLORS[terraform]
   # typeset -g POWERLEVEL9K_TERRAFORM_OTHER_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
   #############[ terraform_version: terraform version (https://www.terraform.io) ]##############
