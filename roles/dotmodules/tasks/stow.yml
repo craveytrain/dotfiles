@@ -1,4 +1,21 @@
 ---
+- name: Initialize {{ dotmodule_name }} backup preview
+  ansible.builtin.set_fact:
+    dotmodule_stow_backup_pending: false
+
+- name: Preserve existing {{ dotmodule_name }} files before Stow
+  ansible.builtin.include_tasks: stow-backup.yml
+  loop: '{{ (dotmodules_stow_backup_files | default({})).get(dotmodule_name, []) }}'
+  loop_control:
+    loop_var: dotmodule_backup_file
+
+- name: Explain deferred {{ dotmodule_name }} Stow preview
+  ansible.builtin.debug:
+    msg: >-
+      Stow would run after backing up the existing files listed above.
+      Its full conflict check is deferred until those files have been moved.
+  when: ansible_check_mode and dotmodule_stow_backup_pending
+
 - name: Preview {{ dotmodule_name }} Stow changes
   ansible.builtin.command:
     argv:
@@ -14,12 +31,13 @@
   register: dotmodule_stow_preview
   changed_when: false
   check_mode: false
+  when: not (ansible_check_mode and dotmodule_stow_backup_pending)
 
 - name: Determine pending {{ dotmodule_name }} Stow changes
   ansible.builtin.set_fact:
     dotmodule_stow_actions: >-
       {{
-        (dotmodule_stow_preview.stderr_lines + dotmodule_stow_preview.stdout_lines)
+        ((dotmodule_stow_preview.stderr_lines | default([])) + (dotmodule_stow_preview.stdout_lines | default([])))
         | reject('equalto', 'WARNING: in simulation mode so not modifying filesystem.')
         | list
       }}

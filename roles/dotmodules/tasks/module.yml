@@ -8,10 +8,12 @@
   ansible.builtin.assert:
     that:
       - dotmodule_config is mapping
-      - dotmodule_config.keys() | difference(['homebrew_packages', 'homebrew_casks', 'stow_dirs', 'register_shell']) | length == 0
+      - dotmodule_config.keys() | difference(['homebrew_packages', 'homebrew_casks', 'stow_dirs', 'stow_backup_files', 'register_shell']) | length == 0
+      - dotmodule_config.stow_backup_files is not defined or dotmodule_name in (dotmodule_config.stow_dirs | default([]))
     fail_msg: >-
       {{ dotmodule_name }}/config.yml contains an unsupported key. Supported keys are
-      homebrew_packages, homebrew_casks, stow_dirs, and register_shell.
+      homebrew_packages, homebrew_casks, stow_dirs, stow_backup_files, and register_shell.
+      stow_backup_files requires the module's own name in stow_dirs.
 
 - name: Collect {{ dotmodule_name }} configuration
   ansible.builtin.set_fact:
@@ -21,6 +23,8 @@
       {{ dotmodules_homebrew_casks + (dotmodule_config.homebrew_casks | default([])) }}
     dotmodules_stow_dirs: >-
       {{ dotmodules_stow_dirs + (dotmodule_config.stow_dirs | default([])) }}
+    dotmodules_stow_backup_files: >-
+      {{ dotmodules_stow_backup_files | combine({dotmodule_name: dotmodule_config.stow_backup_files | default([])}) }}
     dotmodules_shells: >-
       {{
         dotmodules_shells

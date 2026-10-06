@@ -46,10 +46,14 @@ homebrew_casks:
   - example-app
 stow_dirs:
   - module-name
+stow_backup_files:
+  - .config/example/settings.json
 register_shell: example-shell
 ```
 
 Keep modules independent. Do not make one module's configuration require another module to load successfully.
+
+Optional `stow_backup_files` lists home-relative regular files owned by this module that may already exist before first deployment. It requires the module's own name in `stow_dirs`. Each existing regular target is moved to a unique `.pre-dotfiles-*` backup alongside the original before Stow runs. Symlinks and directories are not moved. Check mode reports pending backups without changing anything and defers that module's Stow preview until the files can be moved.
 
 ## Add or change a module
 
@@ -71,11 +75,16 @@ Use prefix groups `10` for core setup, `50` for features, and `80` for late-load
 
 All operations must be idempotent. Prefer declarative YAML and tool-native configuration over shell scripts.
 
+Run deployment regression checks with `python3 -m unittest discover -s tests -v`.
+They require Ansible, Stow, and `/bin/bash`, use temporary homes and stubbed commands, and do not install packages or plugins.
+
 ## Troubleshooting
 
 ### Existing file blocks Stow
 
-Deployment deliberately stops rather than deleting an existing file. Move the file aside, deploy, then compare it with the stowed version. Do not delete it until any local settings have been copied into the appropriate local override.
+For paths explicitly declared in a module's `stow_backup_files` (currently Claude's `settings.json`), deployment preserves the existing regular file in a unique backup and installs the shared symlink. Review the reported backup for personal settings.
+
+Other conflicts deliberately stop deployment. Move the file aside, deploy, then compare it with the stowed version. Do not delete it until any local settings have been copied into the appropriate local override.
 
 ### A pulled change is not visible
 

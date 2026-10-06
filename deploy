@@ -52,7 +52,8 @@ if ! ansible-galaxy collection list community.general 2>/dev/null |
 fi
 
 if "$ask_become"; then
-  args=(--ask-become-pass "${args[@]}")
+  # Bash 3.2 treats empty arrays as unset under nounset.
+  args=(--ask-become-pass ${args[@]+"${args[@]}"})
 fi
 
 cd "$repo_dir"

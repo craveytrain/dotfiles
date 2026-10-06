@@ -5,3 +5,7 @@
 
 stow_dirs:
   - claude
+
+# Claude may create this file before dotfiles are deployed.
+stow_backup_files:
+  - .claude/settings.json

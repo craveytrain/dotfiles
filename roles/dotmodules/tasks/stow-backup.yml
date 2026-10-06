@@ -1,0 +1,61 @@
+---
+- name: Validate backup path
+  ansible.builtin.assert:
+    that:
+      - dotmodule_backup_file is string
+      - dotmodule_backup_file | length > 0
+      - not dotmodule_backup_file.startswith('/')
+      - "'..' not in dotmodule_backup_file.split('/')"
+    fail_msg: stow_backup_files entries must be relative paths inside the module's files directory.
+
+- name: Check the managed source for {{ dotmodule_backup_file }}
+  ansible.builtin.stat:
+    path: '{{ dotmodules_root }}/{{ dotmodule_name }}/files/{{ dotmodule_backup_file }}'
+    follow: false
+  register: dotmodule_backup_source
+
+- name: Require a managed regular file before backing up its target
+  ansible.builtin.assert:
+    that:
+      - dotmodule_backup_source.stat.isreg | default(false)
+
+- name: Inspect existing {{ dotmodule_backup_file }}
+  ansible.builtin.stat:
+    path: '{{ dotmodules_target_home }}/{{ dotmodule_backup_file }}'
+    follow: false
+  register: dotmodule_backup_target
+
+- name: Preserve a regular file that would block Stow
+  when: dotmodule_backup_target.stat.isreg | default(false)
+  block:
+    - name: Record pending backup
+      ansible.builtin.set_fact:
+        dotmodule_stow_backup_pending: true
+
+    - name: Report the pending backup
+      ansible.builtin.debug:
+        msg: >-
+          {{ dotmodules_target_home }}/{{ dotmodule_backup_file }} would be moved
+          to a unique .pre-dotfiles- backup alongside the original before Stow.
+      when: ansible_check_mode
+
+    - name: Reserve a unique backup filename
+      ansible.builtin.tempfile:
+        state: file
+        path: '{{ (dotmodules_target_home ~ "/" ~ dotmodule_backup_file) | dirname }}'
+        prefix: '{{ dotmodule_backup_file | basename }}.pre-dotfiles-'
+      register: dotmodule_backup_destination
+      when: not ansible_check_mode
+
+    - name: Move the existing file to its backup
+      ansible.builtin.command:
+        argv:
+          - mv
+          - '{{ dotmodules_target_home }}/{{ dotmodule_backup_file }}'
+          - '{{ dotmodule_backup_destination.path }}'
+      when: not ansible_check_mode
+
+    - name: Report the preserved file
+      ansible.builtin.debug:
+        msg: 'Original {{ dotmodule_backup_file }} saved to {{ dotmodule_backup_destination.path }}'
+      when: not ansible_check_mode

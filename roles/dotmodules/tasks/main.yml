@@ -12,6 +12,7 @@
     dotmodules_homebrew_packages: []
     dotmodules_homebrew_casks: []
     dotmodules_stow_dirs: []
+    dotmodules_stow_backup_files: {}
     dotmodules_shells: []
 
 - name: Read enabled module configuration

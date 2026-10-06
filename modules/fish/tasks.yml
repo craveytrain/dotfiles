@@ -10,6 +10,14 @@
   register: dotfiles_fisher_list
   changed_when: false
   check_mode: false
+  # Fisher's string match returns 1 with no output when no plugins exist yet.
+  failed_when: >-
+    dotfiles_fisher_list.rc != 0
+    and not (
+      dotfiles_fisher_list.rc == 1
+      and dotfiles_fisher_list.stdout == ''
+      and dotfiles_fisher_list.stderr == ''
+    )
 
 - name: Report Fish plugin drift
   ansible.builtin.debug:
